@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3A2</p>
+    <p>Kupony vlaků: 3A3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -190,17 +190,19 @@ function buyTrain(trainIndex) {
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
 
         // Vytvoření ikony vlaku a umístění na mapu
-        let trainIcon = document.createElement('img');
-        trainIcon.src = getTrainImage(trainIndex);  // Získání správné ikony podle typu vlaku
-        trainIcon.className = 'train-icon';
+        let trainIcon = L.icon({
+            iconUrl: selectedTrain.image,
+            iconSize: [100, 100],
+            iconAnchor: [50, 50],
+            popupAnchor: [0, 0]
+        });
 
         // Přidání ikony vlaku do stanice
-        let station = L.marker(selectedTrain.location).addTo(map);
+        let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
         station.bindPopup(selectedTrain.name);
         station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
-        station.setIcon(L.divIcon({className: 'leaflet-div-icon', html: trainIcon.outerHTML}));
 
-        closeBuyTrainModal();
+        closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
