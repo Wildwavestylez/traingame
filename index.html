@@ -13,7 +13,19 @@
             height: 100vh;
         }
 
-        /* Přidání stylu pro modální okno */
+       
+
+        #playerPanel {
+            flex: 1;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        #map {
+            flex: 2;
+            height: 100%;
+        }
+         /* Přidání stylu pro modální okno */
 .modal {
   display: none;
   position: fixed;
@@ -46,17 +58,6 @@
   cursor: pointer;
 }
 
-        #playerPanel {
-            flex: 1;
-            padding: 10px;
-            background-color: #f0f0f0;
-        }
-
-        #map {
-            flex: 2;
-            height: 100%;
-        }
-
           
         
     </style>
@@ -68,7 +69,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 78787</p>
+    <p>Kupony vlaků: 77</p>
     <button id="buyTrainButton">Nakupovat vlaky</button>
     <div id="buyTrainModal" class="modal">
   <div class="modal-content">
