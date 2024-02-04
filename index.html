@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 0A5</p>
+        <p>Kupony vlaků: 0A6</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -174,8 +174,9 @@ lines.forEach(line => {
 
        // Nová funkce pro nákup vlaků
 function buyTrains(trainType, trainIndex) {
-   const trainInfo = trainData[trainType];
+    const trainInfo = trainData[trainType];
     const selectedTrain = trainInfo.trains[trainIndex];
+
     if (playerFinance >= selectedTrain.price) {
         playerFinance -= selectedTrain.price;
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
@@ -195,11 +196,11 @@ function buyTrains(trainType, trainIndex) {
         const michalovceStation = { lat: 48.7505264, lon: 21.8986283 };
 
         // Přidáme nový marker (vlak) na pozici stanice Michalovce
-        const trainMarker = L.marker([michalovceStation.lat, michalovceStation.lon], { icon: trainIcon }).addTo(map);
-        trainMarker.bindPopup(`Vlak ${newTrain.name}`);
+       const trainMarker = L.marker([michalovceStation.lat, michalovceStation.lon], { icon: selectedTrain.icon }).addTo(map);
+    trainMarker.bindPopup(`Vlak ${newTrain.name}`);
 
         // Přidáme do inventáře informace o umístění vlaku
-        newTrain.location = { lat: michalovceStation.lat, lon: michalovceStation.lon };
+      newTrain.location = { lat: michalovceStation.lat, lon: michalovceStation.lon };
 
         alert(`Gratulujeme! Zakoupil jsi nový vlak typu ${trainType} - ${selectedTrain.name}.`);
 
@@ -282,14 +283,22 @@ function buyTrains(trainType, trainIndex) {
             };
 
             // Přiřazení ikon vlakům
-Object.keys(trainTypes).forEach(trainType => {
-    trainTypes[trainType].trains.forEach(train => {
+
+
+// Přiřazení ikon vlakům
+Object.keys(trainData).forEach(trainType => {
+    trainData[trainType].trains.forEach(train => {
         train.icon = L.icon({
             iconUrl: train.imgUrl,
             iconSize: [50, 50],
             iconAnchor: [25, 25],
             popupAnchor: [0, 0],
+        });
+    });
+});
 
+// Přidání skriptu pro otevření modálního okna
+document.getElementById('buyTrainButton').addEventListener('click', ()
             return trainData[trainType];
         }
 
