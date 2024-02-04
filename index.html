@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 0A3</p>
+        <p>Kupony vlaků: 0A4</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -172,10 +172,10 @@ lines.forEach(line => {
             createBuyButtons(trainInfo.trains);
         }
 
-        // Nová funkce pro nákup více vlaků najednou
-       function buyTrains(trainType, trainIndex) {
-    // Získání informací o vybraném vlaku
-    const trainInfo = getTrainInfo(trainType);
+       // Nová funkce pro nákup vlaků
+function buyTrains(trainType, trainIndex) {
+    // Získání informací o vybraném vlaku z nové proměnné trainData
+    const trainInfo = trainData[trainType];
     // Získání informací o konkrétním vlaku
     const selectedTrain = trainInfo.trains[trainIndex];
     // Kontrola, zda hráč má dostatek peněz na nákup vlaků
@@ -192,8 +192,8 @@ lines.forEach(line => {
             id: generateUniqueId(),
             type: trainType,
             name: selectedTrain.name,
-            speed: selectedTrain.maxSpeed,
-            capacity: selectedTrain.capacity,
+            price: selectedTrain.price,
+            imgUrl: selectedTrain.imgUrl,
             // Další vlastnosti vlaku
         };
         playerInventory.push(newTrain);
@@ -218,7 +218,6 @@ lines.forEach(line => {
         alert("Nemáte dostatek financí na nákup tohoto vlaku.");
     }
 }
-
         // Nová funkce pro vytvoření tlačítek pro nákup vlaků
         function createBuyButtons(trains) {
             // Najdeme kontejner pro tlačítka v modálním okně
