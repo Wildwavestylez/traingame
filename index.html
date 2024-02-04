@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 2A8</p>
+    <p>Kupony vlaků: 2A9</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -199,6 +199,10 @@ function buyTrain(trainIndex) {
         station.bindPopup(selectedTrain.name);
         station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
         station.setIcon(L.divIcon({className: 'leaflet-div-icon', html: trainIcon.outerHTML}));
+
+        let trainDiv = document.createElement('div');
+trainDiv.appendChild(trainIcon);
+station.setIcon(L.divIcon({className: 'leaflet-div-icon', html: trainDiv.outerHTML}));
 
         closeBuyTrainModal();
     } else {
