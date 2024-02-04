@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 4A0</p>
+    <p>Kupony vlaků: 4A1</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -231,8 +231,15 @@ window.onload = function () {
 
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
-    lines.forEach(line => {
+      lines.forEach(line => {
         line.stops.forEach(startStop => {
+            const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
+
+            // Oprava načítání souřadnic
+            let realDistance = getRealDistance(
+                [startStop.lat, startStop.lon],
+                [destinationStop.lat, destinationStop.lon]
+            );
             if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
@@ -241,8 +248,7 @@ function generateCargo() {
                     popupAnchor: [0, 0]
                 });
 
-                let destinationStop = getRandomDestination(line.stops, startStop);
-                let realDistance = getRealDistance(startStop.location, destinationStop.location);
+               
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
                 cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`);
@@ -273,8 +279,8 @@ function getRandomDistance() {
 
 // Funkce pro získání skutečné vzdálenosti mezi dvěma zastávkami
 function getRealDistance(start, end) {
-    const lat1 = start.lat;
-    const lon1 = start.lon;
+    const lat1 = start.lat || start[0];
+    const lon1 = start.lon || start[1];
     const lat2 = end.lat || end[0];
     const lon2 = end.lon || end[1];
 
