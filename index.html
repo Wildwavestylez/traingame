@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 4A1</p>
+    <p>Kupony vlaků: 4A2</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -285,7 +285,7 @@ function getRealDistance(start, end) {
     const lon2 = end.lon || end[1];
 
 
-
+    const R = 6371; // Poloměr Země v kilometrech
     const dLat = toRadians(lat2 - lat1);
     const dLon = toRadians(lon2 - lon1);
     const a =
