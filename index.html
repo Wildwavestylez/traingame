@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 4A6</p>
+    <p>Kupony vlaků: 4A7</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -285,14 +285,46 @@ function generateTrainOptions() {
     return options;
 }
 
-// Funkce pro odeslání nákladního vlaku na cestu k nákladu
 function sendTrain() {
     const trainSelect = document.getElementById('trainSelect');
     const selectedTrainIndex = trainSelect.value;
 
     const selectedTrain = trainTypes[selectedTrainIndex];
-    // Zde můžete přidat logiku pro odeslání vlaku (např. animaci pohybu vlaku směrem k nákladu)
-    alert(`Vlak ${selectedTrain.name} byl vypraven na cestu k nákladu.`);
+    const cargoPopup = map._popup; // Získáme otevřený popup (informace o nákladu)
+
+    if (cargoPopup) {
+        const cargoLatLng = cargoPopup.getLatLng(); // Získáme souřadnice nákladu
+        const cargoDestination = cargoPopup.getContent().split('-')[1].trim(); // Získáme cílovou zastávku nákladu
+
+        // Přidáme nový marker pro sledování vlaku
+        const trainIcon = L.icon({
+            iconUrl: selectedTrain.image,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
+            popupAnchor: [0, 0]
+        });
+        const trainMarker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
+        trainMarker.bindPopup(`Vlak ${selectedTrain.name} na cestě k nákladu (${cargoDestination})`);
+
+        // Vypočítáme vzdálenost mezi vlakem a nákladem
+        const distanceToCargo = getRealDistance(selectedTrain.location, [cargoLatLng.lat, cargoLatLng.lng]);
+
+        // Čas, který vlak potřebuje na cestu k nákladu (v hodinách)
+        const travelTimeHours = distanceToCargo / trainSpeed;
+
+        // Animace pohybu vlaku k nákladu
+        trainMarker.animateTo(cargoLatLng, { duration: travelTimeHours * 60 * 60 * 1000, easing: 'linear' });
+
+        // Zavřeme popup nákladu
+        cargoPopup._close();
+
+        // Po příjezdu vlaku k nákladu odebereme vlak z mapy
+        setTimeout(() => {
+            map.removeLayer(trainMarker);
+            // Zde můžete přidat další logiku (např. naložení nákladu na vlak)
+            alert(`Vlak ${selectedTrain.name} dorazil k nákladu (${cargoDestination}).`);
+        }, travelTimeHours * 60 * 60 * 1000);
+    }
 }
 
 
