@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 4A8</p>
+    <p>Kupony vlaků: 4A9</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -287,46 +287,56 @@ function generateTrainOptions() {
     return options;
 }
 
+// Funkce pro odeslání nákladního vlaku na cestu k nákladu
 function sendTrain() {
     const trainSelect = document.getElementById('trainSelect');
     const selectedTrainIndex = trainSelect.value;
 
     const selectedTrain = trainTypes[selectedTrainIndex];
-    const cargoPopup = map._popup; // Získáme otevřený popup (informace o nákladu)
+    const cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
+    cargoMarker.bindPopup(`
+        Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč
+        <br>
+        <select id="trainSelect">
+            ${generateTrainOptions()}  <!-- Přidáme rolovací menu pro výběr dostupných nákladních vlaků -->
+        </select>
+        <button onclick="sendTrain()">Vypravit vlak</button>
+    `);
 
-    if (cargoPopup) {
-        const cargoLatLng = cargoPopup.getLatLng(); // Získáme souřadnice nákladu
-        const cargoDestination = cargoPopup.getContent().split('-')[1].trim(); // Získáme cílovou zastávku nákladu
+    const trainMarker = L.marker(selectedTrain.location, { icon: selectedTrain.image }).addTo(map);
+    trainMarker.bindPopup(`Vlak ${selectedTrain.name} - ${selectedTrain.speed} km/h`);
 
-        // Přidáme nový marker pro sledování vlaku
-        const trainIcon = L.icon({
-            iconUrl: selectedTrain.image,
-            iconSize: [40, 40],
-            iconAnchor: [20, 20],
-            popupAnchor: [0, 0]
-        });
-        const trainMarker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
-        trainMarker.bindPopup(`Vlak ${selectedTrain.name} na cestě k nákladu (${cargoDestination})`);
+    let currentStopIndex = 0;
+    let direction = 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
+    let startTime = new Date();
 
-        // Vypočítáme vzdálenost mezi vlakem a nákladem
-        const distanceToCargo = getRealDistance(selectedTrain.location, [cargoLatLng.lat, cargoLatLng.lng]);
+    const moveTrainInterval = setInterval(() => {
+        const currentStop = line.stops[currentStopIndex];
+        const nextStop = line.stops[currentStopIndex + direction];
 
-        // Čas, který vlak potřebuje na cestu k nákladu (v hodinách)
-        const travelTimeHours = distanceToCargo / trainSpeed;
+        if (nextStop) {
+            const distanceToNextStop = getDistance(currentStop.location[0], currentStop.location[1], nextStop.location[0], nextStop.location[1]);
+            const timeToNextStop = distanceToNextStop / selectedTrain.maxSpeed;
 
-        // Animace pohybu vlaku k nákladu
-        trainMarker.animateTo(cargoLatLng, { duration: travelTimeHours * 60 * 60 * 1000, easing: 'linear' });
+            const currentTime = new Date();
+            const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
 
-        // Zavřeme popup nákladu
-        cargoPopup._close();
+            if (elapsedTime <= timeToNextStop) {
+                const lat = currentStop.location[0] + (nextStop.location[0] - currentStop.location[0]) * (elapsedTime / timeToNextStop);
+                const lon = currentStop.location[1] + (nextStop.location[1] - currentStop.location[1]) * (elapsedTime / timeToNextStop);
+                trainMarker.setLatLng([lat, lon]);
+            } else {
+                currentStopIndex += direction;
+                startTime = new Date();
 
-        // Po příjezdu vlaku k nákladu odebereme vlak z mapy
-        setTimeout(() => {
-            map.removeLayer(trainMarker);
-            // Zde můžete přidat další logiku (např. naložení nákladu na vlak)
-            alert(`Vlak ${selectedTrain.name} dorazil k nákladu (${cargoDestination}).`);
-        }, travelTimeHours * 60 * 60 * 1000);
-    }
+                if (currentStopIndex === line.stops.length - 1) {
+                    // Vlak dosáhl cílové stanice (kde je náklad)
+                    clearInterval(moveTrainInterval);
+                    alert(`Vlak ${selectedTrain.name} dosáhl cílové stanice.`);
+                }
+            }
+        }
+    }, updateInterval);
 }
 
 
