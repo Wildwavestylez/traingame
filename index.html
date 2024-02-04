@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 2A6</p>
+    <p>Kupony vlaků: 2A7</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -165,31 +165,51 @@ function closeTrainModal() {
 }
  openTrainModal();
 
-// Funkce pro generování tlačítek pro druhy vlaků
+const trainTypes = [
+    { name: 'Nákladní Lokomotiva', price: 10000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [48.7505264, 21.8986283] },
+    // Další typy vlaků můžete přidat podle potřeby
+];
+
 function generateTrainButtons() {
-    const trainOptionsContainer = document.getElementById('trainOptions');
-    const trainTypes = [
-        { name: 'Nákladní Lokomotiva', price: 10000, speed: 400 },
-        { name: 'Rychlíková Lokomotiva', price: 15000, speed: 600 },
-        { name: 'Těžká Nákladní Lokomotiva', price: 20000, speed: 300 },
-        // Přidej další typy vlaků podle potřeby
-    ];
+    let trainOptions = document.getElementById('trainOptions');
 
-    trainTypes.forEach(train => {
-        const button = document.createElement('button');
-        button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed} km/h`;
-        button.onclick = function() {
-            // Funkce pro nákup vlaku - můžeš tady přidat kód pro aktualizaci financí a vytvoření nového vlaku
-            alert(`Zakoupil/a jsi ${train.name} za ${train.price} Kč!`);
-            closeTrainModal();
-        };
+    trainTypes.forEach((train, index) => {
+        let button = document.createElement('button');
+        button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
+        button.onclick = function() { buyTrain(index); };
 
-        trainOptionsContainer.appendChild(button);
+        trainOptions.appendChild(button);
     });
 }
 
-// Zavolání funkce pro generování tlačítek při načítání stránky
-generateTrainButtons();
+function buyTrain(trainIndex) {
+    let selectedTrain = trainTypes[trainIndex];
+
+    if (playerFinance >= selectedTrain.price) {
+        playerFinance -= selectedTrain.price;
+        document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+
+        // Vytvoření ikony vlaku a umístění na mapu
+        let trainIcon = document.createElement('img');
+        trainIcon.src = selectedTrain.image;
+        trainIcon.className = 'train-icon';
+
+        // Přidání ikony vlaku do stanice
+        let station = L.marker(selectedTrain.location).addTo(map);
+        station.bindPopup(selectedTrain.name);
+        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
+        station.setIcon(L.divIcon({className: 'leaflet-div-icon', html: trainIcon.outerHTML}));
+
+        closeBuyTrainModal();
+    } else {
+        alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
+    }
+}
+
+window.onload = function () {
+    generateTrainButtons();
+    openBuyTrainModal();
+};
     
 function showRandomOffer() {
     const randomLineIndex = Math.floor(Math.random() * availableLines.length);
