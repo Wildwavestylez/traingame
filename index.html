@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 4A7</p>
+    <p>Kupony vlaků: 4A8</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -89,7 +89,9 @@ let availableLines = []; // Seznam dostupných linek
 const cargoInterval = 10000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 120000; // Interval nabídek od herního drážního úřadu v ms
+const trainSpeed = 60; // v km/h
 
+    
 // Fiktivní data pro linky a zastávky
 const lines = [
       {
