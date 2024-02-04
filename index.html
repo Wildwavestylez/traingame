@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3A4</p>
+    <p>Kupony vlaků: 3A5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -231,13 +231,16 @@ function generateCargo() {
             if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 20],
+                    iconSize: [64, 64],
+                    iconAnchor: [32, 32],
                     popupAnchor: [0, 0]
                 });
 
+                let destinationStop = getRandomDestination(line.stops, stop);
+                let realDistance = getRealDistance(stop.location, destinationStop.location);
+
                 let cargoMarker = L.marker(stop.location, { icon: cargoIcon }).addTo(map);
-                cargoMarker.bindPopup(`Náklad na cestu do ${getRandomDestination(line.stops, stop)} (${getRandomDistance()} km)`);
+                cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`);
 
                 setTimeout(() => {
                     map.removeLayer(cargoMarker);
@@ -258,9 +261,30 @@ function getRandomDestination(stops, currentStop) {
 }
 
 // Funkce pro generování náhodní vzdálenosti
+// Funkce pro generování náhodné vzdálenosti
 function getRandomDistance() {
     return Math.floor(Math.random() * (100 - 20 + 1)) + 20;
 }
+
+// Funkce pro získání skutečné vzdálenosti mezi dvěma zastávkami
+function getRealDistance(start, end) {
+    const R = 6371; // poloměr Země v km
+    const lat1 = start[0];
+    const lon1 = start[1];
+    const lat2 = end[0];
+    const lon2 = end[1];
+
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // vzdálenost v km
+    return distance;
+}
+
 
 window.onload = function () {
     generateTrainButtons();
