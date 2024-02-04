@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 1A1</p>
+        <p>Kupony vlaků: 1A2</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -173,7 +173,7 @@ lines.forEach(line => {
         }
 
        // Nová funkce pro nákup vlaků
-unction buyTrains(trainType, trainIndex) {
+function buyTrains(trainType, trainIndex) {
     const trainInfo = trainTypes[trainType];
     const selectedTrain = trainInfo.trains[trainIndex];
 
