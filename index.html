@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 0A8</p>
+        <p>Kupony vlaků: 0A9</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -174,7 +174,7 @@ lines.forEach(line => {
 
        // Nová funkce pro nákup vlaků
 function buyTrains(trainType, trainIndex) {
-    const trainInfo = trainData[trainType];  // Nahradit trainData proměnnou trainInfo
+    const trainInfo = trainData[trainType];
     const selectedTrain = trainInfo.trains[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
@@ -192,7 +192,7 @@ function buyTrains(trainType, trainIndex) {
         };
         playerInventory.push(newTrain);
 
-         // Zjistíme pozici stanice Michalovce
+          // Zjistíme pozici stanice Michalovce
     const michalovceStation = { lat: 48.7505264, lon: 21.8986283 };
 
     // Přidáme nový marker (vlak) na pozici stanice Michalovce
@@ -201,6 +201,7 @@ function buyTrains(trainType, trainIndex) {
 
     // Přidáme do inventáře informace o umístění vlaku
     newTrain.location = { lat: michalovceStation.lat, lon: michalovceStation.lon };
+
 
         alert(`Gratulujeme! Zakoupil jsi nový vlak typu ${trainType} - ${selectedTrain.name}.`);
 
