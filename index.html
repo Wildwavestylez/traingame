@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3A3</p>
+    <p>Kupony vlaků: 3A4</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -86,7 +86,7 @@
 <script>
 let playerFinance = 500000;
 let availableLines = []; // Seznam dostupných linek
-
+const cargoInterval = 30000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 20000; // Interval nabídek od herního drážního úřadu v ms
 
@@ -223,6 +223,54 @@ window.onload = function () {
     generateTrainButtons();
     openTrainModal();
 };
+
+// Funkce pro generování nákladu na zastávkách
+function generateCargo() {
+    lines.forEach(line => {
+        line.stops.forEach(stop => {
+            if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+                let cargoIcon = L.icon({
+                    iconUrl: 'https://i.imgur.com/cYbr4oG.png',
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20],
+                    popupAnchor: [0, 0]
+                });
+
+                let cargoMarker = L.marker(stop.location, { icon: cargoIcon }).addTo(map);
+                cargoMarker.bindPopup(`Náklad na cestu do ${getRandomDestination(line.stops, stop)} (${getRandomDistance()} km)`);
+
+                setTimeout(() => {
+                    map.removeLayer(cargoMarker);
+                }, cargoInterval);
+            }
+        });
+    });
+}
+
+// Funkce pro získání náhodné destinace z okolních stanic
+function getRandomDestination(stops, currentStop) {
+    let nearbyStops = stops.filter(stop =>
+        getDistance(currentStop.location[0], currentStop.location[1], stop.location[0], stop.location[1]) < 20
+    );
+
+    let randomStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
+    return randomStop.name;
+}
+
+// Funkce pro generování náhodní vzdálenosti
+function getRandomDistance() {
+    return Math.floor(Math.random() * (100 - 20 + 1)) + 20;
+}
+
+window.onload = function () {
+    generateTrainButtons();
+    openTrainModal();
+    setInterval(generateCargo, cargoInterval);
+};
+
+
+
+
     
 function showRandomOffer() {
     const randomLineIndex = Math.floor(Math.random() * availableLines.length);
