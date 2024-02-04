@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 1A0</p>
+        <p>Kupony vlaků: 1A1</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -173,8 +173,8 @@ lines.forEach(line => {
         }
 
        // Nová funkce pro nákup vlaků
-function buyTrains(trainType, trainIndex) {
-    const trainInfo = getTrainInfo(trainType);
+unction buyTrains(trainType, trainIndex) {
+    const trainInfo = trainTypes[trainType];
     const selectedTrain = trainInfo.trains[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
@@ -206,12 +206,12 @@ function buyTrains(trainType, trainIndex) {
         // Odstraníme tuto možnost z tlačítka
         trainInfo.trains.splice(trainIndex, 1);
         // Znovu vygenerujeme tlačítka pro nákup
-        createBuyButtons(trainInfo.trains);
+        createBuyButtons(trainType, trainInfo.trains);
     } else {
         alert("Nemáte dostatek financí na nákup tohoto vlaku.");
     }
 }
-        function createBuyButtons(trainType, trains) {
+       function createBuyButtons(trainType, trains) {
     // Najdeme kontejner pro tlačítka v modálním okně
     const buttonsContainer = document.querySelector('.modal-content');
     // Odstraníme všechna existující tlačítka z modálního okna
@@ -226,6 +226,7 @@ function buyTrains(trainType, trainIndex) {
         buttonsContainer.appendChild(button);
     });
 }
+
 
         // Funkce pro zavření modálního okna
         function closeModal() {
