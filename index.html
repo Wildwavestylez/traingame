@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 0A7</p>
+        <p>Kupony vlaků: 0A8</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -174,7 +174,7 @@ lines.forEach(line => {
 
        // Nová funkce pro nákup vlaků
 function buyTrains(trainType, trainIndex) {
-    const trainInfo = trainData[trainType];
+    const trainInfo = trainData[trainType];  // Nahradit trainData proměnnou trainInfo
     const selectedTrain = trainInfo.trains[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
@@ -192,15 +192,15 @@ function buyTrains(trainType, trainIndex) {
         };
         playerInventory.push(newTrain);
 
-        // Zjistíme pozici stanice Michalovce
-        const michalovceStation = { lat: 48.7505264, lon: 21.8986283 };
+         // Zjistíme pozici stanice Michalovce
+    const michalovceStation = { lat: 48.7505264, lon: 21.8986283 };
 
-        // Přidáme nový marker (vlak) na pozici stanice Michalovce
-       const trainMarker = L.marker([michalovceStation.lat, michalovceStation.lon], { icon: selectedTrain.icon }).addTo(map);
+    // Přidáme nový marker (vlak) na pozici stanice Michalovce
+    const trainMarker = L.marker([michalovceStation.lat, michalovceStation.lon], { icon: selectedTrain.icon }).addTo(map);
     trainMarker.bindPopup(`Vlak ${newTrain.name}`);
 
-        // Přidáme do inventáře informace o umístění vlaku
-      newTrain.location = { lat: michalovceStation.lat, lon: michalovceStation.lon };
+    // Přidáme do inventáře informace o umístění vlaku
+    newTrain.location = { lat: michalovceStation.lat, lon: michalovceStation.lon };
 
         alert(`Gratulujeme! Zakoupil jsi nový vlak typu ${trainType} - ${selectedTrain.name}.`);
 
