@@ -268,11 +268,11 @@ function getRandomDistance() {
 
 // Funkce pro získání skutečné vzdálenosti mezi dvěma zastávkami
 function getRealDistance(start, end) {
-    const R = 6371; // poloměr Země v km
-    const lat1 = start[0];
-    const lon1 = start[1];
-    const lat2 = end[0];
-    const lon2 = end[1];
+    const lat1 = start.lat;
+    const lon1 = start.lon;
+    const lat2 = end.lat;
+    const lon2 = end.lon;
+
 
     const dLat = toRadians(lat2 - lat1);
     const dLon = toRadians(lon2 - lon1);
