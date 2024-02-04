@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 4A5</p>
+    <p>Kupony vlaků: 4A6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -257,7 +257,14 @@ function generateCargo() {
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`);
+                cargoMarker.bindPopup(`
+                    Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč
+                    <br>
+                    <select id="trainSelect">
+                        ${generateTrainOptions()}  <!-- Přidáme rolovací menu pro výběr dostupných nákladních vlaků -->
+                    </select>
+                    <button onclick="sendTrain()">Vypravit vlak</button>
+                `);
 
                 setTimeout(() => {
                     map.removeLayer(cargoMarker);
@@ -266,9 +273,28 @@ function generateCargo() {
         });
     });
 }
-
-// Spustit generování nákladu každou minutu
+    // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
+
+// Funkce pro generování rolovacího menu s dostupnými nákladními vlaky
+function generateTrainOptions() {
+    let options = '';
+    trainTypes.forEach((train, index) => {
+        options += `<option value="${index}">${train.name}</option>`;
+    });
+    return options;
+}
+
+// Funkce pro odeslání nákladního vlaku na cestu k nákladu
+function sendTrain() {
+    const trainSelect = document.getElementById('trainSelect');
+    const selectedTrainIndex = trainSelect.value;
+
+    const selectedTrain = trainTypes[selectedTrainIndex];
+    // Zde můžete přidat logiku pro odeslání vlaku (např. animaci pohybu vlaku směrem k nákladu)
+    alert(`Vlak ${selectedTrain.name} byl vypraven na cestu k nákladu.`);
+}
+
 
     
 // Funkce pro získání náhodné destinace z okolních stanic
