@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3A5</p>
+    <p>Kupony vlaků: 3A6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -228,11 +228,11 @@ window.onload = function () {
 function generateCargo() {
     lines.forEach(line => {
         line.stops.forEach(stop => {
-            if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (stop.location && Math.random() < 0.2) {  // Kontrola, zda má zastávka definovanou polohu
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
-                    iconSize: [64, 64],
-                    iconAnchor: [32, 32],
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20],
                     popupAnchor: [0, 0]
                 });
 
