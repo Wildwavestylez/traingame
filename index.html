@@ -63,19 +63,18 @@
 
 <div id="playerPanel">
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
-    <h2>Player Panel</h2>
-    <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 23</p>
-    <button id="buyTrainButton">Nakupovat vlaky</button>
-    <div id="buyTrainModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>Výběr vlaku</h2>
-    <button onclick="buyTrain('TrainType1')">Vlak typu 1 - Rychlý</button>
-    <button onclick="buyTrain('TrainType2')">Vlak typu 2 - Nákladní</button>
-    <!-- Další tlačítka pro různé typy vlaků -->
-  </div>
-</div>
+    <div id="playerPanel">
+        <h2>Player Panel</h2>
+        <p id="finance">Finance: 500000 Kč</p>
+        <p>Kupony vlaků: 14</p>
+        <button id="buyTrainButton">Nakupovat vlaky</button>
+        <div id="buyTrainModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Výběr vlaku</h2>
+            </div>
+        </div>
+    </div>
    
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -88,6 +87,8 @@
 <script>
 let playerFinance = 500000;
 let availableLines = []; // Seznam dostupných linek
+ let currentTrainType;
+ let playerFinance = 500000;
 
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 20000; // Interval nabídek od herního drážního úřadu v ms
@@ -155,94 +156,121 @@ lines.forEach(line => {
     availableLines.push(line);
 });
 
-    // Přidání skriptu pro otevření modálního okna
-document.getElementById('buyTrainButton').addEventListener('click', openModal);
+      // Přidání skriptu pro otevření modálního okna
+        document.getElementById('buyTrainButton').addEventListener('click', () => openModal('TrainType1'));
 
-function openModal(trainType) {
-    document.getElementById('buyTrainModal').style.display = 'block';
-    // Nastavíme aktuální typ vlaku do globální proměnné
-    currentTrainType = trainType;
-    // Získáme informace o vlaku na základě aktuálního typu
-    const trainInfo = getTrainInfo(currentTrainType);
-    // Změníme nadpis modálního okna na aktuální typ vlaku
-    document.querySelector('.modal-content h2').innerText = `Výběr vlaku - ${trainInfo.name}`;
-    // Vytvoříme tlačítka pro nákup více vlaků
-    createBuyButtons(trainInfo.trains);
-}
+        function openModal(trainType) {
+            document.getElementById('buyTrainModal').style.display = 'block';
+            // Nastavíme aktuální typ vlaku do globální proměnné
+            currentTrainType = trainType;
+            // Získáme informace o vlaku na základě aktuálního typu
+            const trainInfo = getTrainInfo(currentTrainType);
+            // Změníme nadpis modálního okna na aktuální typ vlaku
+            document.querySelector('.modal-content h2').innerText = `Výběr vlaku - ${trainInfo.name}`;
+            // Vytvoříme tlačítka pro nákup více vlaků
+            createBuyButtons(trainInfo.trains);
+        }
 
-// Přidání skriptu pro zavření modálního okna
-function closeModal() {
-  document.getElementById('buyTrainModal').style.display = 'none';
-}
-// Nová funkce pro nákup více vlaků najednou
-function buyTrains(trainType, trainIndex) {
-    // Získání informací o vybraném vlaku
-    const trainInfo = getTrainInfo(trainType);
-    // Získání informací o konkrétním vlaku
-    const selectedTrain = trainInfo.trains[trainIndex];
-    // Kontrola, zda hráč má dostatek peněz na nákup vlaků
-    if (playerFinance >= selectedTrain.price) {
-        // Snížení hráčových financí o cenu vlaku
-        playerFinance -= selectedTrain.price;
-        // Aktualizace zobrazení financí
-        document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+        // Nová funkce pro nákup více vlaků najednou
+        function buyTrains(trainType, trainIndex) {
+            // Získání informací o vybraném vlaku
+            const trainInfo = getTrainInfo(trainType);
+            // Získání informací o konkrétním vlaku
+            const selectedTrain = trainInfo.trains[trainIndex];
+            // Kontrola, zda hráč má dostatek peněz na nákup vlaků
+            if (playerFinance >= selectedTrain.price) {
+                // Snížení hráčových financí o cenu vlaku
+                playerFinance -= selectedTrain.price;
+                // Aktualizace zobrazení financí
+                document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
 
-        // Zde můžeš přidat logiku pro přidání nových vlaků do inventáře hráče
-        // a další specifické vlastnosti vlaků (např. rychlost, kapacita, atd.)
-        addTrainToInventory(trainType, trainIndex);
+                // Zde můžeš přidat logiku pro přidání nových vlaků do inventáře hráče
+                // a další specifické vlastnosti vlaků (např. rychlost, kapacita, atd.)
+                addTrainToInventory(trainType, trainIndex);
 
-        // Odstraníme tuto možnost z tlačítka
-        trainInfo.trains.splice(trainIndex, 1);
-        // Znovu vygenerujeme tlačítka pro nákup
-        createBuyButtons(trainInfo.trains);
-    } else {
-        alert("Nemáte dostatek financí na nákup tohoto vlaku.");
-    }
-}
+                // Odstraníme tuto možnost z tlačítka
+                trainInfo.trains.splice(trainIndex, 1);
+                // Znovu vygenerujeme tlačítka pro nákup
+                createBuyButtons(trainInfo.trains);
+            } else {
+                alert("Nemáte dostatek financí na nákup tohoto vlaku.");
+            }
+        }
 
-// Nová funkce pro vytvoření tlačítek pro nákup vlaků
-function createBuyButtons(trains) {
-    // Najdeme kontejner pro tlačítka v modálním okně
-    const buttonsContainer = document.querySelector('.modal-content');
-    // Odstraníme všechna existující tlačítka z modálního okna
-    buttonsContainer.querySelectorAll('button.buyTrainButton').forEach(button => button.remove());
-    // Pro každý vlak vytvoříme tlačítko
-    trains.forEach((train, index) => {
-        const button = document.createElement('button');
-        button.className = 'buyTrainButton';
-        button.innerText = `Koupit vlak - ${train.name} za ${train.price} Kč`;
-        button.addEventListener('click', () => buyTrains(currentTrainType, index));
-        // Přidáme tlačítko do modálního okna
-        buttonsContainer.appendChild(button);
-    });
-}
+        // Nová funkce pro vytvoření tlačítek pro nákup vlaků
+        function createBuyButtons(trains) {
+            // Najdeme kontejner pro tlačítka v modálním okně
+            const buttonsContainer = document.querySelector('.modal-content');
+            // Odstraníme všechna existující tlačítka z modálního okna
+            buttonsContainer.querySelectorAll('button.buyTrainButton').forEach(button => button.remove());
+            // Pro každý vlak vytvoříme tlačítko
+            trains.forEach((train, index) => {
+                const button = document.createElement('button');
+                button.className = 'buyTrainButton';
+                button.innerText = `Koupit vlak - ${train.name} za ${train.price} Kč`;
+                button.addEventListener('click', () => buyTrains(currentTrainType, index));
+                // Přidáme tlačítko do modálního okna
+                buttonsContainer.appendChild(button);
+            });
+        }
 
-// Funkce pro přidání nového vlaku do inventáře hráče
-function addTrainToInventory(trainType, trainIndex) {
-    const trainInfo = getTrainInfo(trainType);
-    const selectedTrain = trainInfo.trains[trainIndex];
+        // Funkce pro zavření modálního okna
+        function closeModal() {
+            document.getElementById('buyTrainModal').style.display = 'none';
+        }
 
-    // Přidání nového vlaku do inventáře hráče
-    const newTrain = {
-        id: generateUniqueId(), // Generování unikátního identifikátoru pro vlak
-        type: trainType,
-        name: selectedTrain.name,
-        speed: selectedTrain.maxSpeed, // Předpokládáme, že rychlost vlaku je jeho hlavní vlastnost
-        capacity: selectedTrain.capacity, // Předpokládáme, že kapacita vlaku je jeho hlavní vlastnost
-        // Další vlastnosti vlaku, které bys mohl chtít ukládat
-    };
+        // Funkce pro přidání nového vlaku do inventáře hráče
+        function addTrainToInventory(trainType, trainIndex) {
+            const trainInfo = getTrainInfo(trainType);
+            const selectedTrain = trainInfo.trains[trainIndex];
 
-    playerInventory.push(newTrain);
+            // Přidání nového vlaku do inventáře hráče
+            const newTrain = {
+                id: generateUniqueId(), // Generování unikátního identifikátoru pro vlak
+                type: trainType,
+                name: selectedTrain.name,
+                speed: selectedTrain.maxSpeed, // Předpokládáme, že rychlost vlaku je jeho hlavní vlastnost
+                capacity: selectedTrain.capacity, // Předpokládáme, že kapacita vlaku je jeho hlavní vlastnost
+                // Další vlastnosti vlaku, které bys mohl chtít ukládat
+            };
 
-    // Zde bys mohl přidat další logiku pro aktualizaci inventáře nebo jiné akce
+            // Zde bys mohl přidat další logiku pro aktualizaci inventáře nebo jiné akce
+            playerInventory.push(newTrain);
 
-    alert(`Gratulujeme! Vlak ${newTrain.name} byl přidán do tvého inventáře.`);
-}
+            alert(`Gratulujeme! Vlak ${newTrain.name} byl přidán do tvého inventáře.`);
+        }
 
-// Funkce pro generování unikátního identifikátoru (jednoduchý příklad)
-function generateUniqueId() {
-    return '_' + Math.random().toString(36).substr(2, 9);
-}
+        // Funkce pro generování unikátního identifikátoru (jednoduchý příklad)
+        function generateUniqueId() {
+            return '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Funkce pro získání informací o vlaku na základě jeho typu
+        function getTrainInfo(trainType) {
+            // Tato funkce by měla vrátit informace o vlaku na základě zadaného typu
+            // Zde by měla být implementace, která získá potřebné informace (název, cenu, obrázek, atd.) z dat nebo serveru
+            // Pro účely příkladu použijeme jednoduché statické informace
+            const trainData = {
+                TrainType1: {
+                    name: 'Vlak 751 017',
+                    trains: [
+                        { name: '751 017', price: 5000, imgUrl: 'https://i.imgur.com/PYQfds5.png' },
+                        { name: '752 040', price: 6000, imgUrl: 'https://i.imgur.com/PYquoig.png' }
+                    ]
+                },
+                TrainType2: {
+                    name: 'Vlak 751 195',
+                    trains: [
+                        { name: '751 195', price: 50000, imgUrl: 'https://i.imgur.com/3Vz0jG7.png' },
+                        { name: '751 154', price: 75000, imgUrl: 'https://i.imgur.com/d8pHGVD.png' }
+                    ]
+                }
+                // ... další typy vlaků
+            };
+
+            return trainData[trainType];
+        }
+ 
 function showRandomOffer() {
     const randomLineIndex = Math.floor(Math.random() * availableLines.length);
     const offerLine = availableLines[randomLineIndex];
