@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 1A2</p>
+        <p>Kupony vlaků: 1A3</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -211,7 +211,7 @@ function buyTrains(trainType, trainIndex) {
         alert("Nemáte dostatek financí na nákup tohoto vlaku.");
     }
 }
-       function createBuyButtons(trainType, trains) {
+function createBuyButtons(trainType, trains) {
     // Najdeme kontejner pro tlačítka v modálním okně
     const buttonsContainer = document.querySelector('.modal-content');
     // Odstraníme všechna existující tlačítka z modálního okna
