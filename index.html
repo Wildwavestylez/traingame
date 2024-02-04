@@ -24,7 +24,39 @@
             height: 100%;
         }
 
-          
+        .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}  
         
     </style>
     <title>Train Game</title>
@@ -35,11 +67,20 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 58</p>
+    <p>Kupony vlaků: 1A6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
-
+<div id="trainModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeTrainModal()">&times;</span>
+        <h2>Výběr vlaku</h2>
+        <p>Vyber si nový vlak pro přepravu nákladu:</p>
+        <div id="trainOptions">
+            <!-- Zde budou možnosti pro každý druh vlaku -->
+        </div>
+    </div>
+</div>
 <div id="map"></div>
 
 
@@ -116,6 +157,42 @@ lines.forEach(line => {
     availableLines.push(line);
 });
 
+    // Funkce pro otevření modálního okna
+function openTrainModal() {
+    document.getElementById('trainModal').style.display = 'block';
+}
+
+// Funkce pro zavření modálního okna
+function closeTrainModal() {
+    document.getElementById('trainModal').style.display = 'none';
+}
+
+// Funkce pro generování tlačítek pro druhy vlaků
+function generateTrainButtons() {
+    const trainOptionsContainer = document.getElementById('trainOptions');
+    const trainTypes = [
+        { name: 'Nákladní Lokomotiva', price: 10000, speed: 400 },
+        { name: 'Rychlíková Lokomotiva', price: 15000, speed: 600 },
+        { name: 'Těžká Nákladní Lokomotiva', price: 20000, speed: 300 },
+        // Přidej další typy vlaků podle potřeby
+    ];
+
+    trainTypes.forEach(train => {
+        const button = document.createElement('button');
+        button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed} km/h`;
+        button.onclick = function() {
+            // Funkce pro nákup vlaku - můžeš tady přidat kód pro aktualizaci financí a vytvoření nového vlaku
+            alert(`Zakoupil/a jsi ${train.name} za ${train.price} Kč!`);
+            closeTrainModal();
+        };
+
+        trainOptionsContainer.appendChild(button);
+    });
+}
+
+// Zavolání funkce pro generování tlačítek při načítání stránky
+generateTrainButtons();
+    
 function showRandomOffer() {
     const randomLineIndex = Math.floor(Math.random() * availableLines.length);
     const offerLine = availableLines[randomLineIndex];
