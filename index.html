@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 0A4</p>
+        <p>Kupony vlaků: 0A5</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -174,20 +174,13 @@ lines.forEach(line => {
 
        // Nová funkce pro nákup vlaků
 function buyTrains(trainType, trainIndex) {
-    // Získání informací o vybraném vlaku z nové proměnné trainData
-    const trainInfo = trainData[trainType];
-    // Získání informací o konkrétním vlaku
+   const trainInfo = trainData[trainType];
     const selectedTrain = trainInfo.trains[trainIndex];
-    // Kontrola, zda hráč má dostatek peněz na nákup vlaků
     if (playerFinance >= selectedTrain.price) {
-        // Snížení hráčových financí o cenu vlaku
         playerFinance -= selectedTrain.price;
-        // Aktualizace zobrazení financí
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-        // Zde můžeš přidat logiku pro přidání nových vlaků do inventáře hráče
-        // a další specifické vlastnosti vlaků (např. rychlost, kapacita, atd.)
-
-        // Přidání nového vlaku do inventáře hráče
+        
+        
         const newTrain = {
             id: generateUniqueId(),
             type: trainType,
@@ -218,22 +211,21 @@ function buyTrains(trainType, trainIndex) {
         alert("Nemáte dostatek financí na nákup tohoto vlaku.");
     }
 }
-        // Nová funkce pro vytvoření tlačítek pro nákup vlaků
         function createBuyButtons(trains) {
-            // Najdeme kontejner pro tlačítka v modálním okně
-            const buttonsContainer = document.querySelector('.modal-content');
-            // Odstraníme všechna existující tlačítka z modálního okna
-            buttonsContainer.querySelectorAll('button.buyTrainButton').forEach(button => button.remove());
-            // Pro každý vlak vytvoříme tlačítko
-            trains.forEach((train, index) => {
-                const button = document.createElement('button');
-                button.className = 'buyTrainButton';
-                button.innerText = `Koupit vlak - ${train.name} za ${train.price} Kč`;
-                button.addEventListener('click', () => buyTrains(currentTrainType, index));
-                // Přidáme tlačítko do modálního okna
-                buttonsContainer.appendChild(button);
-            });
-        }
+    // Najdeme kontejner pro tlačítka v modálním okně
+    const buttonsContainer = document.querySelector('.modal-content');
+    // Odstraníme všechna existující tlačítka z modálního okna
+    buttonsContainer.querySelectorAll('button.buyTrainButton').forEach(button => button.remove());
+    // Pro každý vlak vytvoříme tlačítko
+    trains.forEach((train, index) => {
+        const button = document.createElement('button');
+        button.className = 'buyTrainButton';
+        button.innerText = `Koupit vlak - ${train.name} za ${train.price} Kč`;
+        button.addEventListener('click', () => buyTrains(currentTrainType, index));
+        // Přidáme tlačítko do modálního okna
+        buttonsContainer.appendChild(button);
+    });
+}
 
         // Funkce pro zavření modálního okna
         function closeModal() {
@@ -288,6 +280,15 @@ function buyTrains(trainType, trainIndex) {
                 }
                 // ... další typy vlaků
             };
+
+            // Přiřazení ikon vlakům
+Object.keys(trainTypes).forEach(trainType => {
+    trainTypes[trainType].trains.forEach(train => {
+        train.icon = L.icon({
+            iconUrl: train.imgUrl,
+            iconSize: [50, 50],
+            iconAnchor: [25, 25],
+            popupAnchor: [0, 0],
 
             return trainData[trainType];
         }
