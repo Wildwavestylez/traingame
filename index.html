@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3A1</p>
+    <p>Kupony vlaků: 3A2</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -191,7 +191,7 @@ function buyTrain(trainIndex) {
 
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = document.createElement('img');
-        trainIcon.src = selectedTrain.image;
+        trainIcon.src = getTrainImage(trainIndex);  // Získání správné ikony podle typu vlaku
         trainIcon.className = 'train-icon';
 
         // Přidání ikony vlaku do stanice
@@ -200,9 +200,20 @@ function buyTrain(trainIndex) {
         station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
         station.setIcon(L.divIcon({className: 'leaflet-div-icon', html: trainIcon.outerHTML}));
 
-        closeTrainModal();
+        closeBuyTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
+    }
+}
+function getTrainImage(trainIndex) {
+    // Zde můžeš přidat další typy vlaků a jejich ikony
+    switch (trainIndex) {
+        case 0:  // První typ vlaku
+            return 'https://i.imgur.com/PYquoig.png';
+        case 1:  // Druhý typ vlaku
+            return 'https://i.imgur.com/d8pHGVD.png';
+        default:
+            return 'https://i.imgur.com/defaultTrainIcon.png';  // Defaultní ikona, můžeš změnit podle potřeby
     }
 }
 
