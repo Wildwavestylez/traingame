@@ -67,7 +67,7 @@
     <div id="playerPanel">
         <h2>Player Panel</h2>
         <p id="finance">Finance: 500000 Kč</p>
-        <p>Kupony vlaků: 0A0</p>
+        <p>Kupony vlaků: 0A1</p>
         <button id="buyTrainButton">Nakupovat vlaky</button>
         <div id="buyTrainModal" class="modal">
             <div class="modal-content">
@@ -271,6 +271,35 @@ lines.forEach(line => {
 
             return trainData[trainType];
         }
+
+    let playerInventory = [];
+
+// Funkce pro přidání nového vlaku do inventáře hráče
+function addTrainToInventory(trainType, trainIndex) {
+    const trainInfo = getTrainInfo(trainType);
+    const selectedTrain = trainInfo.trains[trainIndex];
+
+    // Přidání nového vlaku do inventáře hráče
+    const newTrain = {
+        id: generateUniqueId(), // Generování unikátního identifikátoru pro vlak
+        type: trainType,
+        name: selectedTrain.name,
+        speed: selectedTrain.maxSpeed, // Předpokládáme, že rychlost vlaku je jeho hlavní vlastnost
+        capacity: selectedTrain.capacity, // Předpokládáme, že kapacita vlaku je jeho hlavní vlastnost
+        // Další vlastnosti vlaku, které bys mohl chtít ukládat
+    };
+
+    playerInventory.push(newTrain);
+
+    // Zde bys mohl přidat další logiku pro aktualizaci inventáře nebo jiné akce
+
+    alert(`Gratulujeme! Vlak ${newTrain.name} byl přidán do tvého inventáře.`);
+}
+
+// Funkce pro generování unikátního identifikátoru (jednoduchý příklad)
+function generateUniqueId() {
+    return '_' + Math.random().toString(36).substr(2, 9);
+}
  
 function showRandomOffer() {
     const randomLineIndex = Math.floor(Math.random() * availableLines.length);
