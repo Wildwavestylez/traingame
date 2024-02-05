@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:0B3</p>
+    <p>Kupony vlaků:0B4</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -86,6 +86,7 @@
 <script>
 let playerFinance = 3000000000;
 let availableLines = []; // Seznam dostupných linek
+let currentStopIndex;
 const cargoInterval = 10000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
@@ -255,7 +256,7 @@ function generateCargo() {
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                
+
                 // Vytvoření rolovacího menu pro výběr vlaku
                 let selectTrain = document.createElement('select');
                 trainTypes.forEach(train => {
@@ -282,6 +283,9 @@ function generateCargo() {
 
                 cargoMarker.bindPopup(popupContent);
 
+                // Nastavení aktuální zastávky pro funkci moveTrainForCargo
+                currentStopIndex = line.stops.indexOf(startStop);
+
                 setTimeout(() => {
                     map.removeLayer(cargoMarker);
                 }, cargoInterval);
@@ -289,6 +293,9 @@ function generateCargo() {
         });
     });
 }
+
+// Spustit generování nákladu každou minutu
+setInterval(generateCargo, cargoInterval);
 
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
@@ -330,7 +337,7 @@ function moveTrainForCargo(train, line, destinationStop) {
 function confirmTrainForCargo(cargoMarker, trainSelect, line, destinationStop) {
     const selectedTrainIndex = trainSelect.selectedIndex;
     const selectedTrain = trainTypes[selectedTrainIndex];
-    
+
     // Vytvoření ikony vybraného vlaku a umístění na mapu
     let trainIcon = document.createElement('img');
     trainIcon.src = getTrainImage(selectedTrainIndex);
@@ -339,15 +346,13 @@ function confirmTrainForCargo(cargoMarker, trainSelect, line, destinationStop) {
     // Přidání ikony vybraného vlaku na mapu
     let trainMarker = L.marker(line.stops[currentStopIndex].location, { icon: L.divIcon({className: 'leaflet-div-icon', html: trainIcon.outerHTML}) }).addTo(map);
     trainMarker.bindPopup(selectedTrain.name);
-    
+
     // Spustit pohyb vlaku na základě zvolené linky
     moveTrainForCargo({ marker: trainMarker, startingIndex: 0, reverse: false, maxSpeed: selectedTrain.maxSpeed }, line, destinationStop);
 
     // Po potvrzení odeber nákladní ikonu z mapy
     map.removeLayer(cargoMarker);
 }
-
-
 
 // Funkce pro získání náhodné destinace z okolních stanic
 function getRandomDestination(stops, currentStop) {
