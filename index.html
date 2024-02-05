@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 7A2</p>
+    <p>Kupony vlaků: 7A3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -230,12 +230,12 @@ window.onload = function () {
 };
 
 function getRealDistance(start, end) {
-    const lat1 = start.lat;
-    const lon1 = start.lon;
-    const lat2 = end.lat;
-    const lon2 = end.lon;
-    
-    const R = 6371; // Poloměr Země v kilometrech
+    const lat1 = start.lat || start[0];
+    const lon1 = start.lon || start[1];
+    const lat2 = end.lat || end[0];
+    const lon2 = end.lon || end[1];
+  
+    const R = 6371; // poloměr Země v km
     const dLat = toRadians(lat2 - lat1);
     const dLon = toRadians(lon2 - lon1);
     const a =
@@ -245,6 +245,11 @@ function getRealDistance(start, end) {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c; // vzdálenost v km
     return distance;
+}
+
+// Převádí stupně na radiány
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
 }
 
 // Funkce pro generování nákladu na zastávkách
