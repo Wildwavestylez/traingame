@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6A8</p>
+    <p>Kupony vlaků: 6A9</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -266,7 +266,11 @@ function generateCargo() {
                     popupAnchor: [0, 0]
                 });
 
-                let cargoMarker = L.marker(startStopGlobal.location, { icon: cargoIcon }).addTo(map);
+               if (startStopGlobal && startStopGlobal.location) {
+    let cargoMarker = L.marker(startStopGlobal.location, { icon: cargoIcon }).addTo(map);
+} else {
+    console.error("Chyba: startStopGlobal nebo jeho location není definován.");
+}
                 cargoMarker.bindPopup(`
                     Náklad na cestu do ${destinationStopGlobal.name} (${realDistanceGlobal.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč
                     <br>
