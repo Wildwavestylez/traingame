@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5A6</p>
+    <p>Kupony vlaků: 5A7</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -245,7 +245,7 @@ function generateCargo() {
         line.stops.forEach(startStop => {
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
-            // Oprava načítání souřadnic
+            // Definice cargoPrice
             let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
@@ -253,6 +253,10 @@ function generateCargo() {
 
             // Definice cargoPrice
             let cargoPrice = calculateCargoPrice(realDistance);
+
+            // Přiřazení hodnot do globálních proměnných
+            startStopGlobal = startStop;
+            destinationStopGlobal = destinationStop;
 
             if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 let cargoIcon = L.icon({
