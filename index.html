@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků: 9A4</p>
+    <p>Kupony vlaků: 9A5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -248,11 +248,21 @@ function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
         if (elapsedTime <= timeToCargo) {
             const lat = currentLocation[0] + (cargoLocation[0] - currentLocation[0]) * (elapsedTime / timeToCargo);
             const lon = currentLocation[1] + (cargoLocation[1] - currentLocation[1]) * (elapsedTime / timeToCargo);
-            train.marker.setLatLng([lat, lon]);
+
+            // Před aktualizací polohy markeru zkontrolujte, zda marker existuje
+            if (train.marker) {
+                train.marker.setLatLng([lat, lon]);
+            } else {
+                clearInterval(trainMoveInterval);
+            }
         } else {
             clearInterval(trainMoveInterval);
-            cargoMarker.remove();
-            alert(`Vlak ${train.name} úspěšně dojel k nákladu a připraven na odvoz.`);
+
+            // Před odebráním markeru zkontrolujte, zda marker existuje
+            if (cargoMarker) {
+                cargoMarker.remove();
+                alert(`Vlak ${train.name} úspěšně dojel k nákladu a připraven na odvoz.`);
+            }
         }
     }, updateInterval);
 }
