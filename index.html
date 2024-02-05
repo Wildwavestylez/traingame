@@ -232,6 +232,8 @@ function getTrainImage(trainIndex) {
 window.onload = function () {
     generateTrainButtons();
     openTrainModal();
+    setInterval(generateCargo, cargoInterval);
+    setInterval(showRandomOffer, offerInterval);
 };
 
 
