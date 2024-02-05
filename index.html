@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 8A7</p>
+    <p>Kupony vlaků: 8A8</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -240,7 +240,7 @@ function generateCargo() {
                  let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
-            );
+                 );
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
                 cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`);
@@ -248,7 +248,7 @@ function generateCargo() {
                 setTimeout(() => {
                     map.removeLayer(cargoMarker);
                 }, cargoInterval);
-            )};
+          )};
         );
     };
 
