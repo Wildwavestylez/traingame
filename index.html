@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:2B0</p>
+    <p>Kupony vlaků:2B1</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -258,15 +258,7 @@ function confirmTrainForCargo(trainIndex, cargoMarker) {
     moveTrainToCargo(trainMarker, cargoMarker);
 }
 
-    // Vytvořit marker vlaku a přidat na mapu
-    const trainMarker = L.marker(cargoPosition, { icon: trainIcon }).addTo(map);
-    
-    // Přiřadit marker vlaku k nákladu nebo uchovat informace o nákladu, které jsou spojeny s vlakem
-    cargoMarker.trainMarker = trainMarker;
 
-    // Zde by měla být simulace pohybu vlaku směrem k cíli nákladu
-    moveTrainToCargo(trainMarker, cargoMarker);
-}
 
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
