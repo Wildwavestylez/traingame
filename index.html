@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 8A8</p>
+    <p>Kupony vlaků: 8A9</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -226,32 +226,31 @@ function getTrainImage(trainIndex) {
 
 
 function generateCargo() {
-     lines.forEach(line => {
+    lines.forEach(line => {
         line.stops.forEach(startStop => {
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
-                let cargoIcon = L.icon({
-                    iconUrl: 'https://i.imgur.com/cYbr4oG.png',
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 20],
-                    popupAnchor: [0, 0]
-                });
-
             
-                 let realDistance = getRealDistance(
+            let cargoIcon = L.icon({
+                iconUrl: 'https://i.imgur.com/cYbr4oG.png',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20],
+                popupAnchor: [0, 0]
+            });
+
+            let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
-                 );
+            );
 
-                let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`);
+            let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
+            cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`);
 
-                setTimeout(() => {
-                    map.removeLayer(cargoMarker);
-                }, cargoInterval);
-          )};
-        );
-    };
-
+            setTimeout(() => {
+                map.removeLayer(cargoMarker);
+            }, cargoInterval);
+        });
+    });
+}
 
 // Funkce pro získání náhodné destinace z okolních stanic
 function getRandomDestination(stops, currentStop) {
