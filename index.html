@@ -350,18 +350,20 @@ function getRandomDestination(stops, currentStop) {
     return randomStop.name;
 }
 
-    function moveTrainToCargo(train, line, targetLocation) {
-    let currentStopIndex = train.startingIndex;
-    let direction = train.reverse ? -1 : 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
+    // Funkce pro pohyb vlaku k nákladu
+function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
+    let currentStopIndex = startStop.index; // Uložíme index startovní zastávky
+    let direction = getDirection(startStop.location, cargoDestination.location);
     let startTime = new Date();
 
-    setInterval(() => {
+    // Interval pro aktualizaci pohybu vlaku
+    const trainMoveInterval = setInterval(() => {
         const currentStop = line.stops[currentStopIndex];
         const nextStop = line.stops[currentStopIndex + direction];
 
-        if (nextStop) {
+        if (currentStop && nextStop) {
             const distanceToNextStop = getDistance(currentStop.location[0], currentStop.location[1], nextStop.location[0], nextStop.location[1]);
-            const timeToNextStop = distanceToNextStop / train.maxSpeed; // Vypočítat čas na základě maxSpeed vlaku
+            const timeToNextStop = distanceToNextStop / train.maxSpeed;
 
             const currentTime = new Date();
             const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
@@ -370,13 +372,6 @@ function getRandomDestination(stops, currentStop) {
                 const lat = currentStop.location[0] + (nextStop.location[0] - currentStop.location[0]) * (elapsedTime / timeToNextStop);
                 const lon = currentStop.location[1] + (nextStop.location[1] - currentStop.location[1]) * (elapsedTime / timeToNextStop);
                 train.marker.setLatLng([lat, lon]);
-
-                // Zkontrolovat, zda vlak dorazil k nákladu
-                const distanceToCargo = getDistance(lat, lon, targetLocation[0], targetLocation[1]);
-                if (distanceToCargo < 0.1) { // Předpokládaná vzdálenost pro doraz k nákladu (přizpůsobte podle potřeby)
-                    // Zde můžete přidat další logiku, například načítání nákladu na vlak
-                    console.log(`Vlak ${train.name} dorazil k nákladu.`);
-                }
             } else {
                 currentStopIndex += direction;
                 startTime = new Date();
@@ -387,12 +382,13 @@ function getRandomDestination(stops, currentStop) {
                 }
             }
         } else {
-            direction *= -1;
-            currentStopIndex += direction;
-            giveRandomMoneyToPlayer(line.category);
+            clearInterval(trainMoveInterval);
+            cargoMarker.remove();
+            alert(`Vlak ${train.name} úspěšně dojel k nákladu a připraven na odvoz.`);
         }
     }, updateInterval);
 }
+
 
 
 function getRealDistance(start, end) {
