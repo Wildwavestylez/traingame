@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:1B0</p>
+    <p>Kupony vlaků:1B1</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -257,7 +257,7 @@ function generateCargo() {
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                
+
                 // Vytvoření rolovacího menu pro výběr vlaku
                 let selectTrain = document.createElement('select');
                 trainTypes.forEach(train => {
@@ -274,14 +274,18 @@ function generateCargo() {
                     const selectedTrainName = selectTrain.value;
                     const selectedTrain = trainTypes.find(train => train.name === selectedTrainName);
 
-                    if (selectedTrain) {
+                    if (selectedTrain && selectedTrain.marker) {
                         moveTrainToCargo(selectedTrain.marker, startStop.location, destinationStop.location);
+                    } else {
+                        console.error("Chyba: Vybraný vlak neobsahuje správně definovaný marker.");
                     }
                 };
 
                 // Přidání rolovacího menu a buttonu do popup okna
                 let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
+                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`));
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(document.createTextNode(`Cena za přepravu: ${cargoPrice.toFixed(2)} Kč/km`));
                 popupContent.appendChild(document.createElement('br'));
                 popupContent.appendChild(selectTrain);
                 popupContent.appendChild(document.createElement('br'));
@@ -302,6 +306,11 @@ setInterval(generateCargo, cargoInterval);
 
 // Funkce pro simulaci pohybu vlaku k nákladu
 function moveTrainToCargo(trainMarker, cargoLocation, destinationLocation) {
+    if (!trainMarker) {
+        console.error("Chyba: Marker vlaku není definován.");
+        return;
+    }
+
     const maxSpeed = 60; // Rychlost vlaku v km/h
     const distanceToCargo = getRealDistance(trainMarker.getLatLng(), cargoLocation);
     const timeToCargo = distanceToCargo / maxSpeed; // Čas na dosažení nákladu
@@ -318,7 +327,7 @@ function moveTrainToCargo(trainMarker, cargoLocation, destinationLocation) {
             trainMarker.setLatLng([lat, lon]);
         } else {
             clearInterval(intervalId);
-            
+
             // Po dosažení nákladu můžete provést další akce
             // Např. odebrání ikony nákladu a pokračování v pohybu k cíli
             trainMarker.bindPopup('Vlak s nákladem. Cílová zastávka: ' + destinationLocation.name);
