@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:1B4</p>
+    <p>Kupony vlaků:1B5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -184,7 +184,8 @@ function generateTrainButtons() {
         let button = document.createElement('button');
         button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
         button.onclick = function() { buyTrain(index); };
-
+        train.marker = createTrainMarker(train, train.location);
+        
         trainOptions.appendChild(button);
     });
 }
