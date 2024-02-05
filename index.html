@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5A0</p>
+    <p>Kupony vlaků: 5A1</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -294,12 +294,19 @@ function sendTrain() {
     const selectedTrainIndex = trainSelect.value;
 
     const selectedTrain = trainTypes[selectedTrainIndex];
+    
+    // Kontrola, zda jsou destinationStop a startStop definovány
+    if (!destinationStop || !startStop) {
+        alert("Nelze odeslat vlak, protože není dostatečně definována startovní nebo cílová zastávka.");
+        return;
+    }
+
     const cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
     cargoMarker.bindPopup(`
         Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč
         <br>
         <select id="trainSelect">
-            ${generateTrainOptions()}  <!-- Přidáme rolovací menu pro výběr dostupných nákladních vlaků -->
+            ${generateTrainOptions()}
         </select>
         <button onclick="sendTrain()">Vypravit vlak</button>
     `);
@@ -331,7 +338,6 @@ function sendTrain() {
                 startTime = new Date();
 
                 if (currentStopIndex === line.stops.length - 1) {
-                    // Vlak dosáhl cílové stanice (kde je náklad)
                     clearInterval(moveTrainInterval);
                     alert(`Vlak ${selectedTrain.name} dosáhl cílové stanice.`);
                 }
