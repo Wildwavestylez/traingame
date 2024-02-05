@@ -229,28 +229,7 @@ window.onload = function () {
     openTrainModal();
 };
 
-function getRealDistance(start, end) {
-    const lat1 = start.lat || start[0];
-    const lon1 = start.lon || start[1];
-    const lat2 = end.lat || end[0];
-    const lon2 = end.lon || end[1];
-  
-    const R = 6371; // poloměr Země v km
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // vzdálenost v km
-    return distance;
-}
 
-// Převádí stupně na radiány
-function toRadians(degrees) {
-    return degrees * Math.PI / 180;
-}
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
     lines.forEach(line => {
@@ -302,7 +281,24 @@ function getRealDistance(start, end) {
     const lon1 = start.lon || start[1];
     const lat2 = end.lat || end[0];
     const lon2 = end.lon || end[1];
+  }
+    const R = 6371; // poloměr Země v km
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // vzdálenost v km
+    return distance;
 
+    
+
+// Převádí stupně na radiány
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
 
 window.onload = function () {
     generateTrainButtons();
