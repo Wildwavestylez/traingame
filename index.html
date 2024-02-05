@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:1B2</p>
+    <p>Kupony vlaků:1B3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -242,6 +242,15 @@ function confirmTrainForCargo(trainMarker, cargoLocation, destinationLocation) {
     }
 }
 
+// Funkce pro potvrzení odeslání vlaku pro náklad
+function confirmTrainForCargo(trainMarker, cargoLocation, destinationLocation) {
+    if (trainMarker) {
+        moveTrainToCargo(trainMarker, cargoLocation, destinationLocation);
+    } else {
+        console.error("Chyba: Vybraný vlak neobsahuje správně definovaný marker.");
+    }
+}
+
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
     lines.forEach(line => {
@@ -306,7 +315,6 @@ function generateCargo() {
 
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
-
     
 // Funkce pro simulaci pohybu vlaku k nákladu
 function moveTrainToCargo(trainMarker, cargoLocation, destinationLocation) {
