@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5A2</p>
+    <p>Kupony vlaků: 5A3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -236,21 +236,22 @@ window.onload = function () {
     const pricePerKm = 12; // Cena za 1 km
     return distance * pricePerKm;
 }
+
+    let destinationStop;
+let startStop;
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
     lines.forEach(line => {
-        line.stops.forEach(startStop => {
-            const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
+        line.stops.forEach(start => {
+            const destination = line.stops[Math.floor(Math.random() * line.stops.length)];
 
-            // Oprava načítání souřadnic
-            let realDistance = getRealDistance(
-                [startStop.lat, startStop.lon],
-                [destinationStop.lat, destinationStop.lon]
-            );
+            // Nastavení hodnot do globálních proměnných
+            startStop = start;
+            destinationStop = destination;
+
+            let realDistance = getRealDistance([start.lat, start.lon], [destination.lat, destination.lon]);
 
             if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
-                const cargoPrice = calculateCargoPrice(realDistance);
-
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
                     iconSize: [40, 40],
@@ -258,12 +259,12 @@ function generateCargo() {
                     popupAnchor: [0, 0]
                 });
 
-                let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
+                let cargoMarker = L.marker(start.location, { icon: cargoIcon }).addTo(map);
                 cargoMarker.bindPopup(`
-                    Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč
+                    Náklad na cestu do ${destination.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč
                     <br>
                     <select id="trainSelect">
-                        ${generateTrainOptions()}  <!-- Přidáme rolovací menu pro výběr dostupných nákladních vlaků -->
+                        ${generateTrainOptions()}
                     </select>
                     <button onclick="sendTrain()">Vypravit vlak</button>
                 `);
@@ -275,6 +276,7 @@ function generateCargo() {
         });
     });
 }
+
     // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
 
