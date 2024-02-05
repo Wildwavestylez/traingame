@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků: 9A1</p>
+    <p>Kupony vlaků: 9A3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -84,7 +84,7 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let playerFinance = 500000;
+let playerFinance = 3000000000;
 let availableLines = []; // Seznam dostupných linek
 const cargoInterval = 10000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
@@ -294,6 +294,51 @@ function getRandomDestination(stops, currentStop) {
     let randomStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
     return randomStop.name;
 }
+
+    function moveTrainToCargo(train, line, targetLocation) {
+    let currentStopIndex = train.startingIndex;
+    let direction = train.reverse ? -1 : 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
+    let startTime = new Date();
+
+    setInterval(() => {
+        const currentStop = line.stops[currentStopIndex];
+        const nextStop = line.stops[currentStopIndex + direction];
+
+        if (nextStop) {
+            const distanceToNextStop = getDistance(currentStop.location[0], currentStop.location[1], nextStop.location[0], nextStop.location[1]);
+            const timeToNextStop = distanceToNextStop / train.maxSpeed; // Vypočítat čas na základě maxSpeed vlaku
+
+            const currentTime = new Date();
+            const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
+
+            if (elapsedTime <= timeToNextStop) {
+                const lat = currentStop.location[0] + (nextStop.location[0] - currentStop.location[0]) * (elapsedTime / timeToNextStop);
+                const lon = currentStop.location[1] + (nextStop.location[1] - currentStop.location[1]) * (elapsedTime / timeToNextStop);
+                train.marker.setLatLng([lat, lon]);
+
+                // Zkontrolovat, zda vlak dorazil k nákladu
+                const distanceToCargo = getDistance(lat, lon, targetLocation[0], targetLocation[1]);
+                if (distanceToCargo < 0.1) { // Předpokládaná vzdálenost pro doraz k nákladu (přizpůsobte podle potřeby)
+                    // Zde můžete přidat další logiku, například načítání nákladu na vlak
+                    console.log(`Vlak ${train.name} dorazil k nákladu.`);
+                }
+            } else {
+                currentStopIndex += direction;
+                startTime = new Date();
+
+                if (currentStopIndex === 0 || currentStopIndex === line.stops.length - 1) {
+                    direction *= -1;
+                    giveRandomMoneyToPlayer(line.category);
+                }
+            }
+        } else {
+            direction *= -1;
+            currentStopIndex += direction;
+            giveRandomMoneyToPlayer(line.category);
+        }
+    }, updateInterval);
+}
+
 
 function getRealDistance(start, end) {
     const lat1 = start.lat || start[0];
