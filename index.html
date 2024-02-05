@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6A5</p>
+    <p>Kupony vlaků: 6A6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -245,20 +245,18 @@ let cargoIcon; // Globální proměnná pro ikonu nákladu
 // Funkce pro generování nákladu na zastávkách
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
-    lines.forEach(line => {
+    l lines.forEach(line => {
         line.stops.forEach(startStop => {
-            startStopGlobal = startStop; // Uložit startStop do globální proměnné
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
-            destinationStopGlobal = destinationStop; // Uložit destinationStop do globální proměnné
 
             // Oprava načítání souřadnic
-            let realDistance = getRealDistance(
+            realDistanceGlobal = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
             );
 
             // Definice cargoPrice
-            let cargoPrice = calculateCargoPrice(realDistance);
+            let cargoPrice = calculateCargoPrice(realDistanceGlobal);
 
             if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 cargoIcon = L.icon({
@@ -310,10 +308,10 @@ function sendTrain() {
     const selectedTrain = trainTypes[selectedTrainIndex];
     
    // Kontrola, zda jsou destinationStop a startStop definovány
-if (!destinationStopGlobal || !startStopGlobal) {
+ if (!destinationStopGlobal || !startStopGlobal || !realDistanceGlobal) {
         alert("Nelze odeslat vlak, protože není dostatečně definována startovní nebo cílová zastávka.");
         return;
-}
+    }
     const cargoMarker = L.marker(startStopGlobal.location, { icon: cargoIcon }).addTo(map);
     cargoMarker.bindPopup(`
         Náklad na cestu do ${destinationStopGlobal.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč
