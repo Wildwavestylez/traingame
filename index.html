@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5A4</p>
+    <p>Kupony vlaků: 5A5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -236,7 +236,7 @@ window.onload = function () {
     const pricePerKm = 12; // Cena za 1 km
     return distance * pricePerKm;
 }
-
+     let cargoPrice;
     let destinationStop;
 let startStop;
 // Funkce pro generování nákladu na zastávkách
@@ -276,7 +276,10 @@ function generateCargo() {
         });
     });
 }
-
+ function calculateCargoPrice(distance) {
+    const rate = 12; // Cena za 1 km
+    return distance * rate;
+}
     // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
 
