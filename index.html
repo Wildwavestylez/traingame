@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:1B7</p>
+    <p>Kupony vlaků:1B8</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -239,7 +239,7 @@ function createTrainMarker(train, location) {
     // Zde vytvořte a vrátíte marker pro daný vlak a jeho pozici
     // Například:
     return L.marker(location, { icon: train.icon });
-
+}
 
 function confirmTrainForCargo(trainMarker, cargoLocation, destinationLocation) {
     if (trainMarker) {
