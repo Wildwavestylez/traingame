@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 7A9</p>
+    <p>Kupony vlaků: 8A0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -230,11 +230,10 @@ function getTrainImage(trainIndex) {
 function generateCargo() {
     lines.forEach(line => {
         line.stops.forEach(startStop => {
-    lines.forEach(line => {
-        const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
+            const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
                     // Oprava načítání souřadnic
-            let realDistance = getRealDistance(
+             let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
             );
