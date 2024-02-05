@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 8A2</p>
+    <p>Kupony vlaků: 8A3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -225,18 +225,9 @@ function getTrainImage(trainIndex) {
 
 
 
-// Funkce pro generování nákladu na zastávkách
 function generateCargo() {
     lines.forEach(line => {
         line.stops.forEach(startStop => {
-            const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
-
-                    // Oprava načítání souřadnic
-             let realDistance = getRealDistance(
-                [startStop.lat, startStop.lon],
-                [destinationStop.lat, destinationStop.lon]
-            );
-
             if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
@@ -257,8 +248,7 @@ function generateCargo() {
             }
         });
     });
-};
-
+}
 
 // Funkce pro získání náhodné destinace z okolních stanic
 function getRandomDestination(stops, currentStop) {
