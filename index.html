@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků: 9A9</p>
+    <p>Kupony vlaků:0B0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -358,19 +358,18 @@ function getRandomDestination(stops, currentStop) {
 }
 
     // Funkce pro pohyb vlaku k nákladu
-function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
-    let currentStopIndex = startStop.index; // Uložíme index startovní zastávky
-    let direction = getDirection(startStop.location, cargoDestination.location);
+function moveTrainToCargo(train, line) {
+    let currentStopIndex = train.startingIndex;
+    let direction = train.reverse ? -1 : 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
     let startTime = new Date();
 
-    // Interval pro aktualizaci pohybu vlaku
-    const trainMoveInterval = setInterval(() => {
+    setInterval(() => {
         const currentStop = line.stops[currentStopIndex];
         const nextStop = line.stops[currentStopIndex + direction];
 
-        if (currentStop && nextStop) {
+        if (nextStop) {
             const distanceToNextStop = getDistance(currentStop.location[0], currentStop.location[1], nextStop.location[0], nextStop.location[1]);
-            const timeToNextStop = distanceToNextStop / train.maxSpeed;
+            const timeToNextStop = distanceToNextStop / train.maxSpeed; // Vypočítat čas na základě maxSpeed vlaku
 
             const currentTime = new Date();
             const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
@@ -389,13 +388,12 @@ function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
                 }
             }
         } else {
-            clearInterval(trainMoveInterval);
-            cargoMarker.remove();
-            alert(`Vlak ${train.name} úspěšně dojel k nákladu a připraven na odvoz.`);
+            direction *= -1;
+            currentStopIndex += direction;
+            giveRandomMoneyToPlayer(line.category);
         }
     }, updateInterval);
 }
-    
 
 
 function getRealDistance(start, end) {
