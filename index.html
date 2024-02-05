@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:0B7</p>
+    <p>Kupony vlaků:0B8</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -269,7 +269,7 @@ function generateCargo() {
                 // Vytvoření tlačítka pro potvrzení odeslání zvoleného vlaku pro náklad
                 let confirmButton = document.createElement('button');
                 confirmButton.innerText = 'Potvrdit vlak';
-                confirmButton.onclick = function() {
+                confirmButton.onclick = function () {
                     confirmTrainForCargo(cargoMarker, selectTrain, line, destinationStop);
                 };
 
@@ -284,7 +284,7 @@ function generateCargo() {
                 cargoMarker.bindPopup(popupContent);
 
                 // Nastavení aktuální zastávky pro funkci moveTrainForCargo
-                currentStopIndex = line.stops.indexOf(startStop);
+                const currentStopIndex = line.stops.indexOf(startStop);
 
                 setTimeout(() => {
                     map.removeLayer(cargoMarker);
@@ -293,6 +293,9 @@ function generateCargo() {
         });
     });
 }
+
+// Spustit generování nákladu každou minutu
+setInterval(generateCargo, cargoInterval);
 
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
