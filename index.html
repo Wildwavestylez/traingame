@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:0B2</p>
+    <p>Kupony vlaků:0B3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -293,8 +293,8 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
 
-
-  function moveTrainForCargo(train, line, destinationStop) {
+  // Funkce pro pohyb vlaku na základě zvolené linky
+function moveTrainForCargo(train, line, destinationStop) {
     let currentStopIndex = train.startingIndex;
     let direction = train.reverse ? -1 : 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
     let startTime = new Date();
@@ -315,8 +315,13 @@ setInterval(generateCargo, cargoInterval);
             const lon = line.stops[currentStopIndex].location[1] + (destinationStop.location[1] - line.stops[currentStopIndex].location[1]) * (elapsedTime / cargoTime);
             train.marker.setLatLng([lat, lon]);
         } else {
-            giveRandomMoneyToPlayer(line.category); // Při dosažení cílové zastávky hráč obdrží odměnu
-            map.removeLayer(train.marker); // Po dosažení cílové zastávky odeber vlak z mapy
+            currentStopIndex += direction;
+            startTime = new Date();
+
+            if (currentStopIndex === 0 || currentStopIndex === line.stops.length - 1) {
+                direction *= -1;
+                giveRandomMoneyToPlayer(line.category);
+            }
         }
     }, updateInterval);
 }
@@ -332,7 +337,7 @@ function confirmTrainForCargo(cargoMarker, trainSelect, line, destinationStop) {
     trainIcon.className = 'train-icon';
 
     // Přidání ikony vybraného vlaku na mapu
-    let trainMarker = L.marker(line.stops[0].location, { icon: L.divIcon({className: 'leaflet-div-icon', html: trainIcon.outerHTML}) }).addTo(map);
+    let trainMarker = L.marker(line.stops[currentStopIndex].location, { icon: L.divIcon({className: 'leaflet-div-icon', html: trainIcon.outerHTML}) }).addTo(map);
     trainMarker.bindPopup(selectedTrain.name);
     
     // Spustit pohyb vlaku na základě zvolené linky
