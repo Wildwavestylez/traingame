@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:1B8</p>
+    <p>Kupony vlaků:1B9</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -87,6 +87,7 @@
 let playerFinance = 3000000000;
 let availableLines = []; // Seznam dostupných linek
 let currentStopIndex;
+
 const cargoInterval = 10000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
@@ -241,21 +242,27 @@ function createTrainMarker(train, location) {
     return L.marker(location, { icon: train.icon });
 }
 
-function confirmTrainForCargo(trainMarker, cargoLocation, destinationLocation) {
-    if (trainMarker) {
-        moveTrainToCargo(trainMarker, cargoLocation, destinationLocation);
-    } else {
-        console.error("Chyba: Vybraný vlak neobsahuje správně definovaný marker.");
-    }
-}
 
-// Funkce pro potvrzení odeslání vlaku pro náklad
-function confirmTrainForCargo(trainMarker, cargoLocation, destinationLocation) {
-    if (trainMarker) {
-        moveTrainToCargo(trainMarker, cargoLocation, destinationLocation);
-    } else {
-        console.error("Chyba: Vybraný vlak neobsahuje správně definovaný marker.");
-    }
+function confirmTrainForCargo(trainIndex, cargoMarker) {
+    const selectedTrain = trainTypes[trainIndex];
+    const cargoPosition = cargoMarker.getLatLng();
+
+    // Vytvořit ikonu vlaku a umístit na aktuální pozici nákladu
+    const trainIcon = L.icon({
+        iconUrl: selectedTrain.image,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+        popupAnchor: [0, 0]
+    });
+
+    // Vytvořit marker vlaku a přidat na mapu
+    const trainMarker = L.marker(cargoPosition, { icon: trainIcon }).addTo(map);
+    
+    // Přiřadit marker vlaku k nákladu nebo uchovat informace o nákladu, které jsou spojeny s vlakem
+    cargoMarker.trainMarker = trainMarker;
+
+    // Zde by měla být simulace pohybu vlaku směrem k cíli nákladu
+    moveTrainToCargo(trainMarker, cargoMarker);
 }
 
 // Funkce pro generování nákladu na zastávkách
@@ -281,6 +288,7 @@ function generateCargo() {
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
+                 cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`);
 
                 // Vytvoření rolovacího menu pro výběr vlaku
                 let selectTrain = document.createElement('select');
