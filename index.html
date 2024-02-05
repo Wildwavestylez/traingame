@@ -62,8 +62,8 @@
 <div id="playerPanel">
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
-    <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:2B1</p>
+    <p id="finance">Finance: 500000 Kč</p>
+    <p>Kupony vlaků: 2B2</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -84,10 +84,8 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let playerFinance = 3000000000;
+let playerFinance = 500000;
 let availableLines = []; // Seznam dostupných linek
-let currentStopIndex;
-
 const cargoInterval = 10000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
@@ -172,9 +170,7 @@ function closeTrainModal() {
  openTrainModal();
 
 const trainTypes = [
-    { name: '752 040', price: 10000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [48.7505264, 21.8986283] },
-    { name: '751 017', price: 20000, speed: 400, image: 'https://i.imgur.com/PYQfds5.png', location: [48.6329881, 21.7118856] },
-   
+    { name: 'Nákladní Lokomotiva', price: 10000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [48.7505264, 21.8986283] },
     // Další typy vlaků můžete přidat podle potřeby
 ];
 
@@ -185,8 +181,7 @@ function generateTrainButtons() {
         let button = document.createElement('button');
         button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
         button.onclick = function() { buyTrain(index); };
-        train.marker = createTrainMarker(train, train.location);
-        
+
         trainOptions.appendChild(button);
     });
 }
@@ -236,30 +231,6 @@ function calculateCargoPrice(distance) {
     return distance * pricePerKm;
 }
 
-function confirmTrainForCargo(trainIndex, cargoMarker) {
-    const selectedTrain = trainTypes[trainIndex];
-    const cargoPosition = cargoMarker.getLatLng();  // Opraveno na cargoMarker.getLatLng()
-
-    // Vytvořit ikonu vlaku a umístit na aktuální pozici nákladu
-    const trainIcon = L.icon({
-        iconUrl: selectedTrain.image,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20],
-        popupAnchor: [0, 0]
-    });
-
-    // Vytvořit marker vlaku a přidat na mapu
-    const trainMarker = L.marker(cargoPosition, { icon: trainIcon }).addTo(map);
-    
-    // Přiřadit marker vlaku k nákladu nebo uchovat informace o nákladu, které jsou spojeny s vlakem
-    cargoMarker.trainMarker = trainMarker;
-
-    // Zde by měla být simulace pohybu vlaku směrem k cíli nákladu
-    moveTrainToCargo(trainMarker, cargoMarker);
-}
-
-
-
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
     lines.forEach(line => {
@@ -283,37 +254,7 @@ function generateCargo() {
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                 cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`);
-
-                // Vytvoření rolovacího menu pro výběr vlaku
-                let selectTrain = document.createElement('select');
-                trainTypes.forEach(train => {
-                    let option = document.createElement('option');
-                    option.value = train.name;
-                    option.text = train.name;
-                    selectTrain.add(option);
-                });
-
-                // Vytvoření buttonu pro potvrzení odeslání vlaku pro náklad
-                let confirmButton = document.createElement('button');
-                confirmButton.innerText = 'Potvrdit odeslání vlaku';
-                confirmButton.onclick = function() {
-                    const selectedTrainName = selectTrain.value;
-                    const selectedTrain = trainTypes.find(train => train.name === selectedTrainName);
-                    confirmTrainForCargo(selectedTrain ? selectedTrain.marker : null, startStop.location, destinationStop.location);
-                };
-
-                // Přidání rolovacího menu a buttonu do popup okna
-                let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(document.createTextNode(`Cena za přepravu: ${cargoPrice.toFixed(2)} Kč/km`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(selectTrain);
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(confirmButton);
-
-                cargoMarker.bindPopup(popupContent);
+                cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`);
 
                 setTimeout(() => {
                     map.removeLayer(cargoMarker);
@@ -325,35 +266,16 @@ function generateCargo() {
 
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
-    
-function moveTrainToCargo(train, cargo) {
-    const cargoLocation = cargo.getLatLng();
-    const trainLocation = train.marker.getLatLng();
+// Funkce pro získání náhodné destinace z okolních stanic
+function getRandomDestination(stops, currentStop) {
+    let nearbyStops = stops.filter(stop =>
+        getDistance(currentStop.location[0], currentStop.location[1], stop.location[0], stop.location[1]) < 20
+    );
 
-    const distanceToCargo = getRealDistance([trainLocation.lat, trainLocation.lng], [cargoLocation.lat, cargoLocation.lng]);
-    const timeToCargo = distanceToCargo / train.speed;
-
-    // Simulace pohybu k nákladu
-    const interval = setInterval(() => {
-        const currentTime = new Date();
-        const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
-
-        if (elapsedTime <= timeToCargo) {
-            const lat = trainLocation.lat + (cargoLocation.lat - trainLocation.lat) * (elapsedTime / timeToCargo);
-            const lng = trainLocation.lng + (cargoLocation.lng - trainLocation.lng) * (elapsedTime / timeToCargo);
-
-            train.marker.setLatLng([lat, lng]);
-        } else {
-            clearInterval(interval);
-
-            // V této fázi můžete provádět další akce, např. naložení nákladu do vlaku
-            // a poté pokračování v simulaci pohybu k cílové destinaci
-            moveTrainToDestination(train, cargo);
-        }
-    }, updateInterval);
+    let randomStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
+    return randomStop.name;
 }
 
-   
 function getRealDistance(start, end) {
     const lat1 = start.lat || start[0];
     const lon1 = start.lon || start[1];
