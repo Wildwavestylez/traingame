@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:0B4</p>
+    <p>Kupony vlaků:0B5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -297,38 +297,37 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
 
-// Spustit generování nákladu každou minutu
-setInterval(generateCargo, cargoInterval);
-
   // Funkce pro pohyb vlaku na základě zvolené linky
 function moveTrainForCargo(train, line, destinationStop) {
-    let currentStopIndex = train.startingIndex;
+    let currentStopIndex = train.startingIndex; // Deklarace proměnné pro aktuální zastávku
     let direction = train.reverse ? -1 : 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
     let startTime = new Date();
 
-    const cargoDistance = getRealDistance(
-        line.stops[currentStopIndex].location,
-        destinationStop.location
-    );
-
-    const cargoTime = cargoDistance / train.maxSpeed; // Vypočítat čas na základě maxSpeed vlaku pro daný náklad
-
     setInterval(() => {
-        const currentTime = new Date();
-        const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
+        const currentStop = line.stops[currentStopIndex];
+        const nextStop = line.stops[currentStopIndex + direction];
 
-        if (elapsedTime <= cargoTime) {
-            const lat = line.stops[currentStopIndex].location[0] + (destinationStop.location[0] - line.stops[currentStopIndex].location[0]) * (elapsedTime / cargoTime);
-            const lon = line.stops[currentStopIndex].location[1] + (destinationStop.location[1] - line.stops[currentStopIndex].location[1]) * (elapsedTime / cargoTime);
-            train.marker.setLatLng([lat, lon]);
-        } else {
-            currentStopIndex += direction;
-            startTime = new Date();
+        if (nextStop) {
+            const distanceToNextStop = getDistance(currentStop.location[0], currentStop.location[1], nextStop.location[0], nextStop.location[1]);
+            const timeToNextStop = distanceToNextStop / train.maxSpeed; // Vypočítat čas na základě maxSpeed vlaku
 
-            if (currentStopIndex === 0 || currentStopIndex === line.stops.length - 1) {
-                direction *= -1;
-                giveRandomMoneyToPlayer(line.category);
+            const currentTime = new Date();
+            const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
+
+            if (elapsedTime <= timeToNextStop) {
+                const lat = currentStop.location[0] + (nextStop.location[0] - currentStop.location[0]) * (elapsedTime / timeToNextStop);
+                const lon = currentStop.location[1] + (nextStop.location[1] - currentStop.location[1]) * (elapsedTime / timeToNextStop);
+                train.marker.setLatLng([lat, lon]);
+            } else {
+                currentStopIndex += direction;
+                startTime = new Date();
+
+                if (currentStopIndex === line.stops.length - 1) {
+                    giveRandomMoneyToPlayer(line.category);
+                }
             }
+        } else {
+            giveRandomMoneyToPlayer(line.category);
         }
     }, updateInterval);
 }
@@ -348,12 +347,11 @@ function confirmTrainForCargo(cargoMarker, trainSelect, line, destinationStop) {
     trainMarker.bindPopup(selectedTrain.name);
 
     // Spustit pohyb vlaku na základě zvolené linky
-    moveTrainForCargo({ marker: trainMarker, startingIndex: 0, reverse: false, maxSpeed: selectedTrain.maxSpeed }, line, destinationStop);
+    moveTrainForCargo({ marker: trainMarker, startingIndex: currentStopIndex, reverse: false, maxSpeed: selectedTrain.maxSpeed }, line, destinationStop);
 
     // Po potvrzení odeber nákladní ikonu z mapy
     map.removeLayer(cargoMarker);
 }
-
 // Funkce pro získání náhodné destinace z okolních stanic
 function getRandomDestination(stops, currentStop) {
     let nearbyStops = stops.filter(stop =>
