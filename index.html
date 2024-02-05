@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 9A0</p>
+    <p>Kupony vlaků: 9A1</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -254,7 +254,23 @@ function generateCargo() {
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`);
+                
+                // Vytvoření rolovacího menu pro výběr vlaku
+                let selectTrain = document.createElement('select');
+                trainTypes.forEach(train => {
+                    let option = document.createElement('option');
+                    option.value = train.name;
+                    option.text = train.name;
+                    selectTrain.add(option);
+                });
+
+                // Přidání rolovacího menu do popup okna
+                let popupContent = document.createElement('div');
+                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(selectTrain);
+
+                cargoMarker.bindPopup(popupContent);
 
                 setTimeout(() => {
                     map.removeLayer(cargoMarker);
@@ -263,6 +279,9 @@ function generateCargo() {
         });
     });
 }
+
+// Spustit generování nákladu každou minutu
+setInterval(generateCargo, cargoInterval);
 
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
