@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6A1</p>
+    <p>Kupony vlaků: 6A2</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -237,24 +237,24 @@ window.onload = function () {
     return distance * pricePerKm;
 }
      
-  let cargoIcon; // definujte cargoIcon globálně
+let cargoIcon; // Globální proměnná pro ikonu nákladu
 
+// Funkce pro generování nákladu na zastávkách
 function generateCargo() {
     lines.forEach(line => {
         line.stops.forEach(startStop => {
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
+            // Oprava načítání souřadnic
             let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
             );
 
+            // Definice cargoPrice
             let cargoPrice = calculateCargoPrice(realDistance);
 
-            startStopGlobal = startStop;
-            destinationStopGlobal = destinationStop;
-
-            if (Math.random() < 0.2) {
+            if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
                     iconSize: [40, 40],
@@ -263,7 +263,14 @@ function generateCargo() {
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                cargoMarker.bindPopup(/* ... */);
+                cargoMarker.bindPopup(`
+                    Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč
+                    <br>
+                    <select id="trainSelect">
+                        ${generateTrainOptions()}
+                    </select>
+                    <button onclick="sendTrain()">Vypravit vlak</button>
+                `);
 
                 setTimeout(() => {
                     map.removeLayer(cargoMarker);
