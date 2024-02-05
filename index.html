@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6A9</p>
+    <p>Kupony vlaků: 7A0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -399,17 +399,6 @@ function getRealDistance(start, end) {
     const distance = R * c; // vzdálenost v km
     return distance;
 }
-
-
-window.onload = function () {
-    generateTrainButtons();
-    openTrainModal();
-    setInterval(generateCargo, cargoInterval);
-};
-
-
-
-
     
 function showRandomOffer() {
     const randomLineIndex = Math.floor(Math.random() * availableLines.length);
