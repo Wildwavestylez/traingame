@@ -231,6 +231,43 @@ function calculateCargoPrice(distance) {
     return distance * pricePerKm;
 }
 
+// Funkce pro pohyb vlaku k nákladu
+function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
+    let currentLocation = startStop.location;
+    let cargoLocation = cargoDestination.location;
+    let direction = getDirection(currentLocation, cargoLocation);
+    let startTime = new Date();
+
+    // Interval pro aktualizaci pohybu vlaku
+    const trainMoveInterval = setInterval(() => {
+        const currentTime = new Date();
+        const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
+        const distanceToCargo = getDistance(currentLocation[0], currentLocation[1], cargoLocation[0], cargoLocation[1]);
+        const timeToCargo = distanceToCargo / train.maxSpeed;
+
+        if (elapsedTime <= timeToCargo) {
+            const lat = currentLocation[0] + (cargoLocation[0] - currentLocation[0]) * (elapsedTime / timeToCargo);
+            const lon = currentLocation[1] + (cargoLocation[1] - currentLocation[1]) * (elapsedTime / timeToCargo);
+            train.marker.setLatLng([lat, lon]);
+        } else {
+            clearInterval(trainMoveInterval);
+            cargoMarker.remove();
+            alert(`Vlak ${train.name} úspěšně dojel k nákladu a připraven na odvoz.`);
+        }
+    }, updateInterval);
+}
+
+// Funkce pro vytvoření tlačítka pro potvrzení odeslání vlaku pro náklad
+function createSendTrainButton(train, startStop, cargoDestination, cargoMarker) {
+    let sendTrainButton = document.createElement('button');
+    sendTrainButton.innerText = 'Odeslat vlak';
+    sendTrainButton.onclick = function() {
+        moveTrainToCargo(train, startStop, cargoDestination, cargoMarker);
+    };
+
+    return sendTrainButton;
+}
+
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
     lines.forEach(line => {
@@ -264,11 +301,16 @@ function generateCargo() {
                     selectTrain.add(option);
                 });
 
-                // Přidání rolovacího menu do popup okna
+                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro náklad
+                let sendTrainButton = createSendTrainButton(trainTypes[0], startStop, destinationStop, cargoMarker);
+
+                // Přidání rolovacího menu a tlačítka do popup okna
                 let popupContent = document.createElement('div');
                 popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
                 popupContent.appendChild(document.createElement('br'));
                 popupContent.appendChild(selectTrain);
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(sendTrainButton);
 
                 cargoMarker.bindPopup(popupContent);
 
@@ -279,6 +321,9 @@ function generateCargo() {
         });
     });
 }
+
+// Spustit generování nákladu každou minutu
+setInterval(generateCargo, cargoInterval);
 
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
