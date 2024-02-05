@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:1B1</p>
+    <p>Kupony vlaků:1B2</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -234,6 +234,14 @@ function calculateCargoPrice(distance) {
 
 
 
+function confirmTrainForCargo(trainMarker, cargoLocation, destinationLocation) {
+    if (trainMarker) {
+        moveTrainToCargo(trainMarker, cargoLocation, destinationLocation);
+    } else {
+        console.error("Chyba: Vybraný vlak neobsahuje správně definovaný marker.");
+    }
+}
+
 // Funkce pro generování nákladu na zastávkách
 function generateCargo() {
     lines.forEach(line => {
@@ -273,12 +281,7 @@ function generateCargo() {
                 confirmButton.onclick = function() {
                     const selectedTrainName = selectTrain.value;
                     const selectedTrain = trainTypes.find(train => train.name === selectedTrainName);
-
-                    if (selectedTrain && selectedTrain.marker) {
-                        moveTrainToCargo(selectedTrain.marker, startStop.location, destinationStop.location);
-                    } else {
-                        console.error("Chyba: Vybraný vlak neobsahuje správně definovaný marker.");
-                    }
+                    confirmTrainForCargo(selectedTrain ? selectedTrain.marker : null, startStop.location, destinationStop.location);
                 };
 
                 // Přidání rolovacího menu a buttonu do popup okna
@@ -304,6 +307,7 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
 
+    
 // Funkce pro simulaci pohybu vlaku k nákladu
 function moveTrainToCargo(trainMarker, cargoLocation, destinationLocation) {
     if (!trainMarker) {
