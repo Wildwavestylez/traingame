@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků: 9A7</p>
+    <p>Kupony vlaků: 9A8</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -244,7 +244,7 @@ function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
         const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
         const distanceToCargo = getDistance(currentLocation[0], currentLocation[1], cargoLocation[0], cargoLocation[1]);
         const timeToCargo = distanceToCargo / train.maxSpeed;
-
+     
         if (elapsedTime <= timeToCargo) {
             const lat = currentLocation[0] + (cargoLocation[0] - currentLocation[0]) * (elapsedTime / timeToCargo);
             const lon = currentLocation[1] + (cargoLocation[1] - currentLocation[1]) * (elapsedTime / timeToCargo);
@@ -344,6 +344,17 @@ function getRandomDestination(stops, currentStop) {
     let randomStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
     return randomStop.name;
 }
+    function getDirection(start, end) {
+    const latDiff = end[0] - start[0];
+    const lonDiff = end[1] - start[1];
+
+    // Určení směru na základě rozdílu souřadnic
+    if (Math.abs(latDiff) > Math.abs(lonDiff)) {
+        return latDiff > 0 ? 1 : -1; // Pokud je rozdíl v zeměpisné šířce kladný, jde se na sever, jinak na jih
+    } else {
+        return lonDiff > 0 ? 1 : -1; // Pokud je rozdíl v zeměpisné délce kladný, jde se na východ, jinak na západ
+    }
+}
 
     // Funkce pro pohyb vlaku k nákladu
 function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
@@ -384,17 +395,6 @@ function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
     }, updateInterval);
 }
     
-function getDirection(start, end) {
-    const latDiff = end[0] - start[0];
-    const lonDiff = end[1] - start[1];
-
-    // Určení směru na základě rozdílu souřadnic
-    if (Math.abs(latDiff) > Math.abs(lonDiff)) {
-        return latDiff > 0 ? 1 : -1; // Pokud je rozdíl v zeměpisné šířce kladný, jde se na sever, jinak na jih
-    } else {
-        return lonDiff > 0 ? 1 : -1; // Pokud je rozdíl v zeměpisné délce kladný, jde se na východ, jinak na západ
-    }
-}
 
 
 function getRealDistance(start, end) {
