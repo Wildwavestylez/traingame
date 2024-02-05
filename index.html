@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků: 9A8</p>
+    <p>Kupony vlaků: 9A9</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -237,7 +237,8 @@ function moveTrainToCargo(train, startStop, cargoDestination, cargoMarker) {
     let cargoLocation = cargoDestination.location;
     let direction = getDirection(currentLocation, cargoLocation);
     let startTime = new Date();
-
+    let line = selectedTrain.line;
+    
     // Interval pro aktualizaci pohybu vlaku
     const trainMoveInterval = setInterval(() => {
         const currentTime = new Date();
