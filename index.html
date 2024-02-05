@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:1B9</p>
+    <p>Kupony vlaků:2B0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -236,16 +236,9 @@ function calculateCargoPrice(distance) {
     return distance * pricePerKm;
 }
 
-function createTrainMarker(train, location) {
-    // Zde vytvořte a vrátíte marker pro daný vlak a jeho pozici
-    // Například:
-    return L.marker(location, { icon: train.icon });
-}
-
-
 function confirmTrainForCargo(trainIndex, cargoMarker) {
     const selectedTrain = trainTypes[trainIndex];
-    const cargoPosition = cargoMarker.getLatLng();
+    const cargoPosition = cargoMarker.getLatLng();  // Opraveno na cargoMarker.getLatLng()
 
     // Vytvořit ikonu vlaku a umístit na aktuální pozici nákladu
     const trainIcon = L.icon({
@@ -254,6 +247,16 @@ function confirmTrainForCargo(trainIndex, cargoMarker) {
         iconAnchor: [20, 20],
         popupAnchor: [0, 0]
     });
+
+    // Vytvořit marker vlaku a přidat na mapu
+    const trainMarker = L.marker(cargoPosition, { icon: trainIcon }).addTo(map);
+    
+    // Přiřadit marker vlaku k nákladu nebo uchovat informace o nákladu, které jsou spojeny s vlakem
+    cargoMarker.trainMarker = trainMarker;
+
+    // Zde by měla být simulace pohybu vlaku směrem k cíli nákladu
+    moveTrainToCargo(trainMarker, cargoMarker);
+}
 
     // Vytvořit marker vlaku a přidat na mapu
     const trainMarker = L.marker(cargoPosition, { icon: trainIcon }).addTo(map);
