@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 3000000000 Kč</p>
-    <p>Kupony vlaků:1B5</p>
+    <p>Kupony vlaků:1B6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -319,39 +319,29 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
     
-// Funkce pro simulaci pohybu vlaku k nákladu
-function moveTrainToCargo(trainMarker, cargoLocation, destinationLocation) {
-    if (!trainMarker) {
-        console.error("Chyba: Marker vlaku není definován.");
-        return;
-    }
+function moveTrainToCargo(train, cargo) {
+    const cargoLocation = cargo.getLatLng();
+    const trainLocation = train.marker.getLatLng();
 
-    const maxSpeed = 60; // Rychlost vlaku v km/h
-    const distanceToCargo = getRealDistance(trainMarker.getLatLng(), cargoLocation);
-    const timeToCargo = distanceToCargo / maxSpeed; // Čas na dosažení nákladu
+    const distanceToCargo = getRealDistance([trainLocation.lat, trainLocation.lng], [cargoLocation.lat, cargoLocation.lng]);
+    const timeToCargo = distanceToCargo / train.speed;
 
-    // Simulace pohybu vlaku k nákladu
-    let startTime = new Date();
-    let intervalId = setInterval(() => {
+    // Simulace pohybu k nákladu
+    const interval = setInterval(() => {
         const currentTime = new Date();
         const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
 
         if (elapsedTime <= timeToCargo) {
-            const lat = trainMarker.getLatLng().lat + (cargoLocation[0] - trainMarker.getLatLng().lat) * (elapsedTime / timeToCargo);
-            const lon = trainMarker.getLatLng().lng + (cargoLocation[1] - trainMarker.getLatLng().lng) * (elapsedTime / timeToCargo);
-            trainMarker.setLatLng([lat, lon]);
+            const lat = trainLocation.lat + (cargoLocation.lat - trainLocation.lat) * (elapsedTime / timeToCargo);
+            const lng = trainLocation.lng + (cargoLocation.lng - trainLocation.lng) * (elapsedTime / timeToCargo);
+
+            train.marker.setLatLng([lat, lng]);
         } else {
-            clearInterval(intervalId);
+            clearInterval(interval);
 
-            // Po dosažení nákladu můžete provést další akce
-            // Např. odebrání ikony nákladu a pokračování v pohybu k cíli
-            trainMarker.bindPopup('Vlak s nákladem. Cílová zastávka: ' + destinationLocation.name);
-            setTimeout(() => {
-                map.removeLayer(trainMarker);
-            }, cargoInterval);
-
-            // Zde byste měli implementovat logiku pro další pohyb vlaku od nákladu k cíli
-            // (simulaci pohybu od nákladu k cíli podobně jako v této funkci)
+            // V této fázi můžete provádět další akce, např. naložení nákladu do vlaku
+            // a poté pokračování v simulaci pohybu k cílové destinaci
+            moveTrainToDestination(train, cargo);
         }
     }, updateInterval);
 }
