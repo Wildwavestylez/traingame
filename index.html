@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 8A3</p>
+    <p>Kupony vlaků: 8A4</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -226,9 +226,9 @@ function getTrainImage(trainIndex) {
 
 
 function generateCargo() {
-    lines.forEach(line => {
+     lines.forEach(line => {
         line.stops.forEach(startStop => {
-            if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
                     iconSize: [40, 40],
@@ -237,7 +237,10 @@ function generateCargo() {
                 });
 
                 let destinationStop = getRandomDestination(line.stops, startStop);
-                let realDistance = getRealDistance(startStop.location, destinationStop.location);
+                 let realDistance = getRealDistance(
+                [startStop.lat, startStop.lon],
+                [destinationStop.lat, destinationStop.lon]
+            );
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
                 cargoMarker.bindPopup(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km)`);
