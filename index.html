@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3B0</p>
+    <p>Kupony vlaků: 3B1</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -333,9 +333,20 @@ function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
 
     let index = 0;
 
+    // Najdi index aktuální zastávky na trase
+    const startIndex = route.findIndex(stop => {
+        const markerLocation = trainMarker.getLatLng();
+        return stop[0] === markerLocation.lat && stop[1] === markerLocation.lng;
+    });
+
+    // Najdi index cílové zastávky na trase
+    const destinationIndex = route.findIndex(stop => {
+        return stop[0] === destinationLocation[0] && stop[1] === destinationLocation[1];
+    });
+
     // Aktualizace polohy vlaku v pravidelných intervalech
     const moveInterval = setInterval(() => {
-        if (index < route.length - 1) {
+        if (index < destinationIndex) {
             const startLocation = route[index];
             const endLocation = route[index + 1];
             const distance = getRealDistance(startLocation, endLocation);
@@ -366,7 +377,7 @@ function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
             clearInterval(moveInterval);
 
             // Simulace pohybu vlaku směrem k nákladu
-            const startLocation = route[index];
+            const startLocation = trainMarker.getLatLng();
             const distance = getRealDistance(startLocation, destinationLocation);
             const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
@@ -378,8 +389,8 @@ function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
 
                 if (elapsedTime < travelTime) {
                     const ratio = elapsedTime / travelTime;
-                    const newLat = startLocation[0] + (destinationLocation[0] - startLocation[0]) * ratio;
-                    const newLng = startLocation[1] + (destinationLocation[1] - startLocation[1]) * ratio;
+                    const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
+                    const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
 
                     trainMarker.setLatLng([newLat, newLng]);
                 } else {
