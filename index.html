@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 2B8</p>
+    <p>Kupony vlaků: 2B9</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -328,7 +328,7 @@ function getTrainRoute(train) {
 
 // Funkce pro simulaci pohybu vlaku podle trasy
 function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
-    const maxSpeed = 500; // Maximální rychlost vlaku v km/h
+    const maxSpeed = 60; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
     let index = 0;
