@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 2B4</p>
+    <p>Kupony vlaků: 2B5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -290,36 +290,55 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
 
-// Funkce pro odeslání vlaku pro naklad
+// Funkce pro odeslání vlaku pro náklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = trainTypes.find(train => train.name === trainName);
 
     if (selectedTrain) {
-        // Vytvoření ikony vlaku
-        let trainIcon = L.icon({
-            iconUrl: selectedTrain.image,
-            iconSize: [40, 40],
-            iconAnchor: [20, 20],
-            popupAnchor: [0, 0]
-        });
+        // Získej trasu vlaku
+        const line = lines.find(line => line.trains.some(train => train.name === trainName));
 
-        // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
-        let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
+        if (line) {
+            const stops = line.stops;
+            
+            // Získej seznam souřadnic na trase vlaku
+            const routeCoordinates = stops.map(stop => stop.location);
 
-        // Spuštění simulace pohybu vlaku směrem k nákladu
-        moveTrainToDestination(trainMarker, destinationLocation);
+            // Najdi index startovní zastávky pro vybraný vlak
+            const startingIndex = selectedTrain.startingIndex;
+
+            // Získej podseznam souřadnic od startovní zastávky do konce trasy
+            const trainRoute = routeCoordinates.slice(startingIndex);
+
+            // Vytvoření ikony vlaku
+            let trainIcon = L.icon({
+                iconUrl: selectedTrain.image,
+                iconSize: [40, 40],
+                iconAnchor: [20, 20],
+                popupAnchor: [0, 0]
+            });
+
+            // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
+            let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
+
+            // Spuštění simulace pohybu vlaku směrem k nákladu po trase vlaku
+            moveTrainAlongRoute(trainMarker, trainRoute, destinationLocation);
+        }
     }
 }
 
-// Funkce pro simulaci pohybu vlaku směrem k cíli
-function moveTrainToDestination(trainMarker, destinationLocation) {
+// Funkce pro simulaci pohybu vlaku po trase
+function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
     const maxSpeed = 60; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
+    let currentIndex = 0;
     const startLocation = trainMarker.getLatLng();
-    const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
-    const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
+    const distanceToDestination = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
+    
+    // Vypočítej čas potřebný k přepravě na konečnou zastávku
+    const travelTime = (distanceToDestination / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
     const startTime = new Date().getTime();
 
@@ -330,10 +349,23 @@ function moveTrainToDestination(trainMarker, destinationLocation) {
 
         if (elapsedTime < travelTime) {
             const ratio = elapsedTime / travelTime;
-            const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
-            const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
 
-            trainMarker.setLatLng([newLat, newLng]);
+            // Pokud jsme dorazili na konečnou zastávku, zastavíme pohyb vlaku
+            if (currentIndex >= route.length) {
+                clearInterval(moveInterval);
+                map.removeLayer(trainMarker);
+            } else {
+                const newLat = route[currentIndex][0];
+                const newLng = route[currentIndex][1];
+
+                trainMarker.setLatLng([newLat, newLng]);
+
+                // Pokud jsme blízko aktuální zastávky, přejdeme na další
+                const distanceToNextStop = getRealDistance([newLat, newLng], route[currentIndex + 1]);
+                if (distanceToNextStop < 0.1) {
+                    currentIndex++;
+                }
+            }
         } else {
             // Vlak dorazil na místo určení
             clearInterval(moveInterval);
