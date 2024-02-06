@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3B7</p>
+    <p>Kupony vlaků: 3B8</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -285,9 +285,9 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
     
-// Funkce pro simulaci pohybu vlaku směrem k cíli
+/// Funkce pro simulaci pohybu vlaku směrem k cíli
 function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
-    const maxSpeed = 460; // Maximální rychlost vlaku v km/h
+    const maxSpeed = 60; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
     const startLocation = trainMarker.getLatLng();
@@ -312,13 +312,21 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
-            // Přidání peněz hráči
-            playerFinance += cargoPrice;
-            document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(2)} Kč`;
+            // Získání finanční odměny za doručení nákladu
+            const reward = calculateReward(cargoPrice);
+
+            // Přičtení odměny k financím hráče
+            playerFinance += reward;
+            document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
         }
     }, interval);
 }
 
+// Funkce pro výpočet finanční odměny za doručení nákladu
+function calculateReward(cargoPrice) {
+    // Pro jednoduchost můžeme použít stejnou cenu jako cena nákladu
+    return cargoPrice;
+}
 // Funkce pro odeslání vlaku pro naklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
