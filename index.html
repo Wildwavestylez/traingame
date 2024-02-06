@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 2B9</p>
+    <p>Kupony vlaků: 3B0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -335,9 +335,10 @@ function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
 
     // Aktualizace polohy vlaku v pravidelných intervalech
     const moveInterval = setInterval(() => {
-        if (index < route.length) {
-            const startLocation = trainMarker.getLatLng();
-            const distance = getRealDistance([startLocation.lat, startLocation.lng], route[index]);
+        if (index < route.length - 1) {
+            const startLocation = route[index];
+            const endLocation = route[index + 1];
+            const distance = getRealDistance(startLocation, endLocation);
             const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
             const startTime = new Date().getTime();
@@ -348,8 +349,8 @@ function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
 
                 if (elapsedTime < travelTime) {
                     const ratio = elapsedTime / travelTime;
-                    const newLat = startLocation.lat + (route[index][0] - startLocation.lat) * ratio;
-                    const newLng = startLocation.lng + (route[index][1] - startLocation.lng) * ratio;
+                    const newLat = startLocation[0] + (endLocation[0] - startLocation[0]) * ratio;
+                    const newLng = startLocation[1] + (endLocation[1] - startLocation[1]) * ratio;
 
                     trainMarker.setLatLng([newLat, newLng]);
                 } else {
@@ -365,8 +366,8 @@ function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
             clearInterval(moveInterval);
 
             // Simulace pohybu vlaku směrem k nákladu
-            const startLocation = trainMarker.getLatLng();
-            const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
+            const startLocation = route[index];
+            const distance = getRealDistance(startLocation, destinationLocation);
             const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
             const startTime = new Date().getTime();
@@ -377,8 +378,8 @@ function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
 
                 if (elapsedTime < travelTime) {
                     const ratio = elapsedTime / travelTime;
-                    const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
-                    const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
+                    const newLat = startLocation[0] + (destinationLocation[0] - startLocation[0]) * ratio;
+                    const newLng = startLocation[1] + (destinationLocation[1] - startLocation[1]) * ratio;
 
                     trainMarker.setLatLng([newLat, newLng]);
                 } else {
