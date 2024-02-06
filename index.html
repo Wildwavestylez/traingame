@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3B5</p>
+    <p>Kupony vlaků: 3B6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -288,7 +288,7 @@ setInterval(generateCargo, cargoInterval);
     
 // Funkce pro simulaci pohybu vlaku směrem k cíli
 function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
-    const maxSpeed = 60; // Maximální rychlost vlaku v km/h
+    const maxSpeed = 460; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
     const startLocation = trainMarker.getLatLng();
