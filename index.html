@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 2B5</p>
+    <p>Kupony vlaků: 2B6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -290,27 +290,15 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
 
-// Funkce pro odeslání vlaku pro náklad
+// Funkce pro odeslání vlaku pro naklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = trainTypes.find(train => train.name === trainName);
 
     if (selectedTrain) {
-        // Získej trasu vlaku
-        const line = lines.find(line => line.trains.some(train => train.name === trainName));
+        const trainLine = lines.find(line => line.trains.some(train => train.name === trainName));
 
-        if (line) {
-            const stops = line.stops;
-            
-            // Získej seznam souřadnic na trase vlaku
-            const routeCoordinates = stops.map(stop => stop.location);
-
-            // Najdi index startovní zastávky pro vybraný vlak
-            const startingIndex = selectedTrain.startingIndex;
-
-            // Získej podseznam souřadnic od startovní zastávky do konce trasy
-            const trainRoute = routeCoordinates.slice(startingIndex);
-
+        if (trainLine) {
             // Vytvoření ikony vlaku
             let trainIcon = L.icon({
                 iconUrl: selectedTrain.image,
@@ -322,12 +310,29 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation) {
             // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
             let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
 
-            // Spuštění simulace pohybu vlaku směrem k nákladu po trase vlaku
-            moveTrainAlongRoute(trainMarker, trainRoute, destinationLocation);
+            // Získání seznamu zastávek na trase vlaku
+            const stopsOnLine = trainLine.stops;
+
+            // Index aktuální zastávky na trase
+            let currentStopIndex = 0;
+
+            // Spuštění simulace pohybu vlaku směrem k nákladu
+            const moveInterval = setInterval(() => {
+                if (currentStopIndex < stopsOnLine.length) {
+                    const destinationStop = stopsOnLine[currentStopIndex].location;
+                    moveTrainToDestination(trainMarker, destinationStop);
+
+                    // Aktualizace indexu pro další zastávku
+                    currentStopIndex++;
+                } else {
+                    // Vlak dorazil na konečnou zastávku
+                    clearInterval(moveInterval);
+                    map.removeLayer(trainMarker);
+                }
+            }, 1000);
         }
     }
 }
-
 // Funkce pro simulaci pohybu vlaku po trase
 function moveTrainAlongRoute(trainMarker, route, destinationLocation) {
     const maxSpeed = 60; // Maximální rychlost vlaku v km/h
