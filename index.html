@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 3B4</p>
+    <p>Kupony vlaků: 3B5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -267,32 +267,28 @@ function generateCargo() {
                 // Vytvoření tlačítka pro potvrzení odeslání vlaku pro naklad
                 let confirmButton = document.createElement('button');
                 confirmButton.innerText = 'Potvrdit';
-                confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location); };
-
-                // Přidání rolovacího menu a tlačítka do popup okna
-                let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(selectTrain);
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(confirmButton);
-
-                cargoMarker.bindPopup(popupContent);
-
-                setTimeout(() => {
+                confirmButton.onclick = function() { 
+                    const selectedTrainName = selectTrain.value;
+                    sendTrainForCargo(selectedTrainName, cargoMarker, destinationStop.location, cargoPrice);
                     map.removeLayer(cargoMarker);
-                }, cargoInterval);
+                };
+
+                // Vytvoření divu pro rolovací menu a tlačítko
+                let cargoPopupContent = document.createElement('div');
+                cargoPopupContent.appendChild(selectTrain);
+                cargoPopupContent.appendChild(confirmButton);
+
+                cargoMarker.bindPopup(cargoPopupContent);
             }
         });
     });
 }
-
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
-
+    
 // Funkce pro simulaci pohybu vlaku směrem k cíli
 function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
-    const maxSpeed = 360; // Maximální rychlost vlaku v km/h
+    const maxSpeed = 60; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
     const startLocation = trainMarker.getLatLng();
@@ -317,15 +313,15 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
-            // Přidej peníze hráči za úspěšné doručení nákladu
+            // Přidání peněz hráči
             playerFinance += cargoPrice;
-            document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+            document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(2)} Kč`;
         }
     }, interval);
 }
 
 // Funkce pro odeslání vlaku pro naklad
-function sendTrainForCargo(trainName, cargoMarker, destinationLocation) {
+function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = trainTypes.find(train => train.name === trainName);
 
@@ -333,17 +329,13 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation) {
         // Vytvoření ikony vlaku
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
-            iconSize: [64, 64],
-            iconAnchor: [32, 32],
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
             popupAnchor: [0, 0]
         });
 
         // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
         let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
-
-        // Získání ceny nákladu z popupu
-        const cargoPriceString = cargoMarker.getPopup().getContent().split(':')[1];
-        const cargoPrice = parseFloat(cargoPriceString);
 
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
