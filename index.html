@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5B9</p>
+    <p>Kupony vlaků: 6B0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -331,7 +331,6 @@ function moveTrainToDestination(trainMarker, currentLocation, destinationLocatio
         } else {
             // Vlak dorazil na místo určení
             clearInterval(moveInterval);
-            map.removeLayer(trainMarker);
 
             // Přidání nákladu (pokud je náklad přijatý)
             if (cargoPrice) {
