@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B4</p>
+    <p>Kupony vlaků: 6B5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -302,11 +302,6 @@ let trainIcon = L.icon({
     iconAnchor: [32, 32],
     popupAnchor: [0, 0]
 });
-
-// Vytvoření značky pro vlak na mapě
-let trainMarker = L.marker(selectedTrain.startLocation, { icon: trainIcon }).addTo(map);
-
-
 
     // Čas potřebný k cestě od startovní pozice k pozici s nákladem
     const cargoTravelTime = (cargoDistance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
