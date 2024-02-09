@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5B6</p>
+    <p>Kupony vlaků: 5B7</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -362,7 +362,7 @@ function getRandomDestination(stops, currentStop) {
     let randomStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
     return randomStop.name;
 }
-
+     }
 function getRealDistance(start, end) {
     const lat1 = start.lat || start[0];
     const lon1 = start.lon || start[1];
