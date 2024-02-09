@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B6</p>
+    <p>Kupony vlaků: 6B7</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -186,7 +186,6 @@ function generateTrainButtons() {
     });
 }
 
-// Funkce buyTrain upravena pro udržení trainMarker a předání ho do sendTrainForCargo
 function buyTrain(trainIndex) {
     let selectedTrain = trainTypes[trainIndex];
 
@@ -208,7 +207,8 @@ function buyTrain(trainIndex) {
         trainMarker.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
 
         // Předání trainMarker do funkce sendTrainForCargo
-        sendTrainForCargo(trainMarker, selectedTrain.location);
+        sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoPrice);
+
         closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
