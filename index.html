@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B2</p>
+    <p>Kupony vlaků: 6B3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -283,29 +283,6 @@ function generateCargo() {
     });
 }
 
-function sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoPrice) {
-    const maxSpeed = 560; // Maximální rychlost vlaku v km/h
-    const interval = 1000; // Interval aktualizace polohy vlaku v ms
-
-    const startLocation = trainMarker.getLatLng();
-    const cargoLocation = cargoMarker.getLatLng();
-    const destinationDistance = getRealDistance([cargoLocation.lat, cargoLocation.lng], destinationLocation);
-    const cargoDistance = getRealDistance([startLocation.lat, startLocation.lng], cargoLocation);
-
-    // Čas potřebný k cestě od startovní pozice k pozici s nákladem
-    const cargoTravelTime = (cargoDistance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
-
-    // Čas potřebný k cestě od pozice s nákladem k cílové zastávce
-    const destinationTravelTime = (destinationDistance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
-
-    // Pohyb vlaku k pozici s nákladem
-    moveTrainToDestination(trainMarker, startLocation, cargoLocation, false, cargoTravelTime);
-
-    // Po dosažení pozice s nákladem, pohyb vlaku k cílové zastávce
-    setTimeout(() => {
-        moveTrainToDestination(trainMarker, cargoLocation, destinationLocation, true, destinationTravelTime);
-    }, cargoTravelTime);
-}
 
 
     
