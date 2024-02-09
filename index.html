@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B5</p>
+    <p>Kupony vlaků: 6B6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -186,6 +186,7 @@ function generateTrainButtons() {
     });
 }
 
+// Funkce buyTrain upravena pro udržení trainMarker a předání ho do sendTrainForCargo
 function buyTrain(trainIndex) {
     let selectedTrain = trainTypes[trainIndex];
 
@@ -196,20 +197,27 @@ function buyTrain(trainIndex) {
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
-            iconSize: [100, 100],
-            iconAnchor: [50, 50],
+            iconSize: [64, 64],
+            iconAnchor: [32, 32],
             popupAnchor: [0, 0]
         });
 
         // Přidání ikony vlaku do stanice
-        let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
-        station.bindPopup(selectedTrain.name);
-        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
-         generateCargo()
+        let trainMarker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
+        trainMarker.bindPopup(selectedTrain.name);
+        trainMarker.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
+
+        // Předání trainMarker do funkce sendTrainForCargo
+        sendTrainForCargo(trainMarker, selectedTrain.location);
         closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
+}
+
+// Funkce sendTrainForCargo upravena pro přijetí trainMarker jako parametru
+function sendTrainForCargo(trainMarker, destinationLocation) {
+    // Zde implementujte pohyb vlaku k cílové zastávce
 }
 function getTrainImage(trainIndex) {
     // Zde můžeš přidat další typy vlaků a jejich ikony
