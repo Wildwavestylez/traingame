@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5B2</p>
+    <p>Kupony vlaků: 5B3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -205,7 +205,7 @@ function buyTrain(trainIndex) {
         let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
         station.bindPopup(selectedTrain.name);
         station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
-
+         generateCargo()
         closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
@@ -282,8 +282,7 @@ function generateCargo() {
         });
     });
 }
-// Spustit generování nákladu každou minutu
-setInterval(generateCargo, cargoInterval);
+
     
 // Funkce pro simulaci pohybu vlaku směrem k cíli
 function moveTrainToDestination(trainMarker, destinationLocation) {
