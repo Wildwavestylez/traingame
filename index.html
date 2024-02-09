@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 4B9</p>
+    <p>Kupony vlaků: 5B0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -238,12 +238,11 @@ function calculateCargoPrice(distance) {
 }
 
 function generateCargo(trainLocation) {
-    lines.forEach(line => {
+   lines.forEach(line => {
         line.stops.forEach(startStop => {
-            // Zjistíme vzdálenost od aktuální pozice vlaku k začáteční zastávce
-            const distanceToStartStop = getRealDistance(trainLocation, startStop.location);
-
-            // Pokud je vzdálenost menší než 10 km, generujeme zakázky
+            const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
+            const realDistance = getRealDistance(trainLocation, destinationStop.location);
+          // Pokud je vzdálenost menší než 10 km, generujeme zakázky
             if (distanceToStartStop <= 10) {
                 const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
