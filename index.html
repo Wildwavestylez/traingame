@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5B1</p>
+    <p>Kupony vlaků: 5B2</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -206,12 +206,6 @@ function buyTrain(trainIndex) {
         station.bindPopup(selectedTrain.name);
         station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
 
-        // Získání aktuální polohy vlakové značky
-        let trainMarkerPosition = station.getLatLng();
-
-        // Volání funkce pro generování zakázek s aktuální polohou vlaku
-        generateCargo(trainMarkerPosition);
-
         closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
@@ -237,62 +231,59 @@ function calculateCargoPrice(distance) {
     return distance * pricePerKm;
 }
 
-function generateCargo(trainLocation) {
-   lines.forEach(line => {
+// Funkce pro generování nákladu na zastávkách
+function generateCargo() {
+    lines.forEach(line => {
         line.stops.forEach(startStop => {
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
-            const realDistance = getRealDistance(trainLocation, destinationStop.location);
-          // Pokud je vzdálenost menší než 10 km, generujeme zakázky
-            if (distanceToStartStop <= 10) {
-                const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
-                // Oprava načítání souřadnic
-                let realDistance = getRealDistance(
-                startStop.location,
-                destinationStop.location
-                );
+            // Oprava načítání souřadnic
+            let realDistance = getRealDistance(
+                [startStop.lat, startStop.lon],
+                [destinationStop.lat, destinationStop.lon]
+            );
 
-                if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
-                    const cargoPrice = calculateCargoPrice(realDistance);
+            if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+                const cargoPrice = calculateCargoPrice(realDistance);
 
-                    let cargoIcon = L.icon({
-                        iconUrl: 'https://i.imgur.com/cYbr4oG.png',
-                        iconSize: [40, 40],
-                        iconAnchor: [20, 20],
-                        popupAnchor: [0, 0]
-                    });
+                let cargoIcon = L.icon({
+                    iconUrl: 'https://i.imgur.com/cYbr4oG.png',
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20],
+                    popupAnchor: [0, 0]
+                });
 
-                    let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
+                let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
+                
+                   // Vytvoření rolovacího menu pro výběr vlaku
+                let selectTrain = document.createElement('select');
+                trainTypes.forEach(train => {
+                    let option = document.createElement('option');
+                    option.value = train.name;
+                    option.text = train.name;
+                    selectTrain.add(option);
+                });
 
-                    // Vytvoření rolovacího menu pro výběr vlaku
-                    let selectTrain = document.createElement('select');
-                    trainTypes.forEach(train => {
-                        let option = document.createElement('option');
-                        option.value = train.name;
-                        option.text = train.name;
-                        selectTrain.add(option);
-                    });
+                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro naklad
+                let confirmButton = document.createElement('button');
+                confirmButton.innerText = 'Potvrdit';
+                confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location); };
 
-                    // Vytvoření tlačítka pro potvrzení odeslání vlaku pro naklad
-                    let confirmButton = document.createElement('button');
-                    confirmButton.innerText = 'Potvrdit';
-                    confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location); };
+                // Přidání rolovacího menu a tlačítka do popup okna
+                let popupContent = document.createElement('div');
+                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(selectTrain);
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(confirmButton);
 
-                    // Přidání rolovacího menu a tlačítka do popup okna
-                    let popupContent = document.createElement('div');
-                    popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
-                    popupContent.appendChild(document.createElement('br'));
-                    popupContent.appendChild(selectTrain);
-                    popupContent.appendChild(document.createElement('br'));
-                    popupContent.appendChild(confirmButton);
-
-                    cargoMarker.bindPopup(popupContent);
-                }
+                cargoMarker.bindPopup(popupContent);
             }
         });
     });
 }
-    
+// Spustit generování nákladu každou minutu
+setInterval(generateCargo, cargoInterval);
     
 // Funkce pro simulaci pohybu vlaku směrem k cíli
 function moveTrainToDestination(trainMarker, destinationLocation) {
@@ -370,10 +361,10 @@ function getRandomDestination(stops, currentStop) {
 }
 
 function getRealDistance(start, end) {
-    const lat1 = start.lat !== undefined ? start.lat : start[0];
-    const lon1 = start.lon !== undefined ? start.lon : start[1];
-    const lat2 = end.lat !== undefined ? end.lat : end[0];
-    const lon2 = end.lon !== undefined ? end.lon : end[1];
+    const lat1 = start.lat || start[0];
+    const lon1 = start.lon || start[1];
+    const lat2 = end.lat || end[0];
+    const lon2 = end.lon || end[1];
 
     const R = 6371; // poloměr Země v km
     const dLat = toRadians(lat2 - lat1);
