@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5B5</p>
+    <p>Kupony vlaků: 5B6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -331,15 +331,17 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
     // Najdi vybraný vlak podle názvu
     const selectedTrain = trainTypes.find(train => train.name === trainName);
 
-   if (selectedTrain) {
-    // Vytvoření ikony vlaku pro náklad a s nákladem
-    let trainIcon = L.icon({
-        iconUrl: selectedTrain.image,
-        iconSize: [64, 64],  // Změnili jsme velikost ikony vlaku
-        iconAnchor: [32, 32],
-        popupAnchor: [0, 0]
-    });
-} 
+    let trainIcon; // Definice proměnné trainIcon mimo blok if
+
+    if (selectedTrain) {
+        // Vytvoření ikony vlaku pro náklad a s nákladem
+        trainIcon = L.icon({
+            iconUrl: selectedTrain.image,
+            iconSize: [64, 64],  // Změnili jsme velikost ikony vlaku
+            iconAnchor: [32, 32],
+            popupAnchor: [0, 0]
+        });
+
         // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
         let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
 
