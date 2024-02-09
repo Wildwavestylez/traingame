@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B3</p>
+    <p>Kupony vlaků: 6B4</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -295,6 +295,19 @@ function sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoP
     const destinationDistance = getRealDistance([cargoLocation.lat, cargoLocation.lng], destinationLocation);
     const cargoDistance = getRealDistance([startLocation.lat, startLocation.lng], cargoLocation);
 
+    // Kód při vytváření vlaku a jeho ikony
+let trainIcon = L.icon({
+    iconUrl: selectedTrain.image,
+    iconSize: [64, 64],
+    iconAnchor: [32, 32],
+    popupAnchor: [0, 0]
+});
+
+// Vytvoření značky pro vlak na mapě
+let trainMarker = L.marker(selectedTrain.startLocation, { icon: trainIcon }).addTo(map);
+
+
+
     // Čas potřebný k cestě od startovní pozice k pozici s nákladem
     const cargoTravelTime = (cargoDistance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
@@ -309,7 +322,13 @@ function sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoP
         moveTrainToDestination(trainMarker, cargoLocation, destinationLocation, true, destinationTravelTime);
     }, cargoTravelTime);
 }
+// Funkce pro potvrzení a odeslání vlaku na zastávku s nákladem
+function confirmButtonClicked() {
+    // Získání potřebných informací o cíli vlaku, nákladu, atd.
+    sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoPrice);
+}
 
+    
 function moveTrainToDestination(trainMarker, currentLocation, destinationLocation, hasCargo, travelTime) {
     const startTime = new Date().getTime();
 
