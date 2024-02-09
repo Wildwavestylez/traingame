@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B7</p>
+    <p>Kupony vlaků: 6B8</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -186,7 +186,7 @@ function generateTrainButtons() {
     });
 }
 
-function buyTrain(trainIndex) {
+function buyTrain(trainIndex, cargoMarker, destinationLocation, cargoPrice) {
     let selectedTrain = trainTypes[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
@@ -206,7 +206,7 @@ function buyTrain(trainIndex) {
         trainMarker.bindPopup(selectedTrain.name);
         trainMarker.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
 
-        // Předání trainMarker do funkce sendTrainForCargo
+        // Předání proměnné cargoMarker do funkce sendTrainForCargo
         sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoPrice);
 
         closeTrainModal();
@@ -215,10 +215,6 @@ function buyTrain(trainIndex) {
     }
 }
 
-// Funkce sendTrainForCargo upravena pro přijetí trainMarker jako parametru
-function sendTrainForCargo(trainMarker, destinationLocation) {
-    // Zde implementujte pohyb vlaku k cílové zastávce
-}
 function getTrainImage(trainIndex) {
     // Zde můžeš přidat další typy vlaků a jejich ikony
     switch (trainIndex) {
@@ -230,8 +226,6 @@ function getTrainImage(trainIndex) {
             return 'https://i.imgur.com/4EGn3VT.png';  // Defaultní ikona, můžeš změnit podle potřeby
     }
 }
-
-
 
 // Funkce pro výpočet ceny za odvoz nákladu
 function calculateCargoPrice(distance) {
