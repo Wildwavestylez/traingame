@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 5B7</p>
+    <p>Kupony vlaků: 5B8</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -283,13 +283,35 @@ function generateCargo() {
     });
 }
 
+function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
+    // Najdi vybraný vlak podle názvu
+    const selectedTrain = trainTypes.find(train => train.name === trainName);
+
+    if (selectedTrain) {
+        // Vytvoření ikony vlaku pro náklad a s nákladem
+        let trainIcon = L.icon({
+            iconUrl: selectedTrain.image,
+            iconSize: [64, 64],  // Změnili jsme velikost ikony vlaku
+            iconAnchor: [32, 32],
+            popupAnchor: [0, 0]
+        });
+
+        // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
+        let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
+
+        // Získání aktuální pozice vlaku
+        const currentLocation = trainMarker.getLatLng();
+
+        // Spuštění simulace pohybu vlaku směrem k nákladu
+        moveTrainToDestination(trainMarker, currentLocation, cargoMarker.getLatLng(), destinationLocation, cargoPrice);
+    }
+}
     
-// Funkce pro simulaci pohybu vlaku směrem k cíli
-function moveTrainToDestination(trainMarker, destinationLocation) {
+function moveTrainToDestination(trainMarker, currentLocation, destinationLocation, cargoPrice) {
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
-    const startLocation = trainMarker.getLatLng();
+    const startLocation = currentLocation;
     const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
     const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
@@ -311,10 +333,13 @@ function moveTrainToDestination(trainMarker, destinationLocation) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
-            // Při doručení nákladu získej náhodnou částku peněz
-            const earning = generateRandomEarning();
-            playerFinance += earning;
-            document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+            // Přidání nákladu (pokud je náklad přijatý)
+            if (cargoPrice) {
+                // Generování příjmu z nákladu
+                const earning = generateRandomEarning();
+                playerFinance += earning;
+                document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+            }
         }
     }, interval);
 }
@@ -326,32 +351,7 @@ function generateRandomEarning() {
     return Math.floor(Math.random() * (maxEarning - minEarning + 1)) + minEarning;
 }
 
-// Funkce pro odeslání vlaku pro náklad
-function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
-    // Najdi vybraný vlak podle názvu
-    const selectedTrain = trainTypes.find(train => train.name === trainName);
 
-    let trainIcon; // Definice proměnné trainIcon mimo blok if
-
-    if (selectedTrain) {
-        // Vytvoření ikony vlaku pro náklad a s nákladem
-        trainIcon = L.icon({
-            iconUrl: selectedTrain.image,
-            iconSize: [64, 64],  // Změnili jsme velikost ikony vlaku
-            iconAnchor: [32, 32],
-            popupAnchor: [0, 0]
-        });
-
-        // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
-        let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
-
-        // Získání aktuální pozice vlaku
-        const currentLocation = trainMarker.getLatLng();
-
-        // Spuštění simulace pohybu vlaku směrem k nákladu
-        moveTrainToDestination(trainMarker, currentLocation, destinationLocation, cargoPrice);
-    }
-        
     
 // Funkce pro získání náhodné destinace z okolních stanic
 function getRandomDestination(stops, currentStop) {
