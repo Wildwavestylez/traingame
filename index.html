@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B0</p>
+    <p>Kupony vlaků: 6B1</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -311,8 +311,7 @@ function moveTrainToDestination(trainMarker, currentLocation, destinationLocatio
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
-    const startLocation = currentLocation;
-    const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
+    const distance = getRealDistance([currentLocation.lat, currentLocation.lng], destinationLocation);
     const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
     const startTime = new Date().getTime();
@@ -324,8 +323,8 @@ function moveTrainToDestination(trainMarker, currentLocation, destinationLocatio
 
         if (elapsedTime < travelTime) {
             const ratio = elapsedTime / travelTime;
-            const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
-            const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
+            const newLat = currentLocation.lat + (destinationLocation[0] - currentLocation.lat) * ratio;
+            const newLng = currentLocation.lng + (destinationLocation[1] - currentLocation.lng) * ratio;
 
             trainMarker.setLatLng([newLat, newLng]);
         } else {
