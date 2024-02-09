@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B8</p>
+    <p>Kupony vlaků: 6B9</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -206,7 +206,7 @@ function buyTrain(trainIndex, cargoMarker, destinationLocation, cargoPrice) {
         trainMarker.bindPopup(selectedTrain.name);
         trainMarker.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
 
-        // Předání proměnné cargoMarker do funkce sendTrainForCargo
+        // Předání proměnné trainMarker do funkce sendTrainForCargo
         sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoPrice);
 
         closeTrainModal();
@@ -214,6 +214,7 @@ function buyTrain(trainIndex, cargoMarker, destinationLocation, cargoPrice) {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
 }
+
 
 function getTrainImage(trainIndex) {
     // Zde můžeš přidat další typy vlaků a jejich ikony
@@ -292,39 +293,35 @@ function sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoP
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
-    const startLocation = trainMarker.getLatLng();
-    const cargoLocation = cargoMarker.getLatLng();
-    const destinationDistance = getRealDistance([cargoLocation.lat, cargoLocation.lng], destinationLocation);
-    const cargoDistance = getRealDistance([startLocation.lat, startLocation.lng], cargoLocation);
+    const startLocation = trainMarker.getLatLng(); // Zde získáme pozici vlaku
+    const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
+    const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
-    // Kód při vytváření vlaku a jeho ikony
-let trainIcon = L.icon({
-    iconUrl: selectedTrain.image,
-    iconSize: [64, 64],
-    iconAnchor: [32, 32],
-    popupAnchor: [0, 0]
-});
+    const startTime = new Date().getTime();
 
-    // Čas potřebný k cestě od startovní pozice k pozici s nákladem
-    const cargoTravelTime = (cargoDistance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
+    // Aktualizace polohy vlaku v pravidelných intervalech
+    const moveInterval = setInterval(() => {
+        const currentTime = new Date().getTime();
+        const elapsedTime = currentTime - startTime;
 
-    // Čas potřebný k cestě od pozice s nákladem k cílové zastávce
-    const destinationTravelTime = (destinationDistance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
+        if (elapsedTime < travelTime) {
+            const ratio = elapsedTime / travelTime;
+            const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
+            const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
 
-    // Pohyb vlaku k pozici s nákladem
-    moveTrainToDestination(trainMarker, startLocation, cargoLocation, false, cargoTravelTime);
+            trainMarker.setLatLng([newLat, newLng]);
+        } else {
+            // Vlak dorazil na místo určení
+            clearInterval(moveInterval);
+            map.removeLayer(trainMarker);
 
-    // Po dosažení pozice s nákladem, pohyb vlaku k cílové zastávce
-    setTimeout(() => {
-        moveTrainToDestination(trainMarker, cargoLocation, destinationLocation, true, destinationTravelTime);
-    }, cargoTravelTime);
+            // Při doručení nákladu získej náhodnou částku peněz
+            const earning = generateRandomEarning();
+            playerFinance += earning;
+            document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+        }
+    }, interval);
 }
-// Funkce pro potvrzení a odeslání vlaku na zastávku s nákladem
-function confirmButtonClicked() {
-    // Získání potřebných informací o cíli vlaku, nákladu, atd.
-    sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoPrice);
-}
-
     
 function moveTrainToDestination(trainMarker, currentLocation, destinationLocation, hasCargo, travelTime) {
     const startTime = new Date().getTime();
