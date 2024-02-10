@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 7B2</p>
+    <p>Kupony vlaků: 7B3</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -215,7 +215,6 @@ function buyTrain(trainIndex, cargoMarker, destinationLocation, cargoPrice) {
     }
 }
 
-
 function getTrainImage(trainIndex) {
     // Zde můžeš přidat další typy vlaků a jejich ikony
     switch (trainIndex) {
@@ -293,8 +292,7 @@ function sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoP
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
-    // Přidání event listeneru, který zavolá sendTrainForCargo až poté, co bude trainMarker přidán na mapu
-    trainMarker.addEventListener('add', function() {
+    trainMarker.on('add', function() {
         const startLocation = trainMarker.getLatLng(); // Zde získáme pozici vlaku
         const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
         const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
