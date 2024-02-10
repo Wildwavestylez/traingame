@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 6B9</p>
+    <p>Kupony vlaků: 7B0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -216,6 +216,7 @@ function buyTrain(trainIndex, cargoMarker, destinationLocation, cargoPrice) {
 }
 
 
+
 function getTrainImage(trainIndex) {
     // Zde můžeš přidat další typy vlaků a jejich ikony
     switch (trainIndex) {
@@ -293,34 +294,37 @@ function sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoP
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
-    const startLocation = trainMarker.getLatLng(); // Zde získáme pozici vlaku
-    const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
-    const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
+    // Přidání event listeneru, který zavolá sendTrainForCargo až poté, co bude trainMarker přidán na mapu
+    trainMarker.on('add', function() {
+        const startLocation = trainMarker.getLatLng(); // Zde získáme pozici vlaku
+        const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
+        const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
-    const startTime = new Date().getTime();
+        const startTime = new Date().getTime();
 
-    // Aktualizace polohy vlaku v pravidelných intervalech
-    const moveInterval = setInterval(() => {
-        const currentTime = new Date().getTime();
-        const elapsedTime = currentTime - startTime;
+        // Aktualizace polohy vlaku v pravidelných intervalech
+        const moveInterval = setInterval(() => {
+            const currentTime = new Date().getTime();
+            const elapsedTime = currentTime - startTime;
 
-        if (elapsedTime < travelTime) {
-            const ratio = elapsedTime / travelTime;
-            const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
-            const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
+            if (elapsedTime < travelTime) {
+                const ratio = elapsedTime / travelTime;
+                const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
+                const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
 
-            trainMarker.setLatLng([newLat, newLng]);
-        } else {
-            // Vlak dorazil na místo určení
-            clearInterval(moveInterval);
-            map.removeLayer(trainMarker);
+                trainMarker.setLatLng([newLat, newLng]);
+            } else {
+                // Vlak dorazil na místo určení
+                clearInterval(moveInterval);
+                map.removeLayer(trainMarker);
 
-            // Při doručení nákladu získej náhodnou částku peněz
-            const earning = generateRandomEarning();
-            playerFinance += earning;
-            document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-        }
-    }, interval);
+                // Při doručení nákladu získej náhodnou částku peněz
+                const earning = generateRandomEarning();
+                playerFinance += earning;
+                document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+            }
+        }, interval);
+    });
 }
     
 function moveTrainToDestination(trainMarker, currentLocation, destinationLocation, hasCargo, travelTime) {
