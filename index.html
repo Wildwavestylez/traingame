@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 7B9</p>
+    <p>Kupony vlaků: 8B0</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -340,12 +340,12 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
         // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
         let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
 
+        // Odstranění ikony nákladu
+        map.removeLayer(cargoMarker);
+        
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
     }
-}
-    function removeCargo(cargoMarker) {
-    map.removeLayer(cargoMarker);
 }
     
 // Funkce pro získání náhodné destinace z okolních stanic
