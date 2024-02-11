@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 23</p>
+    <p>Kupony vlaků: 24</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2511,10 +2511,10 @@ function generateCargo() {
                     popupAnchor: [0, 0]
                 });
 
-              let cargoTrainMarker = L.marker(cargoMarker.getLatLng(), { icon: cargoIcon }).addTo(map);
+              let cargoMarker = L.marker(cargoMarker.getLatLng(), { icon: cargoIcon }).addTo(map);
 
 // Přidání popup okna s informacemi o cílové stanici
-cargoTrainMarker.bindPopup(`Cílová stanice: ${destinationStop.name}`);
+cargoMarker.bindPopup(`Cílová stanice: ${destinationStop.name}`);
                 
 
                 // Vytvoření rolovacího menu pro výběr vlaku
