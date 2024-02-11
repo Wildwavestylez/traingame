@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 7B4</p>
+    <p>Kupony vlaků: 7B5</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -232,19 +232,24 @@ function calculateCargoPrice(distance) {
 }
 
 // Funkce pro generování nákladu na zastávkách
-function generateCargo() {
-    lines.forEach(line => {
-        line.stops.forEach(startStop => {
-            const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
+  const numCargo = 5; // Počet generovaných zakázek
+    const trainPosition = getTrainPosition();
 
-            // Oprava načítání souřadnic
-            let realDistance = getRealDistance(
-                [startStop.lat, startStop.lon],
-                [destinationStop.lat, destinationStop.lon]
-            );
+    if (!trainPosition) {
+        return;
+    }
 
-            if (Math.random() < 0.2) {  // Pravděpodobnost generování nákladu na zastávce (20%)
-                const cargoPrice = calculateCargoPrice(realDistance);
+    // Vybrání náhodných zastávek v okruhu 10 km
+    const nearbyStops = getNearbyStops(trainPosition);
+
+    // Generování zakázek
+    for (let i = 0; i < numCargo; i++) {
+        const randomStartStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
+        const randomDestinationStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
+
+        createCargo(randomStartStop, randomDestinationStop);
+    }
+}
 
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
@@ -284,6 +289,21 @@ function generateCargo() {
 }
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
+    // Funkce pro získání zastávek v okruhu 10 km od dané pozice
+function getNearbyStops(position) {
+    const nearbyStops = [];
+
+    lines.forEach(line => {
+        line.stops.forEach(stop => {
+            const distance = getDistance(position.lat, position.lon, stop.lat, stop.lon);
+            if (distance <= 10) {
+                nearbyStops.push(stop);
+            }
+        });
+    });
+
+    return nearbyStops;
+}
     
 // Funkce pro simulaci pohybu vlaku směrem k cíli
 function moveTrainToDestination(trainMarker, destinationLocation) {
