@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 25</p>
+    <p>Kupony vlaků: 26</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2501,7 +2501,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.0001) {  // Pravděpodobnost generování nákladu na zastávce (0.01%)
+            if (Math.random() < 0.0002) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
@@ -2511,10 +2511,10 @@ function generateCargo() {
                     popupAnchor: [0, 0]
                 });
 
-              let cargoMarker = L.marker(cargoMarker.getLatLng(), { icon: cargoIcon }).addTo(map);
+                let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
 
-
-                
+                // Vytvoření popup okna pro zobrazení cílové stanice
+                cargoMarker.bindPopup(`Cílová stanice: ${destinationStop.name}`);
 
                 // Vytvoření rolovacího menu pro výběr vlaku
                 let selectTrain = document.createElement('select');
@@ -2525,10 +2525,10 @@ function generateCargo() {
                     selectTrain.add(option);
                 });
 
-                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro náklad
+                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro naklad
                 let confirmButton = document.createElement('button');
                 confirmButton.innerText = 'Potvrdit';
-                confirmButton.onclick = function () { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location, cargoPrice); };
+                confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location); };
 
                 // Přidání rolovacího menu a tlačítka do popup okna
                 let popupContent = document.createElement('div');
