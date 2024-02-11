@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 03</p>
+    <p>Kupony vlaků: 04</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2502,7 +2502,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.002) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.0005) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
@@ -2544,8 +2544,7 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
     
-// Funkce pro simulaci pohybu vlaku směrem k cíli
-function moveTrainToDestination(trainMarker, destinationLocation) {
+function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
@@ -2575,6 +2574,9 @@ function moveTrainToDestination(trainMarker, destinationLocation) {
             const earning = generateRandomEarning();
             playerFinance += earning;
             document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+
+            // Odstranění zásilky z aktuální zastávky
+            removeCargo(cargoMarker);
         }
     }, interval);
 }
@@ -2592,11 +2594,14 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
     const selectedTrain = trainTypes.find(train => train.name === trainName);
 
     if (selectedTrain) {
+        // Smazání zásilky z aktuální zastávky
+        map.removeLayer(cargoMarker);
+
         // Vytvoření ikony vlaku
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
-            iconSize: [100, 100],
-            iconAnchor: [50, 50],
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
             popupAnchor: [0, 0]
         });
 
@@ -2608,6 +2613,9 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
     }
 }
 
+    function removeCargo(cargoMarker) {
+    map.removeLayer(cargoMarker);
+}
     
 // Funkce pro získání náhodné destinace z okolních stanic
 function getRandomDestination(stops, currentStop) {
