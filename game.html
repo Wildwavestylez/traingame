@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 30</p>
+    <p>Kupony vlaků: 31</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2568,16 +2568,11 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             // Vlak dorazil na místo určení
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
-
-            // Při doručení nákladu získej náhodnou částku peněz
-            // Zaokrouhlení na celé číslo
-  playerFinance += cargoPrice;
-playerFinance = Math.round(playerFinance); // Zaokrouhlení na celé číslo
-             // Zde můžeme přidat další akce, jako například zobrazení cílové stanice nebo přidání peněz hráči
+            
+            // Zde můžeme přidat další akce, jako například zobrazení cílové stanice nebo přidání peněz hráči
             displayCargoDestination(trainMarker.train); // Zobrazení cílové stanice nákladu
             playerFinance += cargoPrice; // Přidání peněz hráči
-           
-document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`; // Zobrazení s jedním desetinným místem
+            document.getElementById('finance').innerText = `Finance: ${Math.round(playerFinance)} Kč`; // Zaokrouhlení na celá čísla
         }
     }, interval);
 }
