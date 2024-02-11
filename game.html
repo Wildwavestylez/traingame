@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 34</p>
+    <p>Kupony vlaků: 35</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2463,7 +2463,7 @@ function buyTrain(trainIndex) {
         // Přidání ikony vlaku do stanice
         let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
         station.bindPopup(selectedTrain.name);
-        
+        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
 
         closeTrainModal();
     } else {
@@ -2568,22 +2568,16 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             // Vlak dorazil na místo určení
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
-            
-            // Zde můžeme přidat další akce, jako například zobrazení cílové stanice nebo přidání peněz hráči
-            trainMarker.on('click', function() {
-        trainMarker.bindPopup(`Cílová stanice: ${destinationLocation}`).openPopup();
-            playerFinance += cargoPrice; // Přidání peněz hráči
-            document.getElementById('finance').innerText = `Finance: ${Math.round(playerFinance)} Kč`; // Zaokrouhlení na celá čísla
-        });
+
+            // Při doručení nákladu získej náhodnou částku peněz
+            // Zaokrouhlení na celé číslo
+  playerFinance += cargoPrice;
+playerFinance = Math.round(playerFinance); // Zaokrouhlení na celé číslo
+document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`; // Zobrazení s jedním desetinným místem
         }
     }, interval);
 }
 
-    trainMarker.on('click', function() {
-    trainMarker.bindPopup(`Cílová stanice: ${destinationLocation}`).openPopup();
-    playerFinance += cargoPrice; // Přidání peněz hráči
-    document.getElementById('finance').innerText = `Finance: ${Math.round(playerFinance)} Kč`; // Zaokrouhlení na celá čísla
-}); 
 // Funkce pro generování náhodné částky peněz po doručení nákladu
 function generateRandomEarning() {
     const minEarning = 100;
@@ -2612,13 +2606,6 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
         
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
-    }
-}
-
-    function displayCargoDestination(train) {
-    const destinationStop = train.cargoDestination;
-    if (destinationStop) {
-        alert(`Náklad na cestě do stanice: ${destinationStop.name}`);
     }
 }
     
