@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 05</p>
+    <p>Kupony vlaků: 06</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2610,6 +2610,9 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice, cargoMarker);
     }
+}
+    function removeCargo(cargoMarker) {
+    map.removeLayer(cargoMarker);
 }
     
 // Funkce pro získání náhodné destinace z okolních stanic
