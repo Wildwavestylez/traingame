@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 33</p>
+    <p>Kupony vlaků: 34</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2501,7 +2501,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.0001) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.0002) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
@@ -2579,6 +2579,11 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
     }, interval);
 }
 
+    trainMarker.on('click', function() {
+    trainMarker.bindPopup(`Cílová stanice: ${destinationLocation}`).openPopup();
+    playerFinance += cargoPrice; // Přidání peněz hráči
+    document.getElementById('finance').innerText = `Finance: ${Math.round(playerFinance)} Kč`; // Zaokrouhlení na celá čísla
+}); 
 // Funkce pro generování náhodné částky peněz po doručení nákladu
 function generateRandomEarning() {
     const minEarning = 100;
