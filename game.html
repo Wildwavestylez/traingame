@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 16</p>
+    <p>Kupony vlaků: 17</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2569,9 +2569,7 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
-            // Přidání ikony vlaku do stanice
-let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
-trainMarker.bindPopup(`Cílová stanice: ${destinationStop.name}`);
+            
 
             // Při doručení nákladu získej náhodnou částku peněz
             // Zaokrouhlení na celé číslo
@@ -2581,6 +2579,22 @@ document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed
         }
     }, interval);
 }
+
+    // Přidání pop-upu ke každému vlaku
+function addCargoDestinationPopup(trainMarker, destination) {
+    trainMarker.bindPopup(`Cílová stanice: ${destination}`);
+}
+
+// Přidání události kliknutí myší
+function addClickEventToTrainMarker(trainMarker, destination) {
+    trainMarker.on('click', function(e) {
+        trainMarker.openPopup();
+    });
+}
+
+// Ve funkci moveTrainToDestination po vytvoření markeru vlaku a před return trainMarker přidejte následující kód:
+addCargoDestinationPopup(trainMarker, destination);
+addClickEventToTrainMarker(trainMarker, destination);
 
 // Funkce pro generování náhodné částky peněz po doručení nákladu
 function generateRandomEarning() {
