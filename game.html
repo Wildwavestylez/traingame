@@ -2574,6 +2574,7 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
         trainMarker.bindPopup(`Cílová stanice: ${destinationLocation}`).openPopup();
             playerFinance += cargoPrice; // Přidání peněz hráči
             document.getElementById('finance').innerText = `Finance: ${Math.round(playerFinance)} Kč`; // Zaokrouhlení na celá čísla
+        });
         }
     }, interval);
 }
