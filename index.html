@@ -1,4 +1,4 @@
--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 7B3</p>
+    <p>Kupony vlaků: 7B4</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -186,7 +186,7 @@ function generateTrainButtons() {
     });
 }
 
-function buyTrain(trainIndex, cargoMarker, destinationLocation, cargoPrice) {
+function buyTrain(trainIndex) {
     let selectedTrain = trainTypes[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
@@ -196,25 +196,21 @@ function buyTrain(trainIndex, cargoMarker, destinationLocation, cargoPrice) {
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
-            iconSize: [64, 64],
-            iconAnchor: [32, 32],
+            iconSize: [100, 100],
+            iconAnchor: [50, 50],
             popupAnchor: [0, 0]
         });
 
         // Přidání ikony vlaku do stanice
-        let trainMarker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
-        trainMarker.bindPopup(selectedTrain.name);
-        trainMarker.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
-
-        // Předání proměnné trainMarker do funkce sendTrainForCargo
-        sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoPrice);
+        let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
+        station.bindPopup(selectedTrain.name);
+        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
 
         closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
 }
-
 function getTrainImage(trainIndex) {
     // Zde můžeš přidat další typy vlaků a jejich ikony
     switch (trainIndex) {
@@ -226,6 +222,8 @@ function getTrainImage(trainIndex) {
             return 'https://i.imgur.com/4EGn3VT.png';  // Defaultní ikona, můžeš změnit podle potřeby
     }
 }
+
+
 
 // Funkce pro výpočet ceny za odvoz nákladu
 function calculateCargoPrice(distance) {
@@ -284,47 +282,18 @@ function generateCargo() {
         });
     });
 }
-
-
-
+// Spustit generování nákladu každou minutu
+setInterval(generateCargo, cargoInterval);
     
-function sendTrainForCargo(trainMarker, cargoMarker, destinationLocation, cargoPrice) {
+// Funkce pro simulaci pohybu vlaku směrem k cíli
+function moveTrainToDestination(trainMarker, destinationLocation) {
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
-    trainMarker.on('add', function() {
-        const startLocation = trainMarker.getLatLng(); // Zde získáme pozici vlaku
-        const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
-        const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
+    const startLocation = trainMarker.getLatLng();
+    const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
+    const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
-        const startTime = new Date().getTime();
-
-        // Aktualizace polohy vlaku v pravidelných intervalech
-        const moveInterval = setInterval(() => {
-            const currentTime = new Date().getTime();
-            const elapsedTime = currentTime - startTime;
-
-            if (elapsedTime < travelTime) {
-                const ratio = elapsedTime / travelTime;
-                const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
-                const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
-
-                trainMarker.setLatLng([newLat, newLng]);
-            } else {
-                // Vlak dorazil na místo určení
-                clearInterval(moveInterval);
-                map.removeLayer(trainMarker);
-
-                // Při doručení nákladu získej náhodnou částku peněz
-                const earning = generateRandomEarning();
-                playerFinance += earning;
-                document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-            }
-        }, interval);
-    });
-}
-    
-function moveTrainToDestination(trainMarker, currentLocation, destinationLocation, hasCargo, travelTime) {
     const startTime = new Date().getTime();
 
     // Aktualizace polohy vlaku v pravidelných intervalech
@@ -334,23 +303,21 @@ function moveTrainToDestination(trainMarker, currentLocation, destinationLocatio
 
         if (elapsedTime < travelTime) {
             const ratio = elapsedTime / travelTime;
-            const newLat = currentLocation.lat + (destinationLocation[0] - currentLocation.lat) * ratio;
-            const newLng = currentLocation.lng + (destinationLocation[1] - currentLocation.lng) * ratio;
+            const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
+            const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
 
             trainMarker.setLatLng([newLat, newLng]);
         } else {
             // Vlak dorazil na místo určení
             clearInterval(moveInterval);
+            map.removeLayer(trainMarker);
 
-            // Přidání nákladu (pokud je náklad přijatý)
-            if (hasCargo) {
-                // Generování příjmu z nákladu
-                const earning = generateRandomEarning();
-                playerFinance += earning;
-                document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-            }
+            // Při doručení nákladu získej náhodnou částku peněz
+            const earning = generateRandomEarning();
+            playerFinance += earning;
+            document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
         }
-    }, 1000); // Interval aktualizace polohy vlaku v ms
+    }, interval);
 }
 
 // Funkce pro generování náhodné částky peněz po doručení nákladu
@@ -360,6 +327,27 @@ function generateRandomEarning() {
     return Math.floor(Math.random() * (maxEarning - minEarning + 1)) + minEarning;
 }
 
+// Funkce pro odeslání vlaku pro náklad
+function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
+    // Najdi vybraný vlak podle názvu
+    const selectedTrain = trainTypes.find(train => train.name === trainName);
+
+    if (selectedTrain) {
+        // Vytvoření ikony vlaku
+        let trainIcon = L.icon({
+            iconUrl: selectedTrain.image,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
+            popupAnchor: [0, 0]
+        });
+
+        // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
+        let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
+
+        // Spuštění simulace pohybu vlaku směrem k nákladu
+        moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
+    }
+}
 
     
 // Funkce pro získání náhodné destinace z okolních stanic
@@ -371,7 +359,7 @@ function getRandomDestination(stops, currentStop) {
     let randomStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
     return randomStop.name;
 }
-     
+
 function getRealDistance(start, end) {
     const lat1 = start.lat || start[0];
     const lon1 = start.lon || start[1];
