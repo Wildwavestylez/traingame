@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 20</p>
+    <p>Kupony vlaků: 21</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2545,9 +2545,9 @@ cargoMarker.on('click', function () {
 
                 cargoMarker.bindPopup(popupContent);
             }
-        });
-    });
-}
+        );
+    };
+
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
     
