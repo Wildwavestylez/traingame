@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 13</p>
+    <p>Kupony vlaků: 14</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2569,6 +2569,9 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
+            // Přidání popup okna k vlaku
+trainMarker.bindPopup(`Cílová stanice: ${destinationStop.name}`);
+
             // Při doručení nákladu získej náhodnou částku peněz
             // Zaokrouhlení na celé číslo
   playerFinance += cargoPrice;
@@ -2589,30 +2592,27 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
     // Najdi vybraný vlak podle názvu
     const selectedTrain = trainTypes.find(train => train.name === trainName);
 
+   function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
+    // Najdi vybraný vlak podle názvu
+    const selectedTrain = trainTypes.find(train => train.name === trainName);
+
     if (selectedTrain) {
         // Vytvoření ikony vlaku
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
-            iconSize: [80, 80],
-            iconAnchor: [0, 0],
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
             popupAnchor: [0, 0]
         });
 
         // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
         let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
 
-        // Odstranění ikony nákladu
-        map.removeLayer(cargoMarker);
-
-        trainMarker.on('click', function() {
-    const destinationStopName = cargoMarker.getPopup().getContent();
-    alert(`Cílová stanice nákladu: ${destinationStopName}`);
-});
-        
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
 
-        
+        // Přidání popup okna k vlaku
+        trainMarker.bindPopup(`Cílová stanice: ${destinationStop.name}`);
     }
 }
     
