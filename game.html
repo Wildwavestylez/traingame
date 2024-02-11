@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 04</p>
+    <p>Kupony vlaků: 05</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2544,7 +2544,7 @@ function generateCargo() {
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
     
-function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
+function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice, cargoMarker) {
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
@@ -2588,7 +2588,6 @@ function generateRandomEarning() {
     return Math.floor(Math.random() * (maxEarning - minEarning + 1)) + minEarning;
 }
 
-// Funkce pro odeslání vlaku pro náklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = trainTypes.find(train => train.name === trainName);
@@ -2609,12 +2608,8 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
         let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
 
         // Spuštění simulace pohybu vlaku směrem k nákladu
-        moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
+        moveTrainToDestination(trainMarker, destinationLocation, cargoPrice, cargoMarker);
     }
-}
-
-    function removeCargo(cargoMarker) {
-    map.removeLayer(cargoMarker);
 }
     
 // Funkce pro získání náhodné destinace z okolních stanic
