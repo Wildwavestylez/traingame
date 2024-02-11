@@ -2580,21 +2580,7 @@ document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed
     }, interval);
 }
 
-    // Přidání pop-upu ke každému vlaku
-function addCargoDestinationPopup(trainMarker, destination) {
-    trainMarker.bindPopup(`Cílová stanice: ${destination}`);
-}
-
-// Přidání události kliknutí myší
-function addClickEventToTrainMarker(trainMarker, destination) {
-    trainMarker.on('click', function(e) {
-        trainMarker.openPopup();
-    });
-}
-
-// Ve funkci moveTrainToDestination po vytvoření markeru vlaku a před return trainMarker přidejte následující kód:
-addCargoDestinationPopup(trainMarker, destination);
-addClickEventToTrainMarker(trainMarker, destination);
+  
 
 // Funkce pro generování náhodné částky peněz po doručení nákladu
 function generateRandomEarning() {
