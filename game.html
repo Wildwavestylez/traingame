@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 11</p>
+    <p>Kupony vlaků: 12</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2603,9 +2603,16 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
 
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
+
+        trainMarker.on('click', function() {
+    const destinationStopName = cargoMarker.getPopup().getContent().split('(')[0].trim(); // Získání názvu stanice z popup obsahu
+    alert(`Cílová stanice nákladu: ${destinationStopName}`);
+});
         
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
+
+        
     }
 }
     
