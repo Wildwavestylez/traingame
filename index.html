@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 7B5</p>
+    <p>Kupony vlaků: 7B6</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -230,66 +230,59 @@ function calculateCargoPrice(distance) {
     const pricePerKm = 12; // Cena za 1 km
     return distance * pricePerKm;
 }
-
-// Funkce pro generování nákladu na zastávkách
+function generateCargo() {
+  // Funkce pro generování nákladu na zastávkách
   const numCargo = 5; // Počet generovaných zakázek
-    const trainPosition = getTrainPosition();
+  const trainPosition = getTrainPosition();
 
-    if (!trainPosition) {
-        return;
-    }
+  if (!trainPosition) {
+    return;
+  }
 
-    // Vybrání náhodných zastávek v okruhu 10 km
-    const nearbyStops = getNearbyStops(trainPosition);
+  // Vybrání náhodných zastávek v okruhu 10 km
+  const nearbyStops = getNearbyStops(trainPosition);
 
-    // Generování zakázek
-    for (let i = 0; i < numCargo; i++) {
-        const randomStartStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
-        const randomDestinationStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
+  // Generování zakázek
+  for (let i = 0; i < numCargo; i++) {
+    const randomStartStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
+    const randomDestinationStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
 
-        createCargo(randomStartStop, randomDestinationStop);
-    }
-}
+    createCargo(randomStartStop, randomDestinationStop);
 
-                let cargoIcon = L.icon({
-                    iconUrl: 'https://i.imgur.com/cYbr4oG.png',
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 20],
-                    popupAnchor: [0, 0]
-                });
-
-                let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                
-                   // Vytvoření rolovacího menu pro výběr vlaku
-                let selectTrain = document.createElement('select');
-                trainTypes.forEach(train => {
-                    let option = document.createElement('option');
-                    option.value = train.name;
-                    option.text = train.name;
-                    selectTrain.add(option);
-                });
-
-                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro naklad
-                let confirmButton = document.createElement('button');
-                confirmButton.innerText = 'Potvrdit';
-                confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location); };
-
-                // Přidání rolovacího menu a tlačítka do popup okna
-                let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(selectTrain);
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(confirmButton);
-
-                cargoMarker.bindPopup(popupContent);
-            }
-        });
+    let cargoIcon = L.icon({
+      iconUrl: 'https://i.imgur.com/cYbr4oG.png',
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
+      popupAnchor: [0, 0]
     });
+
+    let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
+
+    // Vytvoření rolovacího menu pro výběr vlaku
+    let selectTrain = document.createElement('select');
+    trainTypes.forEach(train => {
+      let option = document.createElement('option');
+      option.value = train.name;
+      option.text = train.name;
+      selectTrain.add(option);
+    });
+
+    // Vytvoření tlačítka pro potvrzení odeslání vlaku pro náklad
+    let confirmButton = document.createElement('button');
+    confirmButton.innerText = 'Potvrdit';
+    confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location); };
+
+    // Přidání rolovacího menu a tlačítka do popup okna
+    let popupContent = document.createElement('div');
+    popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
+    popupContent.appendChild(document.createElement('br'));
+    popupContent.appendChild(selectTrain);
+    popupContent.appendChild(document.createElement('br'));
+    popupContent.appendChild(confirmButton);
+
+    cargoMarker.bindPopup(popupContent);
+  }
 }
-// Spustit generování nákladu každou minutu
-setInterval(generateCargo, cargoInterval);
-    // Funkce pro získání zastávek v okruhu 10 km od dané pozice
 function getNearbyStops(position) {
     const nearbyStops = [];
 
