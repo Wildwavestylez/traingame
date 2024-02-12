@@ -89,6 +89,13 @@ let availableLines = []; // Seznam dostupných linek
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
+const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
+    minZoom: 2,
+    maxZoom: 19,
+    tileSize: 256
+}).addTo(map);
+
 
 // Fiktivní data pro linky a zastávky
 const lines = [
