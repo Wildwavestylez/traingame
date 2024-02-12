@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: A</p>
+    <p>Kupony vlaků: B</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -89,12 +89,7 @@ let availableLines = []; // Seznam dostupných linek
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
-const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
-    minZoom: 2,
-    maxZoom: 19,
-    tileSize: 256
-}).addTo(map);
+
 
 
 // Fiktivní data pro linky a zastávky
@@ -155,8 +150,13 @@ lines.forEach(line => {
 });
 // Inicializace mapy Leaflet
 const map = L.map('map').setView([48.7505264, 21.8986283], 11);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
+
+
+    const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
+    minZoom: 2,
+    maxZoom: 19,
+    tileSize: 256
 }).addTo(map);
 
 // Skrytí linek na začátku hry
