@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: G</p>
+    <p>Kupony vlaků: H</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -470,7 +470,7 @@ function showRandomOffer() {
                 train.marker = trainMarker; // Uložení markeru do dat vlaku
 
                 // Spuštění pohybu vlaků na nové lince
-                moveTrainOnRailway(train, railwayData);
+               function moveTrain(train, line);
             });
 
             offerLine.stops.forEach(stop => {
@@ -482,43 +482,42 @@ function showRandomOffer() {
     }
 }
     
-// Funkce pro pohyb vlaku podle tratě z Open Railway Map
-function moveTrainOnRailway(train, railwayData) {
-    let currentIndex = 0;
-    let direction = 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
-
-    const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
+function moveTrain(train, line) {
+    let currentStopIndex = train.startingIndex;
+    let direction = train.reverse ? -1 : 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
+    let startTime = new Date();
 
     setInterval(() => {
-        const currentSegment = railwayData[currentIndex];
-        const nextIndex = currentIndex + direction;
+        const currentStop = line.stops[currentStopIndex];
+        const nextStop = line.stops[currentStopIndex + direction];
 
-        if (nextIndex >= 0 && nextIndex < railwayData.length) {
-            const nextSegment = railwayData[nextIndex];
-            const distanceToNextSegment = getDistance(currentSegment[0], currentSegment[1], nextSegment[0], nextSegment[1]);
-            const timeToNextSegment = distanceToNextSegment / train.maxSpeed;
+        if (nextStop) {
+            const distanceToNextStop = getDistance(currentStop.location[0], currentStop.location[1], nextStop.location[0], nextStop.location[1]);
+            const timeToNextStop = distanceToNextStop / train.maxSpeed; // Vypočítat čas na základě maxSpeed vlaku
 
-            // Aktualizace polohy vlaku
-            const currentTime = new Date().getTime();
-            const elapsedTime = (currentTime - startTime) / 1000;
+            const currentTime = new Date();
+            const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
 
-            if (elapsedTime <= timeToNextSegment) {
-                const ratio = elapsedTime / timeToNextSegment;
-                const lat = currentSegment[0] + (nextSegment[0] - currentSegment[0]) * ratio;
-                const lng = currentSegment[1] + (nextSegment[1] - currentSegment[1]) * ratio;
-                train.marker.setLatLng([lat, lng]);
+            if (elapsedTime <= timeToNextStop) {
+                const lat = currentStop.location[0] + (nextStop.location[0] - currentStop.location[0]) * (elapsedTime / timeToNextStop);
+                const lon = currentStop.location[1] + (nextStop.location[1] - currentStop.location[1]) * (elapsedTime / timeToNextStop);
+                train.marker.setLatLng([lat, lon]);
             } else {
-                currentIndex += direction;
-                startTime = new Date().getTime();
+                currentStopIndex += direction;
+                startTime = new Date();
+
+                if (currentStopIndex === 0 || currentStopIndex === line.stops.length - 1) {
+                    direction *= -1;
+                    giveRandomMoneyToPlayer(line.category);
+                }
             }
         } else {
-            // Dosáhli jsme konce tratě
-            clearInterval(moveInterval);
+            direction *= -1;
+            currentStopIndex += direction;
+            giveRandomMoneyToPlayer(line.category);
         }
     }, updateInterval);
 }
-    // Spuštění nabídek od herního drážního úřadu každou minutu
-setInterval(showRandomOffer, offerInterval);
 
     
 // Funkce pro udělení náhodné finanční částky hráči při dosažení zastávky
