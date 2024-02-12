@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: L</p>
+    <p>Kupony vlaků: M</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -337,6 +337,13 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             // Vlak dorazil na místo určení
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
+
+             // Uvolnění vlaku pro další zakázku
+            trainTypes.forEach(train => {
+                if (train.currentCargo && train.currentCargo.marker === trainMarker) {
+                    train.currentCargo = null;
+                }
+            });
 
             // Při doručení nákladu získej náhodnou částku peněz
             // Zaokrouhlení na celé číslo
