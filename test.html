@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: O</p>
+    <p>Kupony vlaků: P</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -246,7 +246,7 @@ function buyTrain(trainIndex) {
         document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`;
         
         // Získání pořadí zakoupeného vlaku
-        const trainOrder = purchasedTrains[trainIndex] ? purchasedTrains[trainIndex].length + 1 : 1;
+        const trainOrder = (purchasedTrains[trainIndex] ? purchasedTrains[trainIndex].length + 1 : 1);
         
         // Uložení informací o zakoupeném vlaku
         if (!purchasedTrains[trainIndex]) {
@@ -267,7 +267,15 @@ function buyTrain(trainIndex) {
     }
 }
 
-
+    function renderPurchasedTrains() {
+    const purchasedTrainsElement = document.getElementById("purchasedTrains");
+    purchasedTrainsElement.innerHTML = ""; // Vymaže obsah před vykreslením, abychom se vyhnuli duplicitním zobrazením
+    purchasedTrains.forEach((train, index) => {
+        const trainElement = document.createElement("div");
+        trainElement.textContent = `${index + 1}. ${train.name}`;
+        purchasedTrainsElement.appendChild(trainElement);
+    });
+}
 function getTrainImage(trainIndex, trainOrder) {
     const trainType = trainTypes[trainIndex];
     const images = trainType.images;
