@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: N</p>
+    <p>Kupony vlaků: O</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -89,7 +89,7 @@ let availableLines = []; // Seznam dostupných linek
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 10000; // Interval nabídek od herního drážního úřadu v ms
-
+const purchasedTrains = {};
 
 
 // Fiktivní data pro linky a zastávky
@@ -189,12 +189,35 @@ function closeTrainModal() {
  openTrainModal();
 
 const trainTypes = [
-    { name: 'Nákladní Lokomotiva Michalovce', price: 10000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [48.7505264, 21.8986283], purchased: 0 },
-    { name: 'Nákladní Lokomotiva Humenné', price: 20000, speed: 400, image: 'https://i.imgur.com/3Vz0jG7.png', location: [48.9302483, 21.9004994], purchased: 0 },
-    { name: 'Nákladní Lokomotiva Vranov', price: 50000, speed: 400, image: 'https://i.imgur.com/d8pHGVD.png', location: [48.8903617, 21.6741294], purchased: 0 },
-    { name: 'Nákladní Lokomotiva Strážské', price: 100000, speed: 400, image: 'https://i.imgur.com/PYQfds5.png', location: [48.8677217, 21.8253403], purchased: 0 },
+    { 
+        name: 'Nákladní Lokomotiva Michalovce', 
+        price: 10000, 
+        speed: 400, 
+        images: [
+            'https://i.imgur.com/PYquoig.png',
+            'https://i.imgur.com/T3zd5CI.png',
+            'https://i.imgur.com/vo8Tr8J.png',
+            'https://i.imgur.com/q3Mh9Ld.png',
+            'https://i.imgur.com/tw5kV39.png'
+        ], 
+        location: [48.7505264, 21.8986283] 
+    },
+    { 
+        name: 'Nákladní Lokomotiva Humenné', 
+        price: 20000, 
+        speed: 400, 
+        images: [
+            'https://i.imgur.com/3Vz0jG7.png',
+            'https://i.imgur.com/jXoYbZs.png',
+            'https://i.imgur.com/u0phELQ.png',
+            'https://i.imgur.com/TyxYs1f.png',
+            'https://i.imgur.com/XcHIeOk.png'
+        ], 
+        location: [48.9302483, 21.9004994] 
+    },
     // Další typy vlaků můžete přidat podle potřeby
 ];
+
 
 function generateTrainButtons() {
     let trainOptions = document.getElementById('trainOptions');
@@ -215,42 +238,41 @@ function generateTrainButtons() {
     });
 }
 
+// Funkce pro nákup vlaku
 function buyTrain(trainIndex) {
-    let selectedTrain = trainTypes[trainIndex];
-
-    if (playerFinance >= selectedTrain.price) {
-        playerFinance -= selectedTrain.price;
-        document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-
-        selectedTrain.purchased++; // Zvýšit počet zakoupených vlaků daného typu
-
-        // Vytvoření ikony vlaku a umístění na mapu
-        let trainIcon = L.icon({
-            iconUrl: selectedTrain.image,
-            iconSize: [10, 10],
-            iconAnchor: [5, 5],
-            popupAnchor: [0, 0]
+    const trainType = trainTypes[trainIndex];
+    if (playerFinance >= trainType.price) {
+        playerFinance -= trainType.price;
+        document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`;
+        
+        // Získání pořadí zakoupeného vlaku
+        const trainOrder = purchasedTrains[trainIndex] ? purchasedTrains[trainIndex].length + 1 : 1;
+        
+        // Uložení informací o zakoupeném vlaku
+        if (!purchasedTrains[trainIndex]) {
+            purchasedTrains[trainIndex] = [];
+        }
+        purchasedTrains[trainIndex].push({
+            name: trainType.name,
+            speed: trainType.speed,
+            image: getTrainImage(trainIndex, trainOrder),
         });
-
-        closeTrainModal();
-
-        generateTrainButtons(); // Aktualizovat tlačítka pro výběr vlaků
+        
+        // Zobrazení informace o zakoupeném vlaku
+        const trainInfo = document.createElement('div');
+        trainInfo.innerHTML = `<img src="${getTrainImage(trainIndex, trainOrder)}" width="50" height="50"> ${trainType.name} ${trainOrder}`;
+        document.getElementById('purchasedTrains').appendChild(trainInfo);
     } else {
-        alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
+        alert('Nemáte dostatek financí na nákup tohoto vlaku.');
     }
 }
 
 
-function getTrainImage(trainIndex) {
-    // Zde můžeš přidat další typy vlaků a jejich ikony
-    switch (trainIndex) {
-        case 0:  // První typ vlaku
-            return 'https://i.imgur.com/PYquoig.png';
-        case 1:  // Druhý typ vlaku
-            return 'https://i.imgur.com/d8pHGVD.png';
-        default:
-            return 'https://i.imgur.com/4EGn3VT.png';  // Defaultní ikona, můžeš změnit podle potřeby
-    }
+function getTrainImage(trainIndex, trainOrder) {
+    const trainType = trainTypes[trainIndex];
+    const images = trainType.images;
+    const imageIndex = (trainOrder - 1) % images.length;
+    return images[imageIndex];
 }
 
 
