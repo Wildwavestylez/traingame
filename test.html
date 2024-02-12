@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: F</p>
+    <p>Kupony vlaků: G</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -470,7 +470,7 @@ function showRandomOffer() {
                 train.marker = trainMarker; // Uložení markeru do dat vlaku
 
                 // Spuštění pohybu vlaků na nové lince
-                moveTrain(train, offerLine);
+                moveTrainOnRailway(train, railwayData);
             });
 
             offerLine.stops.forEach(stop => {
