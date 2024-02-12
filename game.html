@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 39</p>
+    <p>Kupony vlaků: 40</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2808,6 +2808,8 @@ function moveTrain(train, line) {
         }
     }, updateInterval);
 }
+    // Spuštění nabídek od herního drážního úřadu každou minutu
+setInterval(showRandomOffer, offerInterval);
 
     
 // Funkce pro udělení náhodné finanční částky hráči při dosažení zastávky
