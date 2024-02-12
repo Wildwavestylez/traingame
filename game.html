@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 35</p>
+    <p>Kupony vlaků: 36</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2409,6 +2409,13 @@ lines.forEach(line => {
 const map = L.map('map').setView([49.9498633, 15.2772647], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+    const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
+    minZoom: 2,
+    maxZoom: 19,
+    tileSize: 256
 }).addTo(map);
 
 // Skrytí linek na začátku hry
