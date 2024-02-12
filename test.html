@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: P</p>
+    <p>Kupony vlaků: Q</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -89,7 +89,7 @@ let availableLines = []; // Seznam dostupných linek
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 10000; // Interval nabídek od herního drážního úřadu v ms
-const purchasedTrains = {};
+
 
 
 // Fiktivní data pro linky a zastávky
@@ -218,7 +218,7 @@ const trainTypes = [
     // Další typy vlaků můžete přidat podle potřeby
 ];
 
-
+const purchasedTrains = {};
 function generateTrainButtons() {
     let trainOptions = document.getElementById('trainOptions');
     trainOptions.innerHTML = ''; // Vymazat předchozí tlačítka
