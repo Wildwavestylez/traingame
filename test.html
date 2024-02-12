@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: J</p>
+    <p>Kupony vlaků: K</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -226,8 +226,7 @@ function buyTrain(trainIndex) {
         // Přidání ikony vlaku do stanice
         let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
         station.bindPopup(selectedTrain.name);
-        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
-
+       
         closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
