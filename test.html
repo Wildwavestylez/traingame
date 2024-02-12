@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: Q</p>
+    <p>Kupony vlaků: R</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -218,21 +218,13 @@ const trainTypes = [
     // Další typy vlaků můžete přidat podle potřeby
 ];
 
-const purchasedTrains = {};
 function generateTrainButtons() {
     let trainOptions = document.getElementById('trainOptions');
-    trainOptions.innerHTML = ''; // Vymazat předchozí tlačítka
 
     trainTypes.forEach((train, index) => {
         let button = document.createElement('button');
-        button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}, Počet zakoupených: ${train.purchased}`;
-        button.onclick = function() { 
-            if (train.purchased > 0) {
-                sendTrainForCargo(train.name); // Pokud je zakoupený alespoň jeden vlak tohoto typu, umožnit jeho nasazení
-            } else {
-                buyTrain(index); // Jinak umožnit zakoupení vlaku
-            }
-        };
+        button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
+        button.onclick = function() { buyTrain(index); };
 
         trainOptions.appendChild(button);
     });
@@ -240,47 +232,45 @@ function generateTrainButtons() {
 
 // Funkce pro nákup vlaku
 function buyTrain(trainIndex) {
-    const trainType = trainTypes[trainIndex];
-    if (playerFinance >= trainType.price) {
-        playerFinance -= trainType.price;
-        document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`;
-        
-        // Získání pořadí zakoupeného vlaku
-        const trainOrder = (purchasedTrains[trainIndex] ? purchasedTrains[trainIndex].length + 1 : 1);
-        
-        // Uložení informací o zakoupeném vlaku
-        if (!purchasedTrains[trainIndex]) {
-            purchasedTrains[trainIndex] = [];
-        }
-        purchasedTrains[trainIndex].push({
-            name: trainType.name,
-            speed: trainType.speed,
-            image: getTrainImage(trainIndex, trainOrder),
+    let selectedTrain = trainTypes[trainIndex];
+
+    if (playerFinance >= selectedTrain.price) {
+        playerFinance -= selectedTrain.price;
+        document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+
+        // Přidání informace o zakázce do vybraného vlaku
+        selectedTrain.currentCargo = null;
+
+        // Vytvoření ikony vlaku a umístění na mapu
+        let trainIcon = L.icon({
+            iconUrl: selectedTrain.image,
+            iconSize: [10, 10],
+            iconAnchor: [5, 5],
+            popupAnchor: [0, 0]
         });
-        
-        // Zobrazení informace o zakoupeném vlaku
-        const trainInfo = document.createElement('div');
-        trainInfo.innerHTML = `<img src="${getTrainImage(trainIndex, trainOrder)}" width="50" height="50"> ${trainType.name} ${trainOrder}`;
-        document.getElementById('purchasedTrains').appendChild(trainInfo);
+
+        // Přidání ikony vlaku do stanice
+        let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
+        station.bindPopup(selectedTrain.name);
+       
+
+        closeTrainModal();
     } else {
-        alert('Nemáte dostatek financí na nákup tohoto vlaku.');
+        alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
 }
 
-    function renderPurchasedTrains() {
-    const purchasedTrainsElement = document.getElementById("purchasedTrains");
-    purchasedTrainsElement.innerHTML = ""; // Vymaže obsah před vykreslením, abychom se vyhnuli duplicitním zobrazením
-    purchasedTrains.forEach((train, index) => {
-        const trainElement = document.createElement("div");
-        trainElement.textContent = `${index + 1}. ${train.name}`;
-        purchasedTrainsElement.appendChild(trainElement);
-    });
-}
-function getTrainImage(trainIndex, trainOrder) {
-    const trainType = trainTypes[trainIndex];
+
+function getTrainImage(trainIndex, trainTypeIndex) {
+    const trainType = trainTypes[trainTypeIndex];
     const images = trainType.images;
-    const imageIndex = (trainOrder - 1) % images.length;
-    return images[imageIndex];
+
+    if (trainIndex < images.length) {
+        return images[trainIndex];
+    } else {
+        // Pokud není dostatek ikon, použijeme defaultní ikonu
+        return 'https://i.imgur.com/4EGn3VT.png'; // Defaultní ikona, můžeš změnit podle potřeby
+    }
 }
 
 
