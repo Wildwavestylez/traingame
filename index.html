@@ -62,8 +62,8 @@
 <div id="playerPanel">
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
-    <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 8B1</p>
+    <p id="finance">Finance: 500000 Kč</p>
+    <p>Kupony vlaků: 8B2</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -84,11 +84,13 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let playerFinance = 10000;
+let playerFinance = 500000;
 let availableLines = []; // Seznam dostupných linek
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
-const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
+const offerInterval = 10000; // Interval nabídek od herního drážního úřadu v ms
+
+
 
 // Fiktivní data pro linky a zastávky
 const lines = [
@@ -152,12 +154,29 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
+    const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
+    minZoom: 2,
+    maxZoom: 19,
+    tileSize: 256
+}).addTo(map);
+
+    
 // Skrytí linek na začátku hry
 lines.forEach(line => {
     line.hidden = true;
     availableLines.push(line);
 });
 
+function getRailwayFeaturesInBounds(bounds) {
+    // Získání vektorových prvků (tratí) v daných hranicích oblasti mapy
+    const railwayFeatures = openRailwayMapLayer.queryRenderedFeatures(bounds, {
+        layers: ['railways'] // Specifikace vrstvy tratí
+    });
+
+    return railwayFeatures;
+}
+    
     // Funkce pro otevření modálního okna
 function openTrainModal() {
     document.getElementById('trainModal').style.display = 'block';
@@ -170,7 +189,10 @@ function closeTrainModal() {
  openTrainModal();
 
 const trainTypes = [
-    { name: 'Nákladní Lokomotiva', price: 10000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [48.7505264, 21.8986283] },
+    { name: 'Nákladní Lokomotiva Michalovce', price: 10000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [48.7505264, 21.8986283] },
+    { name: 'Nákladní Lokomotiva Humenné', price: 20000, speed: 400, image: 'https://i.imgur.com/3Vz0jG7.png', location: [48.9302483, 21.9004994] },
+    { name: 'Nákladní Lokomotiva Vranov', price: 50000, speed: 400, image: 'https://i.imgur.com/d8pHGVD.png', location: [48.8903617, 21.6741294] },
+    { name: 'Nákladní Lokomotiva Strážské', price: 100000, speed: 400, image: 'https://i.imgur.com/PYQfds5.png', location: [48.8677217, 21.8253403] },
     // Další typy vlaků můžete přidat podle potřeby
 ];
 
@@ -186,12 +208,16 @@ function generateTrainButtons() {
     });
 }
 
+// Funkce pro nákup vlaku
 function buyTrain(trainIndex) {
     let selectedTrain = trainTypes[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
         playerFinance -= selectedTrain.price;
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+
+        // Přidání informace o zakázce do vybraného vlaku
+        selectedTrain.currentCargo = null;
 
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
@@ -204,13 +230,15 @@ function buyTrain(trainIndex) {
         // Přidání ikony vlaku do stanice
         let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
         station.bindPopup(selectedTrain.name);
-        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
+       
 
         closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
 }
+
+
 function getTrainImage(trainIndex) {
     // Zde můžeš přidat další typy vlaků a jejich ikony
     switch (trainIndex) {
@@ -310,6 +338,13 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
+             // Uvolnění vlaku pro další zakázku
+            trainTypes.forEach(train => {
+                if (train.currentCargo && train.currentCargo.marker === trainMarker) {
+                    train.currentCargo = null;
+                }
+            });
+
             // Při doručení nákladu získej náhodnou částku peněz
             // Zaokrouhlení na celé číslo
   playerFinance += cargoPrice;
@@ -326,11 +361,18 @@ function generateRandomEarning() {
     return Math.floor(Math.random() * (maxEarning - minEarning + 1)) + minEarning;
 }
 
+// Funkce pro odeslání vlaku pro náklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = trainTypes.find(train => train.name === trainName);
 
     if (selectedTrain) {
+        // Zkontroluj, zda je vlak volný
+        if (selectedTrain.currentCargo) {
+            alert("Tento vlak momentálně zpracovává jinou zakázku.");
+            return;
+        }
+
         // Vytvoření ikony vlaku
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
@@ -345,6 +387,13 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
         
+        // Přidání informace o aktuální zakázce do vlaku
+        selectedTrain.currentCargo = {
+            destination: destinationLocation,
+            cargoPrice: cargoPrice,
+            marker: trainMarker
+        };
+
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
     }
@@ -451,7 +500,7 @@ function showRandomOffer() {
                 train.marker = trainMarker; // Uložení markeru do dat vlaku
 
                 // Spuštění pohybu vlaků na nové lince
-                moveTrain(train, offerLine);
+                  moveTrain(train, line);
             });
 
             offerLine.stops.forEach(stop => {
@@ -499,8 +548,6 @@ function moveTrain(train, line) {
         }
     }, updateInterval);
 }
-    // Spuštění nabídek od herního drážního úřadu každou minutu
-setInterval(showRandomOffer, offerInterval);
 
     
 // Funkce pro udělení náhodné finanční částky hráči při dosažení zastávky
