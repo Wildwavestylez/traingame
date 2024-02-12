@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: E</p>
+    <p>Kupony vlaků: F</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -161,12 +161,22 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     tileSize: 256
 }).addTo(map);
 
+    
 // Skrytí linek na začátku hry
 lines.forEach(line => {
     line.hidden = true;
     availableLines.push(line);
 });
 
+function getRailwayFeaturesInBounds(bounds) {
+    // Získání vektorových prvků (tratí) v daných hranicích oblasti mapy
+    const railwayFeatures = openRailwayMapLayer.queryRenderedFeatures(bounds, {
+        layers: ['railways'] // Specifikace vrstvy tratí
+    });
+
+    return railwayFeatures;
+}
+    
     // Funkce pro otevření modálního okna
 function openTrainModal() {
     document.getElementById('trainModal').style.display = 'block';
@@ -472,40 +482,38 @@ function showRandomOffer() {
     }
 }
     
-// Funkce pro pohyb vlaku podle tratě
-function moveTrain(train, line) {
-    let currentStopIndex = train.startingIndex;
-    let direction = train.reverse ? -1 : 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
-    let startTime = new Date();
+// Funkce pro pohyb vlaku podle tratě z Open Railway Map
+function moveTrainOnRailway(train, railwayData) {
+    let currentIndex = 0;
+    let direction = 1; // Směr pohybu vlaku (1 = dopředu, -1 = zpět)
+
+    const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 
     setInterval(() => {
-        const currentStop = line.stops[currentStopIndex];
-        const nextStop = line.stops[currentStopIndex + direction];
+        const currentSegment = railwayData[currentIndex];
+        const nextIndex = currentIndex + direction;
 
-        if (nextStop) {
-            const distanceToNextStop = getDistance(currentStop.location[0], currentStop.location[1], nextStop.location[0], nextStop.location[1]);
-            const timeToNextStop = distanceToNextStop / train.maxSpeed; // Vypočítat čas na základě maxSpeed vlaku
+        if (nextIndex >= 0 && nextIndex < railwayData.length) {
+            const nextSegment = railwayData[nextIndex];
+            const distanceToNextSegment = getDistance(currentSegment[0], currentSegment[1], nextSegment[0], nextSegment[1]);
+            const timeToNextSegment = distanceToNextSegment / train.maxSpeed;
 
-            const currentTime = new Date();
-            const elapsedTime = (currentTime - startTime) / 1000 / 60 / 60;
+            // Aktualizace polohy vlaku
+            const currentTime = new Date().getTime();
+            const elapsedTime = (currentTime - startTime) / 1000;
 
-            if (elapsedTime <= timeToNextStop) {
-                const lat = currentStop.location[0] + (nextStop.location[0] - currentStop.location[0]) * (elapsedTime / timeToNextStop);
-                const lon = currentStop.location[1] + (nextStop.location[1] - currentStop.location[1]) * (elapsedTime / timeToNextStop);
-                train.marker.setLatLng([lat, lon]);
+            if (elapsedTime <= timeToNextSegment) {
+                const ratio = elapsedTime / timeToNextSegment;
+                const lat = currentSegment[0] + (nextSegment[0] - currentSegment[0]) * ratio;
+                const lng = currentSegment[1] + (nextSegment[1] - currentSegment[1]) * ratio;
+                train.marker.setLatLng([lat, lng]);
             } else {
-                currentStopIndex += direction;
-                startTime = new Date();
-
-                if (currentStopIndex === 0 || currentStopIndex === line.stops.length - 1) {
-                    direction *= -1;
-                    giveRandomMoneyToPlayer(line.category);
-                }
+                currentIndex += direction;
+                startTime = new Date().getTime();
             }
         } else {
-            direction *= -1;
-            currentStopIndex += direction;
-            giveRandomMoneyToPlayer(line.category);
+            // Dosáhli jsme konce tratě
+            clearInterval(moveInterval);
         }
     }, updateInterval);
 }
