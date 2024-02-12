@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: K</p>
+    <p>Kupony vlaků: L</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -208,12 +208,16 @@ function generateTrainButtons() {
     });
 }
 
+// Funkce pro nákup vlaku
 function buyTrain(trainIndex) {
     let selectedTrain = trainTypes[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
         playerFinance -= selectedTrain.price;
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+
+        // Přidání informace o zakázce do vybraného vlaku
+        selectedTrain.currentCargo = null;
 
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
@@ -226,12 +230,15 @@ function buyTrain(trainIndex) {
         // Přidání ikony vlaku do stanice
         let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
         station.bindPopup(selectedTrain.name);
-       
+        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
+
         closeTrainModal();
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
 }
+
+
 function getTrainImage(trainIndex) {
     // Zde můžeš přidat další typy vlaků a jejich ikony
     switch (trainIndex) {
@@ -347,11 +354,18 @@ function generateRandomEarning() {
     return Math.floor(Math.random() * (maxEarning - minEarning + 1)) + minEarning;
 }
 
+// Funkce pro odeslání vlaku pro náklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = trainTypes.find(train => train.name === trainName);
 
     if (selectedTrain) {
+        // Zkontroluj, zda je vlak volný
+        if (selectedTrain.currentCargo) {
+            alert("Tento vlak momentálně zpracovává jinou zakázku.");
+            return;
+        }
+
         // Vytvoření ikony vlaku
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
@@ -366,6 +380,13 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
         
+        // Přidání informace o aktuální zakázce do vlaku
+        selectedTrain.currentCargo = {
+            destination: destinationLocation,
+            cargoPrice: cargoPrice,
+            marker: trainMarker
+        };
+
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
     }
