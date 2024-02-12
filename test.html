@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: S</p>
+    <p>Kupony vlaků: T</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -86,6 +86,7 @@
 <script>
 let playerFinance = 500000;
 let availableLines = []; // Seznam dostupných linek
+let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 10000; // Interval nabídek od herního drážního úřadu v ms
@@ -215,7 +216,7 @@ function buyTrain(trainIndex) {
     if (playerFinance >= selectedTrain.price) {
         playerFinance -= selectedTrain.price;
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-
+          ownedTrains.push(selectedTrain);
         // Přidání informace o zakázce do vybraného vlaku
         selectedTrain.currentCargo = null;
 
@@ -364,7 +365,7 @@ function generateRandomEarning() {
 // Funkce pro odeslání vlaku pro náklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
-    const selectedTrain = trainTypes.find(train => train.name === trainName);
+    const selectedTrain = ownedTrains.find(train => train.name === trainName);
 
     if (selectedTrain) {
         // Zkontroluj, zda je vlak volný
