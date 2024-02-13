@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: AD</p>
+    <p>Kupony vlaků: AE</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -200,8 +200,8 @@ const trainTypes = [
 ];
 
 function generateTrainButtons() {
-    // Seznam států a jejich příslušné typy vlaků
-    const countries = {
+    // Seznam států a jejich příslušné typy vlaků a řady
+    const trainTypesByCountry = {
         "Česká Republika": {
             "751": ["751 017-5", "751 195-9"],
             "752": ["752 040-6"],
@@ -209,25 +209,19 @@ function generateTrainButtons() {
             "Vectron": ["Vectron"]
         },
         "Slovensko": {
-            "Typ 1": ["Vlak A", "Vlak B"],
-            "Typ 2": ["Vlak C", "Vlak D"],
-            "Typ 3": ["Vlak E", "Vlak F"]
+            // Doplnění dat pro Slovensko
         },
         "Německo": {
-            "Typ A": ["Vlak G", "Vlak H"],
-            "Typ B": ["Vlak I", "Vlak J"],
-            "Typ C": ["Vlak K", "Vlak L"]
+            // Doplnění dat pro Německo
         },
         "Rakousko": {
-            "Typ X": ["Vlak M", "Vlak N"],
-            "Typ Y": ["Vlak O", "Vlak P"],
-            "Typ Z": ["Vlak Q", "Vlak R"]
+            // Doplnění dat pro Rakousko
         }
     };
 
     // Vytvoření rolovací nabídky pro státy
     let countrySelect = document.createElement('select');
-    Object.keys(countries).forEach(country => {
+    Object.keys(trainTypesByCountry).forEach(country => {
         let option = document.createElement('option');
         option.value = country;
         option.text = country;
@@ -237,41 +231,36 @@ function generateTrainButtons() {
 
     // Vytvoření rolovací nabídky pro typy vlaků
     let trainTypeSelect = document.createElement('select');
+    generateTrainTypeButtons(Object.keys(trainTypesByCountry)[0]); // Výchozí nastavení na první zemi
     function generateTrainTypeButtons(country) {
-    trainTypeSelect.innerHTML = ''; // Vymazání starých položek
-    let selectedCountry = countrySelect.value;
-    let trainTypes = Object.keys(countries[selectedCountry]);
-    trainTypes.forEach(trainType => {
-        let option = document.createElement('option');
-        option.value = trainType;
-        option.text = trainType;
-        trainTypeSelect.add(option);
-    });
-   
-        generateTrainSeriesButtons(trainTypes[0]); // Výchozí nastavení na první typ vlaku
+        trainTypeSelect.innerHTML = ''; // Vymazání starých položek
+        Object.keys(trainTypesByCountry[country]).forEach(trainType => {
+            let option = document.createElement('option');
+            option.value = trainType;
+            option.text = trainType;
+            trainTypeSelect.add(option);
+        });
+        generateTrainSeriesButtons(country, trainTypeSelect.value); // Zobrazení třetího menu po vybrání typu vlaku
     }
 
-    // Deklarace proměnné trainSeriesSelect v nadřazeném kontextu
-    let trainSeriesSelect;
-
     // Vytvoření rolovací nabídky pro řady vlaků
-   function generateTrainSeriesButtons(trainType) {
-    trainSeriesSelect.innerHTML = ''; // Vymazání starých položek
-    let selectedCountry = countrySelect.value;
-    let trainSeries = countries[selectedCountry][trainType];
-    trainSeries.forEach(train => {
-        let option = document.createElement('option');
-        option.value = train;
-        option.text = train;
-        trainSeriesSelect.add(option);
-    });
-}
+    let trainSeriesSelect = document.createElement('select');
+    function generateTrainSeriesButtons(country, trainType) {
+        trainSeriesSelect.innerHTML = ''; // Vymazání starých položek
+        trainTypesByCountry[country][trainType].forEach(trainSeries => {
+            let option = document.createElement('option');
+            option.value = trainSeries;
+            option.text = trainSeries;
+            trainSeriesSelect.add(option);
+        });
+    }
 
     // Tlačítko pro nákup vybraného vlaku
     let buyButton = document.createElement('button');
     buyButton.innerText = 'Koupit';
     buyButton.onclick = function() { 
         let selectedCountry = countrySelect.value;
+        let selectedTrainType = trainTypeSelect.value;
         let selectedTrainSeries = trainSeriesSelect.value;
         let trainIndex = trainTypes.findIndex(train => train.name === selectedTrainSeries);
         if (trainIndex !== -1) {
@@ -285,11 +274,7 @@ function generateTrainButtons() {
     document.getElementById('trainButtons').innerHTML = ''; // Vyčištění starých tlačítek
     document.getElementById('trainButtons').appendChild(countrySelect);
     document.getElementById('trainButtons').appendChild(trainTypeSelect);
-    
-    // Inicializace trainSeriesSelect a jeho přidání do dokumentu
-    trainSeriesSelect = document.createElement('select');
     document.getElementById('trainButtons').appendChild(trainSeriesSelect);
-    
     document.getElementById('trainButtons').appendChild(buyButton);
 }
   
