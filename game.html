@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 5000 Kč</p>
-    <p>Kupony vlaků: 45</p>
+    <p>Kupony vlaků: 46</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2646,9 +2646,9 @@ function generateCargo() {
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
                 
-                // Vytvoření rolovacího menu pro výběr vlaku
+                          // Vytvoření rolovacího menu pro výběr vlaku, který hráč vlastní
                 let selectTrain = document.createElement('select');
-                trainTypes.forEach(train => {
+                ownedTrains.forEach(train => { // Pouze vlaky, které hráč vlastní
                     let option = document.createElement('option');
                     option.value = train.name;
                     option.text = train.name;
