@@ -62,8 +62,8 @@
 <div id="playerPanel">
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
-    <p id="finance">Finance: 5000 Kč</p>
-    <p>Kupony vlaků: 49</p>
+    <p id="finance">Finance: 500000 Kč</p>
+    <p>Kupony vlaků: 50</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -84,7 +84,7 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let playerFinance = 5000;
+let playerFinance = 500000;
 let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
@@ -2585,7 +2585,8 @@ function buyTrain(trainIndex) {
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
 
         // Přidání zakoupeného vlaku do pole ownedTrains
-        ownedTrains.push(selectedTrain);
+         ownedTrains.push({selectedTrain, assignedCargo: false });
+
 
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
@@ -2643,36 +2644,43 @@ function generateCargo() {
 
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
-                    iconSize: [50, 50],
+                    iconSize: [40, 40],
                     iconAnchor: [20, 20],
                     popupAnchor: [0, 0]
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
                 
-                          // Vytvoření rolovacího menu pro výběr vlaku, který hráč vlastní
+                // Vytvoření rolovacího menu pro výběr volného vlaku
                 let selectTrain = document.createElement('select');
-                ownedTrains.forEach(train => { // Pouze vlaky, které hráč vlastní
-                    let option = document.createElement('option');
-                    option.value = train.name;
-                    option.text = train.name;
-                    selectTrain.add(option);
+                ownedTrains.forEach(train => {
+                    if (!train.assignedCargo) { // Pokud vlak není přiřazen k žádnému nákladu
+                        let option = document.createElement('option');
+                        option.value = train.name;
+                        option.text = train.name;
+                        selectTrain.add(option);
+                    }
                 });
 
-                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro náklad
-                let confirmButton = document.createElement('button');
-                confirmButton.innerText = 'Potvrdit';
-                confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location, cargoPrice); };
+                // Pokud existují volné vlaky, vytvoříme tlačítko pro potvrzení odeslání vlaku pro náklad
+                if (selectTrain.childNodes.length > 0) {
+                    let confirmButton = document.createElement('button');
+                    confirmButton.innerText = 'Potvrdit';
+                    confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location, cargoPrice); };
 
-                // Přidání rolovacího menu a tlačítka do popup okna
-                let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(selectTrain);
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(confirmButton);
+                    // Přidání rolovacího menu a tlačítka do popup okna
+                    let popupContent = document.createElement('div');
+                    popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
+                    popupContent.appendChild(document.createElement('br'));
+                    popupContent.appendChild(selectTrain);
+                    popupContent.appendChild(document.createElement('br'));
+                    popupContent.appendChild(confirmButton);
 
-                cargoMarker.bindPopup(popupContent);
+                    cargoMarker.bindPopup(popupContent);
+                } else {
+                    // Pokud neexistují žádné volné vlaky, zpráva o nedostatku vlaků
+                    cargoMarker.bindPopup("Všechny vlaky jsou momentálně přiřazeny k nějakému nákladu.");
+                }
             }
         });
     });
