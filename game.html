@@ -62,8 +62,8 @@
 <div id="playerPanel">
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
-    <p id="finance">Finance: 10000 Kč</p>
-    <p>Kupony vlaků: 43</p>
+    <p id="finance">Finance: 5000 Kč</p>
+    <p>Kupony vlaků: 44</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -84,7 +84,7 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let playerFinance = 10000;
+let playerFinance = 5000;
 let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
@@ -232,6 +232,109 @@ const lines = [
                 { name: "České Budějovice", location: [48.9744872, 14.4886075] }, 
         ]
     }, 
+
+    {
+        name: "Trať 084 Rumburk – Panský – Mikulášovice",
+        color: "red",
+        category: "A",
+        trains: [
+            { name: "Train EE", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+            { name: "Train EF", startingIndex: 7, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+            
+        ],
+         stops: [
+                { name: "Rumburk", location: [50.9569169, 14.5506592] },
+                { name: "Dolní Křečany", location: [50.9563714, 14.5186719] },  
+                { name: "Staré Křečany", location: [50.9477006, 14.4920244] },
+                { name: "Panský", location: [50.9486314, 14.4619800] },   
+                { name: "Brtníky", location: [50.9518319, 14.4386692] },
+                { name: "Mikulášovice horní nádraží", location: [50.9564286, 14.3902617] },
+                 { name: "Mikulášovice střed", location: [50.9624292, 14.3574428] },
+                { name: "Mikulášovice dol.nádr.", location: [50.9843253, 14.3365575] },
+                ]
+    },  
+
+        {
+        name: "Trať 084a Rumburk – Panský – Mikulášovice",
+        color: "blue",
+        category: "A",
+        trains: [
+            { name: "Train EG", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+            
+            
+        ],
+         stops: [
+                { name: "Krásná Lípa", location: [50.9190103, 14.5122794] },  
+                { name: "Zahrady u Rumburka", location: [50.9339942, 14.4823628] },
+                { name: "Panský", location: [50.9486314, 14.4619800] },   
+                
+                ]
+    },  
+
+     {
+        name: "Trať 085 Rybniště – Varnsdorf",
+        color: "green",
+        category: "A",
+        trains: [
+            { name: "Train EH", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+            
+            
+        ],
+         stops: [
+                { name: "Rybniště", location: [50.8830911, 14.5100394] },
+                { name: "Horní Podluží", location: [50.8829803, 14.5569917] },  
+                { name: "Jiřetín pod Jedlovou", location: [50.8830414, 14.5808392] },
+                { name: "Dolní Podluží", location: [50.8863678, 14.6206322] },   
+                { name: "Varnsdorf", location: [50.9031486, 14.6386825] },
+                
+                ]
+    },  
+
+    {
+        name: "Trať 086 Liberec – Česká Lípa -Benešov nad Ploučnicí",
+        color: "red",
+        category: "A",
+        trains: [
+            { name: "Train EI", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Train EJ", startingIndex: 13, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Train EK", startingIndex: 15, reverse: true, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Train EL", startingIndex: 29, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            
+        ],
+         stops: [
+                { name: "Liberec", location: [50.7615014, 15.0462581] },
+                { name: "Liberec-Horní Růžodol", location: [50.7535667, 15.0329381] },  
+                { name: "Ostašov", location: [50.7633133, 15.0129100] },
+                { name: "Karlov pod Ještědem", location: [50.7737275, 14.9836978] },   
+                { name: "Kryštofovo Údolí", location: [50.7720756, 14.9420108] },
+                { name: "Novina", location: [50.7600364, 14.9417247] },
+                 { name: "Křižany", location: [50.7600364, 14.9417247] },
+                { name: "Zdislava", location: [50.7701303, 14.8767606] },
+                { name: "Rynoltice", location: [50.7869911, 14.8267717] },
+                { name: "Lvová", location: [50.7809944, 14.7878781] },  
+             { name: "Jablonné v Podještědí", location: [50.7694436, 14.7582206] },
+                { name: "Velký Valtinov", location: [50.7427178, 14.7334519] },  
+                { name: "Brniště", location: [50.7165794, 14.7288161] },
+                { name: "Velký Grunov", location: [50.6985436, 14.7283783] },   
+                { name: "Pertoltice pod Ralskem", location: [50.6775589, 14.7181283] },
+                { name: "Mimoň", location: [50.6580392, 14.7146397] },
+                 { name: "Zákupy-Božíkov", location: [50.6786614, 14.6499853] },
+                { name: "Zákupy", location: [50.6815261, 14.6359178] },
+                { name: "Vlčí Důl-Dobranov", location: [50.6713639, 14.6075686] },
+                { name: "Česká Lípa hlavní nádraží", location: [50.6771431, 14.5323933] }, 
+             { name: "Česká Lípa-Holý vrch", location: [50.6823806, 14.5229100] },
+                { name: "Stružnice", location: [50.6983489, 14.4499272] },  
+                { name: "Horní Police", location: [50.7060739, 14.4000883] },
+                { name: "Žandov", location: [50.7119750, 14.3900022] },   
+                { name: "Starý Šachov", location: [50.7208406, 14.3751708] },
+                { name: "Františkov nad Ploučnicí", location: [50.7239953, 14.3318328] },
+                 { name: "Benešov nad Ploučnicí", location: [50.7383500, 14.3050700 },
+                { name: "Malá Veleň", location: [50.7423400, 14.2723369] },
+                { name: "Březiny u Děčína", location: [50.7609750, 14.2439500] },
+                { name: "Děčín východ", location: [50.7750969, 14.2233067] },  
+             { name: "Děčín hlavní nádraží", location: [50.7735633, 14.2012986] },
+                ]
+    },  
 
 {
         name: "EC Hamburg - Berlin - Praha - Bratislava - Budapest",
@@ -2447,12 +2550,15 @@ function closeTrainModal() {
  openTrainModal();
 
 const trainTypes = [
-    { name: '751 017-5', price: 10000, speed: 400, image: 'https://i.imgur.com/PYQfds5.png', location: [48.7505264, 21.8986283] },
-     { name: '752 040-6', price: 11000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [48.8677217, 21.8253403] },
-    { name: '751 195-9', price: 15000, speed: 400, image: 'https://i.imgur.com/3Vz0jG7.png', location: [48.9302483, 21.9004994] },
-    { name: '754 021-4', price: 50000, speed: 400, image: 'https://i.imgur.com/6lom0Dq.png', location: [48.8903617, 21.6741294] },
-    { name: 'řada 380', price: 100000, speed: 400, image: 'https://i.imgur.com/XcHIeOk.png', location: [48.8677217, 21.8253403] },
-    { name: 'Vectron', price: 300000, speed: 400, image: 'https://i.imgur.com/HOsq8nT.png', location: [48.8677217, 21.8253403] },
+    { name: '742 186-0', price: 4500, speed: 400, image: 'https://i.imgur.com/7vdX1O8.png', location: [6.1246406, 81.1212572] },
+     { name: '742 381-7', price: 5300, speed: 400, image: 'https://i.imgur.com/10SmSIN.png', location: [6.1246406, 81.1212572] },
+    { name: '730 009-8', price: 15000, speed: 400, image: 'https://i.imgur.com/LHSHI9g.png', location: [6.1246406, 81.1212572] },
+    { name: '751 017-5', price: 10000, speed: 400, image: 'https://i.imgur.com/PYQfds5.png', location: [6.1246406, 81.1212572] },
+     { name: '752 040-6', price: 11000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [6.1246406, 81.1212572] },
+    { name: '751 195-9', price: 15000, speed: 400, image: 'https://i.imgur.com/3Vz0jG7.png', location: [6.1246406, 81.1212572] },
+    { name: '754 021-4', price: 50000, speed: 400, image: 'https://i.imgur.com/6lom0Dq.png', location: [6.1246406, 81.1212572] },
+    { name: 'řada 380', price: 100000, speed: 400, image: 'https://i.imgur.com/XcHIeOk.png', location: [6.1246406, 81.1212572] },
+    { name: 'Vectron', price: 300000, speed: 400, image: 'https://i.imgur.com/HOsq8nT.png', location: [6.1246406, 81.1212572] },
     // Další typy vlaků můžete přidat podle potřeby
 ];
 
