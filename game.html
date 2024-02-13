@@ -62,8 +62,8 @@
 <div id="playerPanel">
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
-    <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 51</p>
+    <p id="finance">Finance: 500 Kč</p>
+    <p>Kupony vlaků: 52</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -84,7 +84,7 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let playerFinance = 500000;
+let playerFinance = 500;
 let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
@@ -2548,12 +2548,24 @@ function closeTrainModal() {
  openTrainModal();
 
 const trainTypes = [
-    { name: '742 186-0', price: 2000, speed: 400, image: 'https://i.imgur.com/7vdX1O8.png', location: [6.1246406, 81.1212572] },
-     { name: '742 381-7', price: 3500, speed: 400, image: 'https://i.imgur.com/10SmSIN.png', location: [6.1246406, 81.1212572] },
-    { name: '730 009-8', price: 5000, speed: 400, image: 'https://i.imgur.com/LHSHI9g.png', location: [6.1246406, 81.1212572] },
-    { name: '751 017-5', price: 10000, speed: 400, image: 'https://i.imgur.com/PYQfds5.png', location: [6.1246406, 81.1212572] },
-     { name: '752 040-6', price: 11000, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [6.1246406, 81.1212572] },
-    { name: '751 195-9', price: 15000, speed: 400, image: 'https://i.imgur.com/3Vz0jG7.png', location: [6.1246406, 81.1212572] },
+    { name: 'T458', price: 500, speed: 400, image: 'https://i.imgur.com/6YGiGqU.png', location: [6.1246406, 81.1212572] },
+    { name: '742 186-0', price: 1000, speed: 400, image: 'https://i.imgur.com/7vdX1O8.png', location: [6.1246406, 81.1212572] },
+     { name: '742 381-7', price: 2000, speed: 400, image: 'https://i.imgur.com/10SmSIN.png', location: [6.1246406, 81.1212572] },
+    { name: '122 034-2', price: 2800, speed: 400, image: 'https://i.imgur.com/HmoWVco.png', location: [6.1246406, 81.1212572] },
+    { name: '730 009-8', price: 3300, speed: 400, image: 'https://i.imgur.com/LHSHI9g.png', location: [6.1246406, 81.1212572] },
+    { name: '751 017-5', price: 4000, speed: 400, image: 'https://i.imgur.com/PYQfds5.png', location: [6.1246406, 81.1212572] },
+     { name: '111 006-3', price: 4700, speed: 400, image: 'https://i.imgur.com/npzSJyk.png', location: [6.1246406, 81.1212572] },
+    { name: '121 067-3', price: 5200, speed: 400, image: 'https://i.imgur.com/OLpj5U0.png', location: [6.1246406, 81.1212572] },
+    { name: '744 111-3', price: 5800, speed: 400, image: 'https://i.imgur.com/nWW3KUr.png', location: [6.1246406, 81.1212572] },
+     { name: '210 038-6', price: 6500, speed: 400, image: 'https://i.imgur.com/VmpmxDD.png', location: [6.1246406, 81.1212572] },
+     { name: '752 040-6', price: 7200, speed: 400, image: 'https://i.imgur.com/PYquoig.png', location: [6.1246406, 81.1212572] },
+    { name: '751 195-9', price: 8000, speed: 400, image: 'https://i.imgur.com/3Vz0jG7.png', location: [6.1246406, 81.1212572] },
+    { name: '230 031-7', price: 10000, speed: 400, image: 'https://i.imgur.com/Cz4rWDM.png', location: [6.1246406, 81.1212572] },
+    { name: '124 601-6', price: 12000, speed: 400, image: 'https://i.imgur.com/nlnPd6i.png', location: [6.1246406, 81.1212572] },
+    { name: '123 020-0', price: 14000, speed: 400, image: 'https://i.imgur.com/kxPjJcI.png', location: [6.1246406, 81.1212572] },
+      { name: '363 077-9', price: 16500, speed: 400, image: 'https://i.imgur.com/CWbHmdW.png', location: [6.1246406, 81.1212572] },
+    { name: '363 170-2', price: 18500, speed: 400, image: 'https://i.imgur.com/gW0VyJM.png', location: [6.1246406, 81.1212572] },
+    { name: '362 053-1', price: 23000, speed: 400, image: 'https://i.imgur.com/iCs0J9d.png', location: [6.1246406, 81.1212572] },
      { name: '150 024-8', price: 28000, speed: 400, image: 'https://i.imgur.com/TyxYs1f.png', location: [6.1246406, 81.1212572] },
     { name: '363 044-9', price: 35000, speed: 400, image: 'https://i.imgur.com/zu23dSD.png', location: [6.1246406, 81.1212572] },
     { name: '162 035-0', price: 42000, speed: 400, image: 'https://i.imgur.com/TyxYs1f.png', location: [6.1246406, 81.1212572] },
@@ -2585,8 +2597,7 @@ function buyTrain(trainIndex) {
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
 
         // Přidání zakoupeného vlaku do pole ownedTrains
-         ownedTrains.push({selectedTrain, assignedCargo: false });
-
+        ownedTrains.push(selectedTrain);
 
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
@@ -2608,18 +2619,6 @@ function buyTrain(trainIndex) {
 }
 
 
-function getTrainImage(trainIndex) {
-    // Zde můžeš přidat další typy vlaků a jejich ikony
-    switch (trainIndex) {
-        case 0:  // První typ vlaku
-            return 'https://i.imgur.com/PYquoig.png';
-        case 1:  // Druhý typ vlaku
-            return 'https://i.imgur.com/d8pHGVD.png';
-        default:
-            return 'https://i.imgur.com/4EGn3VT.png';  // Defaultní ikona, můžeš změnit podle potřeby
-    }
-}
-
 
 
 // Funkce pro výpočet ceny za odvoz nákladu
@@ -2639,52 +2638,46 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.005) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.0002) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
-                    iconSize: [40, 40],
+                    iconSize: [50, 50],
                     iconAnchor: [20, 20],
                     popupAnchor: [0, 0]
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
                 
-                // Vytvoření rolovacího menu pro výběr volného vlaku
+                          // Vytvoření rolovacího menu pro výběr vlaku, který hráč vlastní
                 let selectTrain = document.createElement('select');
-                ownedTrains.forEach(train => {
-                    if (!train.assignedCargo) { // Pokud vlak není přiřazen k žádnému nákladu
-                        let option = document.createElement('option');
-                        option.value = train.id; // Nastavení hodnoty možnosti na ID vlaku
-                        option.text = train.name;
-                        selectTrain.appendChild(option);
-                    }
+                ownedTrains.forEach(train => { // Pouze vlaky, které hráč vlastní
+                    let option = document.createElement('option');
+                    option.value = train.name;
+                    option.text = train.name;
+                    selectTrain.add(option);
                 });
 
-                // Pokud existují volné vlaky, vytvoříme tlačítko pro potvrzení odeslání vlaku pro náklad
-                if (selectTrain.childNodes.length > 0) {
-                    let confirmButton = document.createElement('button');
-                    confirmButton.innerText = 'Potvrdit';
-                    confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location, cargoPrice); };
+                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro náklad
+                let confirmButton = document.createElement('button');
+                confirmButton.innerText = 'Potvrdit';
+                confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location, cargoPrice); };
 
-                    // Přidání rolovacího menu a tlačítka do popup okna
-                    let popupContent = document.createElement('div');
-                    popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
-                    popupContent.appendChild(document.createElement('br'));
-                    popupContent.appendChild(selectTrain);
-                    popupContent.appendChild(document.createElement('br'));
-                    popupContent.appendChild(confirmButton);
+                // Přidání rolovacího menu a tlačítka do popup okna
+                let popupContent = document.createElement('div');
+                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(selectTrain);
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(confirmButton);
 
-                    cargoMarker.bindPopup(popupContent);
-                } else {
-                    // Pokud neexistují žádné volné vlaky, zpráva o nedostatku vlaků
-                    cargoMarker.bindPopup("Všechny vlaky jsou momentálně přiřazeny k nějakému nákladu.");
-                }
+                cargoMarker.bindPopup(popupContent);
             }
         });
     });
 }
+
 // Spustit generování nákladu každou minutu
 setInterval(generateCargo, cargoInterval);
     
