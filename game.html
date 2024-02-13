@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 52</p>
+    <p>Kupony vlaků: 53</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2581,23 +2581,22 @@ function generateTrainButtons() {
     let trainOptions = document.getElementById('trainOptions');
 
     trainTypes.forEach((train, index) => {
-        let button = document.createElement('button');
-        button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
-        button.onclick = function() { buyTrain(index); };
+        if (!ownedTrains.includes(train)) { // Přidávat pouze vlaky, které hráč ještě nevlastní
+            let button = document.createElement('button');
+            button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
+            button.onclick = function() { buyTrain(index, button); };
 
-        trainOptions.appendChild(button);
+            trainOptions.appendChild(button);
+        }
     });
 }
 
-function buyTrain(trainIndex) {
+function buyTrain(trainIndex, button) {
     let selectedTrain = trainTypes[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
         playerFinance -= selectedTrain.price;
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-
-        // Přidání zakoupeného vlaku do pole ownedTrains
-        ownedTrains.push(selectedTrain);
 
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
@@ -2613,11 +2612,16 @@ function buyTrain(trainIndex) {
         station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
 
         closeTrainModal();
+
+        // Odstranění tlačítka po zakoupení vlaku
+        button.parentNode.removeChild(button);
+
+        // Přidání zakoupeného vlaku do pole ownedTrains
+        ownedTrains.push(selectedTrain);
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
 }
-
 
 
 
