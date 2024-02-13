@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: AA</p>
+    <p>Kupony vlaků: AB</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -206,7 +206,7 @@ function generateTrainButtons() {
             "751": ["751 017-5", "751 195-9"],
             "752": ["752 040-6"],
             "754": ["754 021-4"],
-            "183": ["Vectron"]
+            "Vectron": ["Vectron"]
         },
         "Slovensko": {
             "Typ 1": ["Vlak A", "Vlak B"],
@@ -248,19 +248,19 @@ function generateTrainButtons() {
             option.text = trainType;
             trainTypeSelect.add(option);
         });
+        generateTrainSeriesButtons(trainTypes[0]); // Výchozí nastavení na první typ vlaku
     }
 
     // Vytvoření rolovací nabídky pro řady vlaků
     let trainSeriesSelect = document.createElement('select');
-    generateTrainSeriesButtons(Object.keys(countries)[0]); // Výchozí nastavení na první zemi
-    function generateTrainSeriesButtons(country) {
+    function generateTrainSeriesButtons(trainType) {
         trainSeriesSelect.innerHTML = ''; // Vymazání starých položek
         let selectedCountry = countrySelect.value;
-        let trainTypes = Object.keys(countries[selectedCountry]);
-        trainTypes.forEach(trainType => {
+        let trainSeries = countries[selectedCountry][trainType];
+        trainSeries.forEach(train => {
             let option = document.createElement('option');
-            option.value = trainType;
-            option.text = trainType;
+            option.value = train;
+            option.text = train;
             trainSeriesSelect.add(option);
         });
     }
@@ -270,10 +270,8 @@ function generateTrainButtons() {
     buyButton.innerText = 'Koupit';
     buyButton.onclick = function() { 
         let selectedCountry = countrySelect.value;
-        let selectedTrainType = trainTypeSelect.value;
         let selectedTrainSeries = trainSeriesSelect.value;
-        let selectedTrainName = selectedTrainSeries + " " + selectedTrainType;
-        let trainIndex = trainTypes.findIndex(train => train.name === selectedTrainName);
+        let trainIndex = trainTypes.findIndex(train => train.name === selectedTrainSeries);
         if (trainIndex !== -1) {
             buyTrain(trainIndex); 
         } else {
@@ -288,7 +286,6 @@ function generateTrainButtons() {
     document.getElementById('trainButtons').appendChild(trainSeriesSelect);
     document.getElementById('trainButtons').appendChild(buyButton);
 }
-
   
 // Funkce pro nákup vlaku
 function buyTrain(trainIndex) {
