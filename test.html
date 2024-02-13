@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: Z</p>
+    <p>Kupony vlaků: AA</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -289,13 +289,7 @@ function generateTrainButtons() {
     document.getElementById('trainButtons').appendChild(buyButton);
 }
 
-    // Přidání vytvořených elementů do dokumentu
-    document.getElementById('trainButtons').innerHTML = ''; // Vyčištění starých tlačítek
-    document.getElementById('trainButtons').appendChild(countrySelect);
-    document.getElementById('trainButtons').appendChild(trainTypeSelect);
-    document.getElementById('trainButtons').appendChild(trainSeriesSelect);
-    document.getElementById('trainButtons').appendChild(buyButton);
-}
+  
 // Funkce pro nákup vlaku
 function buyTrain(trainIndex) {
     let selectedTrain = trainTypes[trainIndex];
