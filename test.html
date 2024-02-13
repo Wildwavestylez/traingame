@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: AF</p>
+    <p>Kupony vlaků: AG</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -243,19 +243,19 @@ function generateTrainButtons() {
         });
     }
 
-    // Vytvoření rolovací nabídky pro řady vlaků
     let trainSeriesSelect = document.createElement('select');
-    generateTrainSeriesButtons(Object.keys(countries)[0], Object.keys(countries[Object.keys(countries)[0]])[0]); // Výchozí nastavení na první zemi a první typ vlaku
-    function generateTrainSeriesButtons(country, trainType) {
-        trainSeriesSelect.innerHTML = ''; // Vymazání starých položek
-        let trainSeries = countries[country][trainType];
-        trainSeries.forEach(trainSeriesItem => {
-            let option = document.createElement('option');
-            option.value = trainSeriesItem;
-            option.text = trainSeriesItem;
-            trainSeriesSelect.add(option);
-        });
-    }
+generateTrainSeriesButtons(Object.keys(countries)[0], Object.keys(countries[Object.keys(countries)[0]])[0]); // Výchozí nastavení na první zemi a první typ vlaku
+function generateTrainSeriesButtons(country, trainType) {
+    trainSeriesSelect.innerHTML = ''; // Vymazání starých položek
+    let trainSeries = countries[country][trainType];
+    trainSeries.forEach(trainSeriesItem => {
+        let option = document.createElement('option');
+        option.value = trainSeriesItem;
+        option.text = trainSeriesItem;
+        trainSeriesSelect.add(option);
+    });
+}
+trainTypeSelect.onchange = function() { generateTrainSeriesButtons(countrySelect.value, this.value); };
 
     // Tlačítko pro nákup vybraného vlaku
     let buyButton = document.createElement('button');
