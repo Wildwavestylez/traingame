@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: 47</p>
+    <p>Kupony vlaků: 48</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2572,16 +2572,15 @@ function generateTrainButtons() {
     });
 }
 
-// Funkce pro nákup vlaku
 function buyTrain(trainIndex) {
     let selectedTrain = trainTypes[trainIndex];
 
     if (playerFinance >= selectedTrain.price) {
         playerFinance -= selectedTrain.price;
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-          ownedTrains.push(selectedTrain);
-        // Přidání informace o zakázce do vybraného vlaku
-        selectedTrain.currentCargo = null;
+
+        // Přidání zakoupeného vlaku do pole ownedTrains
+        ownedTrains.push(selectedTrain);
 
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
@@ -2594,7 +2593,7 @@ function buyTrain(trainIndex) {
         // Přidání ikony vlaku do stanice
         let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
         station.bindPopup(selectedTrain.name);
-       
+        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
 
         closeTrainModal();
     } else {
