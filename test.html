@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>Kupony vlaků: U</p>
+    <p>Kupony vlaků: V</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -200,62 +200,47 @@ const trainTypes = [
 ];
 
 function generateTrainButtons() {
-    // Funkce pro vytvoření tlačítka pro nákup konkrétní lokomotivy
-    function createBuyButton(train) {
-        let buyButton = document.createElement('button');
-        buyButton.innerText = `Koupit ${train.name} - ${train.price} Kč`;
-        buyButton.onclick = function() { buyTrain(train); };
-        return buyButton;
-    }
-
-    // Vytvoření rolovací nabídky pro výběr státu
-    let stateSelect = document.createElement('select');
-    let states = ["Česká Republika", "Slovensko", "Německo", "Rakousko"];
-    states.forEach(state => {
-        let option = document.createElement('option');
-        option.value = state;
-        option.text = state;
-        stateSelect.add(option);
-    });
-
-    // Vytvoření rolovací nabídky pro výběr řady vlaků podle vybraného státu
-    let trainSelect = document.createElement('select');
-    stateSelect.onchange = function() {
-        trainSelect.innerHTML = ''; // Vymažeme obsah trainSelect při změně státu
-        let selectedState = stateSelect.value;
-        let trainSeries = getTrainSeriesByState(selectedState); // Funkce getTrainSeriesByState() vrátí pole řad vlaků podle vybraného státu
-        trainSeries.forEach(trainSeries => {
-            let option = document.createElement('option');
-            option.value = trainSeries.name;
-            option.text = trainSeries.name;
-            trainSelect.add(option);
-        });
+    // Seznam států a jejich příslušné typy vlaků
+    const countries = {
+        "Česká Republika": ["751 017-5", "752 040-6", "751 195-9", "754 021-4", "řada 380", "Vectron"],
+        "Slovensko": ["Typ 1", "Typ 2", "Typ 3"], // Příklad, doplňte reálné typy vlaků
+        "Německo": ["Typ A", "Typ B", "Typ C"], // Příklad, doplňte reálné typy vlaků
+        "Rakousko": ["Typ X", "Typ Y", "Typ Z"] // Příklad, doplňte reálné typy vlaků
     };
 
-    // Vytvoření tlačítka pro potvrzení nákupu vybrané lokomotivy
-    let confirmButton = document.createElement('button');
-    confirmButton.innerText = 'Potvrdit nákup';
-    confirmButton.onclick = function() { confirmTrainPurchase(); };
+    // Vytvoření rolovací nabídky pro státy
+    let countrySelect = document.createElement('select');
+    Object.keys(countries).forEach(country => {
+        let option = document.createElement('option');
+        option.value = country;
+        option.text = country;
+        countrySelect.add(option);
+    });
+    countrySelect.onchange = function() { generateTrainTypeButtons(this.value); };
 
-    // Přidání všech vytvořených elementů do kontejneru
-    let container = document.createElement('div');
-    container.appendChild(stateSelect);
-    container.appendChild(trainSelect);
-    container.appendChild(confirmButton);
+    // Vytvoření rolovací nabídky pro typy vlaků
+    let trainTypeSelect = document.createElement('select');
+    generateTrainTypeButtons(Object.keys(countries)[0]); // Výchozí nastavení na první zemi
+    function generateTrainTypeButtons(country) {
+        trainTypeSelect.innerHTML = ''; // Vymazání starých položek
+        countries[country].forEach(trainType => {
+            let option = document.createElement('option');
+            option.value = trainType;
+            option.text = trainType;
+            trainTypeSelect.add(option);
+        });
+    }
 
-    // Zobrazení kontejneru s rolovacími nabídkami
-    document.getElementById('trainButtons').appendChild(container);
-}
+    // Tlačítko pro nákup vybraného vlaku
+    let buyButton = document.createElement('button');
+    buyButton.innerText = 'Koupit';
+    buyButton.onclick = function() { buyTrain(trainTypeSelect.value); };
 
-    const trainSeriesByState = {
-    "Česká Republika": ["742 186-0", "742 381-7", "730 009-8", "751 017-5", "752 040-6", "751 195-9", "754 021-4", "řada 380", "Vectron"],
-    "Slovensko": ["742 186-0", "742 381-7", "730 009-8", "751 017-5", "752 040-6", "751 195-9", "754 021-4", "řada 380"],
-    "Německo": ["751 017-5", "752 040-6", "751 195-9", "754 021-4", "řada 380", "Vectron"],
-    "Rakousko": ["751 017-5", "752 040-6", "751 195-9", "754 021-4", "řada 380", "Vectron"]
-};
-
-function getTrainSeriesByState(state) {
-    return trainSeriesByState[state] || []; // Vrátí pole řad vlaků podle vybraného státu, pokud není nalezeno, vrátí prázdné pole
+    // Přidání vytvořených elementů do dokumentu
+    document.getElementById('trainButtons').innerHTML = ''; // Vyčištění starých tlačítek
+    document.getElementById('trainButtons').appendChild(countrySelect);
+    document.getElementById('trainButtons').appendChild(trainTypeSelect);
+    document.getElementById('trainButtons').appendChild(buyButton);
 }
 
 // Funkce pro nákup vlaku
