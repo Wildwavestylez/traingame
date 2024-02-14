@@ -92,6 +92,11 @@ const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 600000; // Interval nabídek od herního drážního úřadu v ms
 
 
+
+window.onbeforeunload = function() {
+    return "Opravdu chcete opustit stránku?";
+};
+
     // Přidání funkcí pro práci s cookies
 function setCookie(cname, cvalue, exdays) {
     const d = new Date();
