@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 55</p>
+    <p>Kupony vlaků: 56</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -90,6 +90,56 @@ let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 600000; // Interval nabídek od herního drážního úřadu v ms
+
+
+    // Přidání funkcí pro práci s cookies
+function setCookie(cname, cvalue, exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+// Načtení herního stavu ze cookies
+window.onload = function () {
+    const financeCookie = getCookie("playerFinance");
+    if (financeCookie !== "") {
+        playerFinance = parseInt(financeCookie);
+        document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
+    }
+    
+    const ownedTrainsCookie = getCookie("ownedTrains");
+    if (ownedTrainsCookie !== "") {
+        ownedTrains = JSON.parse(ownedTrainsCookie);
+    }
+    
+    generateTrainButtons();
+    openTrainModal();
+    setInterval(generateCargo, cargoInterval);
+};
+
+// Ukládání herního stavu do cookies při opuštění stránky
+window.onbeforeunload = function () {
+    setCookie("playerFinance", playerFinance, 30);
+    setCookie("ownedTrains", JSON.stringify(ownedTrains), 30);
+};
+
 
 // Fiktivní data pro linky a zastávky
 const lines = [
@@ -2520,39 +2570,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     tileSize: 256
 }).addTo(map);
 
-// Načtení informací z cookies při načtení stránky
-window.onload = function () {
-    loadGameState();
-    generateTrainButtons();
-    openTrainModal();
-    setInterval(generateCargo, cargoInterval);
-    setInterval(showRandomOffer, offerInterval);
-};
-
-// Funkce pro uložení stavu hry do cookies
-function saveGameState() {
-    document.cookie = `playerFinance=${playerFinance}`;
-    document.cookie = `ownedTrains=${JSON.stringify(ownedTrains)}`;
-}
-
-// Funkce pro načtení stavu hry z cookies
-function loadGameState() {
-    const cookies = document.cookie.split(';').map(cookie => cookie.trim());
-    cookies.forEach(cookie => {
-        const [name, value] = cookie.split('=').map(item => item.trim());
-        if (name === 'playerFinance') {
-            playerFinance = parseInt(value) || 0;
-            document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-        } else if (name === 'ownedTrains') {
-            ownedTrains = JSON.parse(value) || [];
-        }
-    });
-}
-
-// Funkce pro uložení stavu hry při odchodu ze stránky
-window.onbeforeunload = function () {
-    saveGameState();
-}
     
 // Skrytí linek na začátku hry
 lines.forEach(line => {
