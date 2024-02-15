@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 60</p>
+    <p>Kupony vlaků: 61</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3066,16 +3066,16 @@ window.onbeforeunload = function () {
 };
 
 
-    // Funkce pro uložení stavu financí do cookies
+// Funkce pro uložení stavu financí do cookies
 function saveFinanceToCookies() {
     setCookie('playerFinance', playerFinance, 1); // Uložení na jeden den
 }
 
 // Funkce pro načtení stavu financí z cookies
 function loadFinanceFromCookies() {
-    const financeCookie = getCookie('playerFinance');
-    if (financeCookie !== '') {
-        playerFinance = parseInt(financeCookie);
+    const finance = getCookie('playerFinance');
+    if (finance !== '') {
+        playerFinance = parseFloat(finance); // Převedení na číslo
     }
 }
 
