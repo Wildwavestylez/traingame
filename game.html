@@ -3108,19 +3108,6 @@ function toRadians(degrees) {
 
 
 
-// Funkce pro aktualizaci hráčových financí a ukládání do localStorage
-function updatePlayerFinance(amount) {
-    playerFinance += amount;
-    localStorage.setItem('playerFinance', playerFinance.toString());
-    document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-}
-
-// Funkce pro resetování hráčových financí na výchozí hodnotu
-function resetPlayerFinance() {
-    playerFinance = 10000;
-    localStorage.setItem('playerFinance', playerFinance.toString());
-    document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-}
 </script>
 
 </body>
