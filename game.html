@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 65</p>
+    <p>Kupony vlaků: 66</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2987,7 +2987,48 @@ function toRadians(degrees) {
     return degrees * Math.PI / 180;
 }
 
+// Načtení hodnoty financí z cookies při načtení stránky
+window.onload = function () {
+    let savedFinance = getCookie("playerFinance");
+    if (savedFinance !== "") {
+        playerFinance = parseInt(savedFinance);
+        document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`;
+    }
 
+    generateTrainButtons();
+    openTrainModal();
+    setInterval(generateCargo, cargoInterval);
+};
+
+// Funkce pro uložení hodnoty financí do cookies
+function saveFinanceToCookie() {
+    setCookie("playerFinance", playerFinance, 30); // Uloží financie na 30 dní
+}
+
+// Funkce pro nastavení cookies
+function setCookie(cname, cvalue, exdays) {
+    let d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+// Funkce pro získání hodnoty cookies
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
 </script>
 
