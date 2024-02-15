@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 63</p>
+    <p>Kupony vlaků: 64</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3006,102 +3006,7 @@ function toRadians(degrees) {
     return degrees * Math.PI / 180;
 }
 
-    window.onbeforeunload = function() {
-    return "Opravdu chcete opustit stránku?";
-};
 
-    // Přidání funkcí pro práci s cookies
-// Funkce pro uložení dat do cookies
-function setCookie(name, value, days) {
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    const expires = "expires=" + date.toUTCString();
-    document.cookie = name + "=" + value + ";" + expires + ";path=/";
-}
-
-// Funkce pro získání dat z cookies
-function getCookie(name) {
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const cookies = decodedCookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i];
-        while (cookie.charAt(0) === ' ') {
-            cookie = cookie.substring(1);
-        }
-        if (cookie.indexOf(name) === 0) {
-            return cookie.substring(name.length + 1, cookie.length);
-        }
-    }
-    return "";
-}
-
-// Funkce pro odstranění dat z cookies
-function deleteCookie(name) {
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
-}
-
-// Funkce pro uložení zakoupených vlaků do cookies
-function saveOwnedTrainsToCookies() {
-    const jsonOwnedTrains = JSON.stringify(ownedTrains);
-    setCookie('ownedTrains', jsonOwnedTrains, 1); // Uložení na jeden den
-}
-
-// Funkce pro načtení zakoupených vlaků z cookies
-function loadOwnedTrainsFromCookies() {
-    const jsonOwnedTrains = getCookie('ownedTrains');
-    if (jsonOwnedTrains !== '') {
-        ownedTrains = JSON.parse(jsonOwnedTrains);
-        
-        // Aktualizace stavu vlaků po načtení dat z cookies
-        ownedTrains.forEach(train => {
-            if (train.status === 'busy' && isTrainFree(train)) {
-                train.status = 'free';
-            }
-        });
-    }
-}
-    function isTrainFree(train) {
-    // Pokud má vlak status 'free' a nezpracovává žádnou zakázku, je považován za volný
-    return train.status === 'free' && train.currentCargo === null;
-}
-
-// Načtení herního stavu ze cookies
-window.onload = function () {
-    const financeCookie = getCookie("playerFinance");
-    if (financeCookie !== "") {
-        playerFinance = parseInt(financeCookie);
-        document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-    }
-    
-    const ownedTrainsCookie = getCookie("ownedTrains");
-    if (ownedTrainsCookie !== "") {
-        ownedTrains = JSON.parse(ownedTrainsCookie);
-    }
-    
-    generateTrainButtons();
-    openTrainModal();
-    setInterval(generateCargo, cargoInterval);
-};
-
-// Ukládání herního stavu do cookies při opuštění stránky
-window.onbeforeunload = function () {
-    setCookie("playerFinance", playerFinance, 30);
-    setCookie("ownedTrains", JSON.stringify(ownedTrains), 30);
-};
-
-
-// Funkce pro uložení stavu financí do cookies
-function saveFinanceToCookies() {
-    setCookie('playerFinance', playerFinance, 1); // Uložení na jeden den
-}
-
-// Funkce pro načtení stavu financí z cookies
-function loadFinanceFromCookies() {
-    const finance = getCookie('playerFinance');
-    if (finance !== '') {
-        playerFinance = parseFloat(finance); // Převedení na číslo
-    }
-}
 
 </script>
 
