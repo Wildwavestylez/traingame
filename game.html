@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 62</p>
+    <p>Kupony vlaků: 63</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3051,7 +3051,18 @@ function loadOwnedTrainsFromCookies() {
     const jsonOwnedTrains = getCookie('ownedTrains');
     if (jsonOwnedTrains !== '') {
         ownedTrains = JSON.parse(jsonOwnedTrains);
+        
+        // Aktualizace stavu vlaků po načtení dat z cookies
+        ownedTrains.forEach(train => {
+            if (train.status === 'busy' && isTrainFree(train)) {
+                train.status = 'free';
+            }
+        });
     }
+}
+    function isTrainFree(train) {
+    // Pokud má vlak status 'free' a nezpracovává žádnou zakázku, je považován za volný
+    return train.status === 'free' && train.currentCargo === null;
 }
 
 // Načtení herního stavu ze cookies
