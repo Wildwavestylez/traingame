@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 64</p>
+    <p>Kupony vlaků: 65</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2588,15 +2588,11 @@ const trainTypes = [
 
 function generateTrainButtons() {
     let trainOptions = document.getElementById('trainOptions');
-    trainOptions.innerHTML = ''; // Vyčištění obsahu pro případ opakovaného volání funkce
-
     trainTypes.forEach((train, index) => {
-        // Kontrola, zda hráč vlak již nevlastní
-        if (!ownedTrains.includes(train)) {
+        if (!ownedTrains.includes(train)) { // Přidávat pouze vlaky, které hráč ještě nevlastní
             let button = document.createElement('button');
             button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
-            button.onclick = function () { buyTrain(index); };
-
+            button.onclick = function() { buyTrain(index, button); };
             trainOptions.appendChild(button);
         }
     });
@@ -2604,11 +2600,9 @@ function generateTrainButtons() {
 
 function buyTrain(trainIndex, button) {
     let selectedTrain = trainTypes[trainIndex];
-
     if (playerFinance >= selectedTrain.price) {
         playerFinance -= selectedTrain.price;
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-
         // Vytvoření ikony vlaku a umístění na mapu
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
@@ -2616,20 +2610,15 @@ function buyTrain(trainIndex, button) {
             iconAnchor: [5, 5],
             popupAnchor: [0, 0]
         });
-
         // Přidání ikony vlaku do stanice
         let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
         station.bindPopup(selectedTrain.name);
         station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
-
         closeTrainModal();
-
         // Odstranění tlačítka po zakoupení vlaku
         button.parentNode.removeChild(button);
-
         // Přidání zakoupeného vlaku do pole ownedTrains
         ownedTrains.push(selectedTrain);
-         saveOwnedTrainsToCookies(); // Uložení pole zakoupených vlaků do cookies
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
