@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 61</p>
+    <p>Kupony vlaků: 62</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2527,6 +2527,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     tileSize: 256
 }).addTo(map);
 
+window.onload = function () {
+    // Načtení zakoupených vlaků z cookies
+    loadOwnedTrainsFromCookies();
+
+    // Generování tlačítek vlaků, otevření modálního okna, atd.
+    generateTrainButtons();
+    openTrainModal();
+    setInterval(generateCargo, cargoInterval);
+};
+
     
 // Skrytí linek na začátku hry
 lines.forEach(line => {
@@ -2586,12 +2596,14 @@ const trainTypes = [
 
 function generateTrainButtons() {
     let trainOptions = document.getElementById('trainOptions');
+    trainOptions.innerHTML = ''; // Vyčištění obsahu pro případ opakovaného volání funkce
 
     trainTypes.forEach((train, index) => {
-        if (!ownedTrains.includes(train)) { // Přidávat pouze vlaky, které hráč ještě nevlastní
+        // Kontrola, zda hráč vlak již nevlastní
+        if (!ownedTrains.includes(train)) {
             let button = document.createElement('button');
             button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
-            button.onclick = function() { buyTrain(index, button); };
+            button.onclick = function () { buyTrain(index); };
 
             trainOptions.appendChild(button);
         }
@@ -2625,6 +2637,7 @@ function buyTrain(trainIndex, button) {
 
         // Přidání zakoupeného vlaku do pole ownedTrains
         ownedTrains.push(selectedTrain);
+         saveOwnedTrainsToCookies(); // Uložení pole zakoupených vlaků do cookies
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
