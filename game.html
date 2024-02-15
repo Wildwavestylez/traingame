@@ -2527,15 +2527,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     tileSize: 256
 }).addTo(map);
 
-window.onload = function () {
-    // Načtení zakoupených vlaků z cookies
-    loadOwnedTrainsFromCookies();
 
-    // Generování tlačítek vlaků, otevření modálního okna, atd.
-    generateTrainButtons();
-    openTrainModal();
-    setInterval(generateCargo, cargoInterval);
-};
 
     
 // Skrytí linek na začátku hry
