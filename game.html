@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 80</p>
+    <p>Kupony vlaků: 81</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2686,8 +2686,6 @@ lines.forEach(line => {
     availableLines.push(line);
 });
 
-   
-
 function getRailwayFeaturesInBounds(bounds) {
     // Získání vektorových prvků (tratí) v daných hranicích oblasti mapy
     const railwayFeatures = openRailwayMapLayer.queryRenderedFeatures(bounds, {
@@ -2864,14 +2862,12 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
-            ownedTrains.forEach(train => {
-        if (train.currentCargo && train.currentCargo.marker === trainMarker) {
-            // Odstraníme náklad ze vlaku
-            train.currentCargo = null;
-            // Nastavíme vlak jako volný pro další zakázku
-            train.isFree = true;
-        }
-    });
+             // Uvolnění vlaku pro další zakázku
+            trainTypes.forEach(train => {
+                if (train.currentCargo && train.currentCargo.marker === trainMarker) {
+                    train.currentCargo = null;
+                }
+            });
 
             // Při doručení nákladu získej náhodnou částku peněz
             // Zaokrouhlení na celé číslo
@@ -2893,6 +2889,7 @@ function generateRandomEarning() {
     return Math.floor(Math.random() * (maxEarning - minEarning + 1)) + minEarning;
 }
 
+// Funkce pro odeslání vlaku pro náklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = ownedTrains.find(train => train.name === trainName);
@@ -2925,25 +2922,8 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
             marker: trainMarker
         };
 
-        // Aktualizace rolovacího menu
-        updateTrainMenu(selectedTrain);
-
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
-    }
-}
-
-// Funkce pro aktualizaci rolovacího menu po odeslání vlaku pro náklad
-function updateTrainMenu(train) {
-    // Odstranění vybraného vlaku z rolovacího menu
-    let selectTrain = document.getElementById('selectTrain');
-    let options = selectTrain.options;
-
-    for (let i = 0; i < options.length; i++) {
-        if (options[i].value === train.name) {
-            selectTrain.remove(i);
-            break;
-        }
     }
 }
     
