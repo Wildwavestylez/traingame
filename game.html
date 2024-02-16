@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 73</p>
+    <p>Kupony vlaků: 74</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2945,12 +2945,12 @@ function showRandomOffer() {
 
     switch (offerLine.category) {
         case "A":
-            offerPrice = Math.floor(Math.random() * (30000 - 25000 + 1)) + 25000;
+            offerPrice = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
             earningMin = 100;
             earningMax = 200;
             break;
         case "B":
-            offerPrice = Math.floor(Math.random() * (80000 - 70000 + 1)) + 70000;
+            offerPrice = Math.floor(Math.random() * (50000 - 30000 + 1)) + 30000;
             earningMin = 300;
             earningMax = 500;
             break;
@@ -2997,7 +2997,7 @@ function showRandomOffer() {
                 train.marker = trainMarker; // Uložení markeru do dat vlaku
 
                 // Spuštění pohybu vlaků na nové lince
-                  moveTrain(train, line);
+                moveTrain(train, offerLine);
             });
 
             offerLine.stops.forEach(stop => {
@@ -3105,7 +3105,6 @@ function getDistance(lat1, lon1, lat2, lon2) {
 function toRadians(degrees) {
     return degrees * Math.PI / 180;
 }
-
 
 
 </script>
