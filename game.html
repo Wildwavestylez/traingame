@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 77</p>
+    <p>Kupony vlaků: 78</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -89,7 +89,7 @@ let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
-const offerInterval = 60000; // Interval nabídek od herního drážního úřadu v ms
+const offerInterval = 600000; // Interval nabídek od herního drážního úřadu v ms
 
 
 
@@ -2793,7 +2793,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.0005) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.0004) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
