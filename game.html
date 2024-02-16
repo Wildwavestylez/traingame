@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 79</p>
+    <p>Kupony vlaků: 80</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2686,12 +2686,7 @@ lines.forEach(line => {
     availableLines.push(line);
 });
 
-    function initializeTrains() {
-    // Pro každý zakoupený vlak nastavíme, že je volný
-    ownedTrains.forEach(train => {
-        train.isFree = true;
-    });
-}
+   
 
 function getRailwayFeaturesInBounds(bounds) {
     // Získání vektorových prvků (tratí) v daných hranicích oblasti mapy
@@ -2909,9 +2904,6 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
             return;
         }
 
-        // Označení vlaku jako obsazeného
-        selectedTrain.isFree = false;
-
         // Vytvoření ikony vlaku
         let trainIcon = L.icon({
             iconUrl: selectedTrain.image,
@@ -2933,30 +2925,26 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
             marker: trainMarker
         };
 
+        // Aktualizace rolovacího menu
+        updateTrainMenu(selectedTrain);
+
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
-
-        // Aktualizace rolovacího menu
-        updateTrainSelectMenu();
     }
 }
 
-function updateTrainSelectMenu() {
-    // Najdi rolovací menu pro výběr vlaku
+// Funkce pro aktualizaci rolovacího menu po odeslání vlaku pro náklad
+function updateTrainMenu(train) {
+    // Odstranění vybraného vlaku z rolovacího menu
     let selectTrain = document.getElementById('selectTrain');
+    let options = selectTrain.options;
 
-    // Odstranění všech možností (vlaků) z rolovacího menu
-    selectTrain.innerHTML = '';
-
-    // Přidání volných vlaků do rolovacího menu
-    ownedTrains.forEach(train => {
-        if (train.isFree) {
-            let option = document.createElement('option');
-            option.value = train.name;
-            option.text = train.name;
-            selectTrain.add(option);
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].value === train.name) {
+            selectTrain.remove(i);
+            break;
         }
-    });
+    }
 }
     
 // Funkce pro získání náhodné destinace z okolních stanic
