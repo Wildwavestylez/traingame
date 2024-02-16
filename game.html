@@ -62,8 +62,8 @@
 <div id="playerPanel">
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
-    <p id="finance">Finance: 50000 Kč</p>
-    <p>Kupony vlaků: 75</p>
+    <p id="finance">Finance: 500 Kč</p>
+    <p>Kupony vlaků: 76</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -84,12 +84,12 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let playerFinance = 50000;
+let playerFinance = 500;
 let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
-const offerInterval = 10000; // Interval nabídek od herního drážního úřadu v ms
+const offerInterval = 60000; // Interval nabídek od herního drážního úřadu v ms
 
 
 
@@ -277,6 +277,37 @@ const lines = [
                 
                 ]
     },  
+
+     name: "Trať 092  Neratovice – Kralupy nad Vltavou - Kladno",
+        color: "blue",
+        category: "A",
+        trains: [
+            { name: "Train 1", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Train 2", startingIndex: 15, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Train 3", startingIndex: 8, reverse: true, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Train 4", startingIndex: 7, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            
+         stops: [
+                { name: "Neratovice", location: [50.2626839, 14.5176058] },
+                { name: "Chlumín", location: [50.2672386, 14.4564172] },
+                { name: "Netřeba", location: [50.2600822, 14.4222964] },
+                { name: "Úžice", location: [50.2564392, 14.3763142] },
+                { name: "Chvatěruby", location: [50.2400056, 14.3376808] },
+                { name: "Kralupy nad Vltavou", location: [50.2383881, 14.3135492] },
+                { name: "Kralupy nad Vltavou-Minice", location: [50.2243919, 14.2978925] },
+                { name: "Otvovice", location: [50.2102775, 14.2701597] },
+                { name: "Zákolany", location: [50.1998100, 14.2515822] },
+                { name: "Dřetovice", location: [50.1892167, 14.2015628] },
+                { name: "Brandýsek", location: [50.1841431, 14.1730594] },
+                { name: "Kladno-Vrapice", location: [50.1662178, 14.1538411] },
+                { name: "Kladno-Dubí", location: [50.1634217, 14.1298856] },
+                { name: "Kladno-Švermov", location: [50.1615792, 14.1150208] },
+                { name: "Kladno-Ostrovec", location: [50.1475028, 14.0868872] },
+                { name: "Kladno město", location: [50.1419908, 14.0836431] },
+                { name: "Kladno", location: [50.1278267, 14.1132203] },
+                
+        ]
+    }, 
 
      {
         name: "Trať 085 Rybniště – Varnsdorf",
