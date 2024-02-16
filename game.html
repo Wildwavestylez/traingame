@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 78</p>
+    <p>Kupony vlaků: 79</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2686,6 +2686,13 @@ lines.forEach(line => {
     availableLines.push(line);
 });
 
+    function initializeTrains() {
+    // Pro každý zakoupený vlak nastavíme, že je volný
+    ownedTrains.forEach(train => {
+        train.isFree = true;
+    });
+}
+
 function getRailwayFeaturesInBounds(bounds) {
     // Získání vektorových prvků (tratí) v daných hranicích oblasti mapy
     const railwayFeatures = openRailwayMapLayer.queryRenderedFeatures(bounds, {
@@ -2862,12 +2869,14 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
-             // Uvolnění vlaku pro další zakázku
-            trainTypes.forEach(train => {
-                if (train.currentCargo && train.currentCargo.marker === trainMarker) {
-                    train.currentCargo = null;
-                }
-            });
+            ownedTrains.forEach(train => {
+        if (train.currentCargo && train.currentCargo.marker === trainMarker) {
+            // Odstraníme náklad ze vlaku
+            train.currentCargo = null;
+            // Nastavíme vlak jako volný pro další zakázku
+            train.isFree = true;
+        }
+    });
 
             // Při doručení nákladu získej náhodnou částku peněz
             // Zaokrouhlení na celé číslo
@@ -2889,7 +2898,6 @@ function generateRandomEarning() {
     return Math.floor(Math.random() * (maxEarning - minEarning + 1)) + minEarning;
 }
 
-// Funkce pro odeslání vlaku pro náklad
 function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = ownedTrains.find(train => train.name === trainName);
@@ -2900,6 +2908,9 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
             alert("Tento vlak momentálně zpracovává jinou zakázku.");
             return;
         }
+
+        // Označení vlaku jako obsazeného
+        selectedTrain.isFree = false;
 
         // Vytvoření ikony vlaku
         let trainIcon = L.icon({
@@ -2924,7 +2935,28 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
 
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
+
+        // Aktualizace rolovacího menu
+        updateTrainSelectMenu();
     }
+}
+
+function updateTrainSelectMenu() {
+    // Najdi rolovací menu pro výběr vlaku
+    let selectTrain = document.getElementById('selectTrain');
+
+    // Odstranění všech možností (vlaků) z rolovacího menu
+    selectTrain.innerHTML = '';
+
+    // Přidání volných vlaků do rolovacího menu
+    ownedTrains.forEach(train => {
+        if (train.isFree) {
+            let option = document.createElement('option');
+            option.value = train.name;
+            option.text = train.name;
+            selectTrain.add(option);
+        }
+    });
 }
     
 // Funkce pro získání náhodné destinace z okolních stanic
