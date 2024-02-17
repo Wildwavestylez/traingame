@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 91</p>
+    <p>Kupony vlaků: 92</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2736,45 +2736,149 @@ const trainTypes = [
     // Další typy vlaků můžete přidat podle potřeby
 ];
 
-function generateTrainButtons() {
-    let trainOptions = document.getElementById('trainOptions');
-    trainTypes.forEach((train, index) => {
-        if (!ownedTrains.includes(train)) { // Přidávat pouze vlaky, které hráč ještě nevlastní
-            let button = document.createElement('button');
-            button.innerText = `${train.name} - Cena: ${train.price} Kč, Rychlost: ${train.speed}`;
-            button.onclick = function() { buyTrain(index, button); };
-            trainOptions.appendChild(button);
+function openTrainPurchaseModal() {
+    const modal = document.getElementById('trainPurchaseModal');
+    modal.style.display = 'block';
+
+    const countrySelect = document.getElementById('countrySelect');
+    const seriesSelect = document.getElementById('seriesSelect');
+    const trainSelect = document.getElementById('trainSelect');
+
+    // Vyplnění prvního rolovacího menu - států
+    countrySelect.innerHTML = '';
+    const countries = ['Česká republika', 'Slovensko', 'Rakousko'];
+    countries.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+    });
+
+    // Při změně státu vyplníme rolovací menu s řadami vlaků
+    countrySelect.addEventListener('change', () => {
+        const selectedCountry = countrySelect.value;
+        fillSeriesSelect(selectedCountry);
+    });
+
+    // Při změně řady vlaků vyplníme rolovací menu s konkrétními vlaky
+    seriesSelect.addEventListener('change', () => {
+        const selectedSeries = seriesSelect.value;
+        fillTrainSelect(selectedSeries);
+    });
+
+    // Při změně konkrétního vlaku zobrazíme jeho detaily
+    trainSelect.addEventListener('change', () => {
+        const selectedTrainName = trainSelect.value;
+        const selectedTrain = trains.find(train => train.name === selectedTrainName);
+        if (selectedTrain) {
+            displayTrainDetails(selectedTrain);
         }
     });
+
+    // Automatické vyplnění prvního rolovacího menu s řadami vlaků
+    const initialCountry = countrySelect.value;
+    fillSeriesSelect(initialCountry);
+
+    // Automatické vyplnění prvního rolovacího menu s konkrétními vlaky
+    const initialSeries = seriesSelect.value;
+    fillTrainSelect(initialSeries);
 }
 
-function buyTrain(trainIndex, button) {
-    let selectedTrain = trainTypes[trainIndex];
-    if (playerFinance >= selectedTrain.price) {
-        playerFinance -= selectedTrain.price;
-        document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-        // Vytvoření ikony vlaku a umístění na mapu
-        let trainIcon = L.icon({
-            iconUrl: selectedTrain.image,
-            iconSize: [10, 10],
-            iconAnchor: [5, 5],
-            popupAnchor: [0, 0]
-        });
-        // Přidání ikony vlaku do stanice
-        let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
-        station.bindPopup(selectedTrain.name);
-        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
-        closeTrainModal();
-        // Odstranění tlačítka po zakoupení vlaku
-        button.parentNode.removeChild(button);
-        // Přidání zakoupeného vlaku do pole ownedTrains
-        ownedTrains.push(selectedTrain);
-    } else {
-        alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
+function fillSeriesSelect(country) {
+    const seriesSelect = document.getElementById('seriesSelect');
+    seriesSelect.innerHTML = '';
+    const series = getSeriesForCountry(country);
+    series.forEach(seriesName => {
+        const option = document.createElement('option');
+        option.value = seriesName;
+        option.textContent = seriesName;
+        seriesSelect.appendChild(option);
+    });
+
+    // Po vyplnění rolovacího menu s řadami vlaků zavoláme funkci pro vyplnění menu s konkrétními vlaky
+    const selectedSeries = seriesSelect.value;
+    fillTrainSelect(selectedSeries);
+}
+
+function fillTrainSelect(series) {
+    const trainSelect = document.getElementById('trainSelect');
+    trainSelect.innerHTML = '';
+    const trainsForSeries = getTrainsForSeries(series);
+    trainsForSeries.forEach(train => {
+        const option = document.createElement('option');
+        option.value = train.name;
+        option.textContent = train.name;
+        trainSelect.appendChild(option);
+    });
+
+    // Zobrazení detailů prvního vlaku v rolovacím menu
+    const initialTrain = trainsForSeries[0];
+    if (initialTrain) {
+        displayTrainDetails(initialTrain);
     }
 }
 
+function getSeriesForCountry(country) {
+    // Tady můžete implementovat získání řad vlaků pro zvolený stát
+    // Například pokud máte uložené informace o státech a jejich řadách vlaků v databázi nebo jiném úložišti
+    // můžete zde provést dotaz a vrátit seznam řad vlaků pro daný stát
+    // Prozatím pro demonstrační účely použijeme statické informace
+    if (country === 'Česká republika') {
+        return ['Řada 742', 'Řada T458', 'Řada 122' ];
+    } else if (country === 'Slovensko') {
+        return ['Řada 350', 'Řada 381'];
+    } else if (country === 'Rakousko') {
+        return ['Řada 1016', 'Řada 1216'];
+    }
+    return [];
+}
 
+function getTrainsForSeries(series) {
+    // Tady můžete implementovat získání konkrétních vlaků pro zvolenou řadu
+    // Stejně jako u získání řad vlaků, můžete zde provést dotaz na databázi nebo jiné úložiště
+    // a získat seznam konkrétních vlaků pro danou řadu
+    // Prozatím pro demonstrační účely použijeme statické informace
+    if (series === 'Řada 742') {
+        return [
+             { name: '742 186-0', price: 1000, speed: 400, image: 'https://i.imgur.com/7vdX1O8.png', location: [6.1246406, 81.1212572] },
+             { name: '742 381-7', price: 2000, speed: 400, image: 'https://i.imgur.com/10SmSIN.png', location: [6.1246406, 81.1212572] },
+        ];
+    } else if (series === 'Řada T458') {
+        return [
+            { name: 'T458', price: 0, speed: 400, image: 'https://i.imgur.com/6YGiGqU.png', location: [6.1246406, 81.1212572] },
+        ];
+    } else if (series === 'Řada 122') {
+        return [
+           { name: '122 034-2', price: 2800, speed: 400, image: 'https://i.imgur.com/HmoWVco.png', location: [6.1246406, 81.1212572] },
+        ];
+    } else if (series === 'Řada 381') {
+        return [
+            { name: '381 001-9', price: 22000, speed: 420, image: 'https://i.imgur.com/abcdefg.png', location: [48.7505264, 21.8986283] },
+            { name: '381 002-0', price: 24000, speed: 430, image: 'https://i.imgur.com/abcdefg.png', location: [48.7505264, 21.8986283] }
+        ];
+    } else if (series === 'Řada 1016') {
+        return [
+            { name: '1016 001-1', price: 28000, speed: 420, image: 'https://i.imgur.com/abcdefg.png', location: [48.7505264, 21.8986283] },
+            { name: '1016 002-2', price: 30000, speed: 430, image: 'https://i.imgur.com/abcdefg.png', location: [48.7505264, 21.8986283] }
+        ];
+    } else if (series === 'Řada 1216') {
+        return [
+            { name: '1216 001-0', price: 32000, speed: 430, image: 'https://i.imgur.com/abcdefg.png', location: [48.7505264, 21.8986283] },
+            { name: '1216 002-1', price: 34000, speed: 440, image: 'https://i.imgur.com/abcdefg.png', location: [48.7505264, 21.8986283] }
+        ];
+    }
+    return [];
+}
+
+function displayTrainDetails(train) {
+    const trainDetailsContainer = document.getElementById('trainDetails');
+    trainDetailsContainer.innerHTML = `
+        <p><strong>Číslo vlaku:</strong> ${train.name}</p>
+        <p><strong>Cena:</strong> ${train.price} Kč</p>
+        <p><strong>Rychlost:</strong> ${train.speed} km/h</p>
+        <img src="${train.image}" alt="Train Image" width="100" height="100">
+    `;
+}
 
 // Funkce pro výpočet ceny za odvoz nákladu
 function calculateCargoPrice(distance) {
