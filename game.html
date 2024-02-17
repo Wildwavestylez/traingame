@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 105</p>
+    <p>Kupony vlaků: 106</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -309,6 +309,32 @@ const lines = [
         ]
     }, 
 
+    {
+        name: "Trať 095 Vraňany – Straškov – Zlonice",
+        color: "blue",
+        category: "A",
+        trains: [
+            { name: "Train 1", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+            { name: "Train 2", startingIndex: 11, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+            
+        ],
+         stops: [
+                 { name: "Vraňany", location: [50.3352203, 14.3717164] },
+                { name: "Horní Beřkovice", location: [50.3571892, 14.3552094] },  
+                { name: "Kostomlaty pod Řípem", location: [50.3803750, 14.3303489] },
+                { name: "Ctiněves", location: [50.3784753, 14.3066131] },  
+                { name: "Mnetěš", location: [50.3598975, 14.2760725] },
+                { name: "Straškov", location: [50.3618011, 14.2422047] },   
+                { name: "Bříza", location: [50.3542331, 14.2239956] },
+                { name: "Loucká", location: [50.3542331, 14.2239956] },
+                 { name: "Černuc", location: [50.3114053, 14.2033361] },
+                { name: "Hospozín", location: [50.3053867, 14.1614419] },
+                { name: "Břešťany", location: [50.2857078, 14.1237794] },
+                { name: "Zlonice zastávka", location: [50.2825981, 14.0934128] },  
+                { name: "Zlonice", location: [50.2850075, 14.0781669] },  
+                ]
+    },  
+
      {
         name: "Trať 085 Rybniště – Varnsdorf",
         color: "green",
@@ -325,6 +351,94 @@ const lines = [
                 
                 ]
     },  
+
+    {
+        name: "Trať 095 Vraňany – Straškov – Zlonice",
+        color: "blue",
+        category: "A",
+        trains: [
+            { name: "Train 1", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+            { name: "Train 2", startingIndex: 11, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+            
+        ],
+         stops: [
+                 { name: "Vraňany", location: [50.3352203, 14.3717164] },
+                { name: "Horní Beřkovice", location: [50.3571892, 14.3552094] },  
+                { name: "Kostomlaty pod Řípem", location: [50.3803750, 14.3303489] },
+                { name: "Ctiněves", location: [50.3784753, 14.3066131] },  
+                { name: "Mnetěš", location: [50.3598975, 14.2760725] },
+                { name: "Straškov", location: [50.3618011, 14.2422047] },   
+                { name: "Bříza", location: [50.3542331, 14.2239956] },
+                { name: "Loucká", location: [50.3542331, 14.2239956] },
+                 { name: "Černuc", location: [50.3114053, 14.2033361] },
+                { name: "Hospozín", location: [50.3053867, 14.1614419] },
+                { name: "Břešťany", location: [50.2857078, 14.1237794] },
+                { name: "Zlonice zastávka", location: [50.2825981, 14.0934128] },  
+                { name: "Zlonice", location: [50.2850075, 14.0781669] },  
+                ]
+    },  
+
+     {
+        name: "Trať 096 Roudnice nad Labem – Straškov – Libochovice",
+        color: "green",
+        category: "A",
+        trains: [
+            { name: "Train GU", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+             { name: "Train GV", startingIndex: 14, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+             ],
+         stops: [
+                { name: "Roudnice nad Labem", location: [50.4264947, 14.2646056] },
+                { name: "Roudnice nad Labem-Bezděkov", location: [50.4286575, 14.2820922] },  
+                { name: "Roudnice nad Labem město", location: [50.4216689, 14.2586328] },
+                { name: "Roudnice nad Labem-Hracholusky", location: [50.4169503, 14.2529525] },   
+                { name: "Kleneč", location: [50.3942947, 14.2468644] },
+                { name: "Vražkov", location: [50.3674964, 14.2642411] },
+                { name: "Straškov", location: [50.3618011, 14.2422047] },  
+                { name: "Bříza obec", location: [50.3635672, 14.2185489] },
+                { name: "Charvatce", location: [50.3593483, 14.1485758] },   
+                { name: "Mšené Lázně", location: [50.3615914, 14.1329736] },
+                { name: "Martiněves u Libochovic", location: [50.3801117, 14.1410056] },
+                { name: "Vrbka", location: [50.3899575, 14.1405211] },  
+                { name: "Budyně nad Ohří", location: [50.4050828, 14.1343442] },
+                { name: "Břežany nad Ohří", location: [50.4125519, 14.1157514] },   
+                { name: "Žabovřesky nad Ohří", location: [50.4157333, 14.0865383] },
+                { name: "Libochovice", location: [50.4104386, 14.0550347] },
+                
+                ]
+    },  
+
+    
+     {
+        name: "Trať 097 Lovosice – Teplice v Čechách",
+        color: "green",
+        category: "A",
+        trains: [
+            { name: "Train GU", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+             { name: "Train GV", startingIndex: 14, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+            { name: "Train GW", startingIndex: 7, reverse: true, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+             { name: "Train GX", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+             ],
+         stops: [
+                { name: "Lovosice", location: [50.5097847, 14.0594703] },
+                { name: "Lovosice zastávka", location: [50.5187989, 14.0423108] },  
+                { name: "Oparno", location: [50.5424500, 14.0129539] },
+                { name: "Chotiměř", location: [50.5471839, 13.9891731] },   
+                { name: "Dobkovičky", location: [50.5574397, 14.0048269] },
+                { name: "Radejčín", location: [50.5805283, 14.0031061] },
+                { name: "Žim", location: [50.5871011, 13.9650544] },  
+                { name: "Bořislav", location: [50.5856286, 13.9369192] },
+                { name: "Žalany zastávka", location: [50.5872078, 13.9162589] },   
+                { name: "Žalany", location: [50.5891267, 13.9007014] },
+                { name: "Hradiště v Čechách", location: [50.5936775, 13.8758572] },
+                { name: "Úpořiny", location: [50.6095542, 13.8788825] },  
+                { name: "Prosetice", location: [50.6310919, 13.8418322] },
+                { name: "Teplice zámecká zahrada", location: [50.6337472, 13.8137236] },   
+                { name: "Řetenice", location: [50.6424636, 13.8008594] },
+                { name: "Teplice v Čechách", location: [50.6464578, 13.8292283] },
+                
+                ]
+    },  
+
 
     {
         name: "Trať 086 Liberec – Česká Lípa -Benešov nad Ploučnicí",
@@ -2793,7 +2907,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.0005) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.001) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
