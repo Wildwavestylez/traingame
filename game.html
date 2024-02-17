@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 84</p>
+    <p>Kupony vlaků: 85</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2820,7 +2820,7 @@ function generateCargo() {
     });
 }
 
-function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
+function sendFreeTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
     // Najdi vybraný vlak podle názvu
     const selectedTrain = ownedTrains.find(train => train.name === trainName);
 
