@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 89</p>
+    <p>Kupony vlaků: 90</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2787,6 +2787,7 @@ function generateCargo() {
         line.stops.forEach(startStop => {
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
+            // Oprava načítání souřadnic
             let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
@@ -2803,11 +2804,11 @@ function generateCargo() {
                 });
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-
-                // Vytvoření rolovacího menu pro výběr vlaku, který hráč vlastní
+                
+                // Vytvoření rolovacího menu pro výběr volného vlaku
                 let selectTrain = document.createElement('select');
-                ownedTrains.forEach(train => { // Pouze vlaky, které hráč vlastní
-                    if (!train.currentCargo) { // Pokud vlak nemá aktuálně přiřazený náklad
+                ownedTrains.forEach(train => {
+                    if (!train.currentCargo) { // Pouze volné vlaky
                         let option = document.createElement('option');
                         option.value = train.name;
                         option.text = train.name;
@@ -2819,12 +2820,12 @@ function generateCargo() {
                 let confirmButton = document.createElement('button');
                 confirmButton.innerText = 'Potvrdit';
                 confirmButton.onclick = function() { 
-                    let selectedTrainName = selectTrain.value;
-                    let selectedTrain = ownedTrains.find(train => train.name === selectedTrainName);
+                    const selectedTrainName = selectTrain.value;
+                    const selectedTrain = ownedTrains.find(train => train.name === selectedTrainName);
                     if (selectedTrain) {
-                        sendTrainForCargo(selectedTrain, cargoMarker, destinationStop.location, cargoPrice); 
+                        sendTrainForCargo(selectedTrainName, cargoMarker, destinationStop.location, cargoPrice); 
                     } else {
-                        alert("Vyberte prosím volný vlak.");
+                        alert("Vybraný vlak nenalezen.");
                     }
                 };
 
