@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 96</p>
+    <p>Kupony vlaků: 97</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2697,14 +2697,14 @@ function getRailwayFeaturesInBounds(bounds) {
     
     // Funkce pro otevření modálního okna
 function openTrainModal() {
-    document.getElementById('trainModal').style.display = 'block';
+    document.getElementById('trainPurchaseModal').style.display = 'block';
 }
 
 // Funkce pro zavření modálního okna
-function closeTrainModal() {
-    document.getElementById('trainModal').style.display = 'none';
+function closeTrainPurchaseModal() {
+    document.getElementById('trainPurchaseModal').style.display = 'none';
 }
- openTrainModal();
+ openTrainPurchaseModal();
 
 const trainTypes = [
     { name: 'T458', price: 0, speed: 400, image: 'https://i.imgur.com/6YGiGqU.png', location: [6.1246406, 81.1212572] },
