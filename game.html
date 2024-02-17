@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 97</p>
+    <p>Kupony vlaků: 98</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2740,12 +2740,24 @@ function openTrainPurchaseModal() {
     const modal = document.getElementById('trainPurchaseModal');
     modal.style.display = 'block';
 
-    const countrySelect = document.getElementById('countrySelect');
-    const seriesSelect = document.getElementById('seriesSelect');
-    const trainSelect = document.getElementById('trainSelect');
+    const modalContent = document.getElementById('modalContent');
+
+    // Vytvoření prvku pro výběr státu
+    const countrySelect = document.createElement('select');
+    countrySelect.id = 'countrySelect';
+    modalContent.appendChild(countrySelect);
+
+    // Vytvoření prvku pro výběr řady vlaků
+    const seriesSelect = document.createElement('select');
+    seriesSelect.id = 'seriesSelect';
+    modalContent.appendChild(seriesSelect);
+
+    // Vytvoření prvku pro výběr konkrétního vlaku
+    const trainSelect = document.createElement('select');
+    trainSelect.id = 'trainSelect';
+    modalContent.appendChild(trainSelect);
 
     // Vyplnění prvního rolovacího menu - států
-    countrySelect.innerHTML = '';
     const countries = ['Česká republika', 'Slovensko', 'Rakousko'];
     countries.forEach(country => {
         const option = document.createElement('option');
@@ -2783,7 +2795,6 @@ function openTrainPurchaseModal() {
     const initialSeries = seriesSelect.value;
     fillTrainSelect(initialSeries);
 }
-
 function fillSeriesSelect(country) {
     const seriesSelect = document.getElementById('seriesSelect');
     seriesSelect.innerHTML = '';
