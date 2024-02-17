@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 87</p>
+    <p>Kupony vlaků: 88</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2787,6 +2787,7 @@ function generateCargo() {
         line.stops.forEach(startStop => {
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
+            // Oprava načítání souřadnic
             let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
@@ -2795,25 +2796,28 @@ function generateCargo() {
             if (Math.random() < 0.0005) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
-                // Tlačítko pro odeslání volného vlaku
-                let sendTrainButton = document.createElement('button');
-                sendTrainButton.innerText = 'Odeslat vlak';
-                sendTrainButton.onclick = function() { sendTrainForCargo(startStop.location, destinationStop.location, cargoPrice); };
-
-                // Přidání tlačítka do popup okna
-                let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(sendTrainButton);
-
-                // Vytvoření ikony nákladu a přidání na mapu
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
                     iconSize: [50, 50],
                     iconAnchor: [20, 20],
                     popupAnchor: [0, 0]
                 });
+
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
+                
+                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro náklad
+                let confirmButton = document.createElement('button');
+                confirmButton.innerText = 'Potvrdit';
+                confirmButton.onclick = function() { 
+                    sendTrainForCargo(selectedTrain.name, cargoMarker, destinationStop.location, cargoPrice); 
+                };
+
+                // Přidání tlačítka do popup okna
+                let popupContent = document.createElement('div');
+                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(confirmButton);
+
                 cargoMarker.bindPopup(popupContent);
             }
         });
