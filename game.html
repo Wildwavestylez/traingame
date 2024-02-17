@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 82</p>
+    <p>Kupony vlaků: 83</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2836,6 +2836,9 @@ function sendFreeTrainForCargo(startLocation, destinationLocation, cargoPrice) {
 
         // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
         let trainMarker = L.marker(startLocation, { icon: trainIcon }).addTo(map);
+
+        // Odstranění ikony nákladu
+        map.removeLayer(cargoMarker);
 
         // Přiřazení informace o aktuálním nákladu do vlaku
         freeTrain.currentCargo = {
