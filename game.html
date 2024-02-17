@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 83</p>
+    <p>Kupony vlaků: 84</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2820,37 +2820,40 @@ function generateCargo() {
     });
 }
 
-// Funkce pro odeslání volného vlaku pro náklad
-function sendFreeTrainForCargo(startLocation, destinationLocation, cargoPrice) {
-    // Najděte první volný vlak, který má hráč koupený
-    const freeTrain = ownedTrains.find(train => !train.currentCargo);
+function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPrice) {
+    // Najdi vybraný vlak podle názvu
+    const selectedTrain = ownedTrains.find(train => train.name === trainName);
 
-    if (freeTrain) {
+    if (selectedTrain) {
+        // Zkontroluj, zda je vlak volný
+        if (selectedTrain.currentCargo) {
+            alert("Tento vlak momentálně zpracovává jinou zakázku.");
+            return;
+        }
+
         // Vytvoření ikony vlaku
         let trainIcon = L.icon({
-            iconUrl: freeTrain.image,
+            iconUrl: selectedTrain.image,
             iconSize: [106, 106],
             iconAnchor: [53, 53],
             popupAnchor: [0, 0]
         });
 
         // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
-        let trainMarker = L.marker(startLocation, { icon: trainIcon }).addTo(map);
+        let trainMarker = L.marker(cargoMarker.getLatLng(), { icon: trainIcon }).addTo(map);
 
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
-
-        // Přiřazení informace o aktuálním nákladu do vlaku
-        freeTrain.currentCargo = {
+        
+        // Přidání informace o aktuální zakázce do vlaku
+        selectedTrain.currentCargo = {
             destination: destinationLocation,
             cargoPrice: cargoPrice,
             marker: trainMarker
         };
 
-        // Spuštění pohybu vlaku směrem k cílové destinaci
+        // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
-    } else {
-        alert("Nemáte žádné volné vlaky k odeslání nákladu.");
     }
 }
     
