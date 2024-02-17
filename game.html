@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 81</p>
+    <p>Kupony vlaků: 82</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -2787,54 +2787,69 @@ function generateCargo() {
         line.stops.forEach(startStop => {
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
-            // Oprava načítání souřadnic
             let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.0004) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.0005) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
+                // Tlačítko pro odeslání volného vlaku
+                let sendTrainButton = document.createElement('button');
+                sendTrainButton.innerText = 'Odeslat vlak';
+                sendTrainButton.onclick = function() { sendFreeTrainForCargo(startStop.location, destinationStop.location, cargoPrice); };
+
+                // Přidání tlačítka do popup okna
+                let popupContent = document.createElement('div');
+                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(sendTrainButton);
+
+                // Vytvoření ikony nákladu a přidání na mapu
                 let cargoIcon = L.icon({
                     iconUrl: 'https://i.imgur.com/cYbr4oG.png',
                     iconSize: [50, 50],
                     iconAnchor: [20, 20],
                     popupAnchor: [0, 0]
                 });
-
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
-                
-                          // Vytvoření rolovacího menu pro výběr vlaku, který hráč vlastní
-                let selectTrain = document.createElement('select');
-                ownedTrains.forEach(train => { // Pouze vlaky, které hráč vlastní
-                    let option = document.createElement('option');
-                    option.value = train.name;
-                    option.text = train.name;
-                    selectTrain.add(option);
-                });
-
-                // Vytvoření tlačítka pro potvrzení odeslání vlaku pro náklad
-                let confirmButton = document.createElement('button');
-                confirmButton.innerText = 'Potvrdit';
-                confirmButton.onclick = function() { sendTrainForCargo(selectTrain.value, cargoMarker, destinationStop.location, cargoPrice); };
-
-                // Přidání rolovacího menu a tlačítka do popup okna
-                let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(selectTrain);
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(confirmButton);
-
                 cargoMarker.bindPopup(popupContent);
             }
         });
     });
 }
 
-// Spustit generování nákladu každou minutu
-setInterval(generateCargo, cargoInterval);
+// Funkce pro odeslání volného vlaku pro náklad
+function sendFreeTrainForCargo(startLocation, destinationLocation, cargoPrice) {
+    // Najděte první volný vlak, který má hráč koupený
+    const freeTrain = ownedTrains.find(train => !train.currentCargo);
+
+    if (freeTrain) {
+        // Vytvoření ikony vlaku
+        let trainIcon = L.icon({
+            iconUrl: freeTrain.image,
+            iconSize: [106, 106],
+            iconAnchor: [53, 53],
+            popupAnchor: [0, 0]
+        });
+
+        // Vytvoření markeru pro vlak a umístění na aktuální pozici nákladu
+        let trainMarker = L.marker(startLocation, { icon: trainIcon }).addTo(map);
+
+        // Přiřazení informace o aktuálním nákladu do vlaku
+        freeTrain.currentCargo = {
+            destination: destinationLocation,
+            cargoPrice: cargoPrice,
+            marker: trainMarker
+        };
+
+        // Spuštění pohybu vlaku směrem k cílové destinaci
+        moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
+    } else {
+        alert("Nemáte žádné volné vlaky k odeslání nákladu.");
+    }
+}
     
 function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
