@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 108</p>
+    <p>Kupony vlaků: 109</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -295,6 +295,24 @@ const lines = [
                 
         ]
     }, 
+
+     {
+        name: "Trať 111  Kralupy nad Vltavou – Velvary ",
+        color: "red",
+        category: "A",
+        trains: [
+            { name: "Train EE", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+           
+            
+        ],
+         stops: [
+                { name: "Kralupy nad Vltavou", location: [50.2383881, 14.3135492] },
+                { name: "Kralupy nad Vltavou předměstí", location: [50.2318497, 14.2836294] },  
+                { name: "Olovnice zastávka", location: [50.2467042, 14.2537442] },
+                { name: "Velká Bučina", location: [50.2673836, 14.2399892] },   
+                { name: "Velvary", location: [50.2822036, 14.2433461] },
+                ]
+    },  
 
         {
         name: "Trať 084a Rumburk – Panský – Mikulášovice",
@@ -2856,11 +2874,11 @@ function closeTrainModal() {
  openTrainModal();
 
 const trainTypes = [
-    { name: '141 057-0', price: 200, speed: 400, image: 'https://i.imgur.com/6YGiGqU.png', location: [6.1246406, 81.1212572] },
-    { name: 'T458', price: 500, speed: 400, image: 'https://i.imgur.com/BvE0s27.png', location: [6.1246406, 81.1212572] },
+    { name: '141 057-0', price: 200, speed: 400, image: 'https://i.imgur.com/BvE0s27.png', location: [6.1246406, 81.1212572] },
+    { name: 'T458', price: 500, speed: 400, image: 'https://i.imgur.com/6YGiGqU.png', location: [6.1246406, 81.1212572] },
      { name: '111 020-4', price: 800, speed: 400, image: 'https://i.imgur.com/Jyj1Bbn.png', location: [6.1246406, 81.1212572] },
     { name: '742 186-0', price: 1000, speed: 400, image: 'https://i.imgur.com/7vdX1O8.png', location: [6.1246406, 81.1212572] },
-     { name: '100 001-7', price: 1000, speed: 400, image: 'https://i.imgur.com/Kb22Gev.png', location: [6.1246406, 81.1212572] },
+     { name: '100 001-7', price: 1400, speed: 400, image: 'https://i.imgur.com/Kb22Gev.png', location: [6.1246406, 81.1212572] },
      { name: '742 381-7', price: 1900, speed: 400, image: 'https://i.imgur.com/10SmSIN.png', location: [6.1246406, 81.1212572] },
     { name: '110 001-5', price: 2300, speed: 400, image: 'https://i.imgur.com/JvDYUF9.png', location: [6.1246406, 81.1212572] },
     { name: '122 034-2', price: 2800, speed: 400, image: 'https://i.imgur.com/HmoWVco.png', location: [6.1246406, 81.1212572] },
