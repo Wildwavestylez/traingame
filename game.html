@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 121</p>
+    <p>Kupony vlaků: 122</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3039,10 +3039,10 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
         
-            // Přidání informace o aktuální zakázce do vlaku
+        // Přidání informace o aktuální zakázce do vlaku
         availableTrain.currentCargo = {
-            origin: cargoMarker.stopName,
-            destination: destinationLocation.stopName,
+            startStation: findNearestStation(cargoMarker.getLatLng()),
+            destinationStation: findNearestStation(destinationLocation),
             cargoPrice: cargoPrice,
             marker: trainMarker
         };
@@ -3055,9 +3055,9 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
             let cargoInfo = availableTrain.currentCargo;
             if (cargoInfo) {
                 let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Startovní stanice: ${cargoInfo.origin}`));
+                popupContent.appendChild(document.createTextNode(`Startovní stanice: ${cargoInfo.startStation}`));
                 popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destination}`));
+                popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
                 popupContent.appendChild(document.createElement('br'));
                 popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
                 this.bindPopup(popupContent).openPopup();
@@ -3068,12 +3068,21 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
     }
 }
 
-// Funkce pro nalezení názvu zastávky na základě souřadnic
-function findStationName(location) {
-    let station = lines.flatMap(line => line.stops).find(stop => stop.location[0] === location.lat && stop.location[1] === location.lng);
-    return station ? station.name : "Neznámá stanice";
+function findNearestStation(location) {
+    // Nalezení nejbližší zastávky na základě souřadnic
+    let nearestStation = "";
+    let minDistance = Number.MAX_VALUE;
+    lines.forEach(line => {
+        line.stops.forEach(stop => {
+            let distance = getDistance(location.lat, location.lng, stop.location[0], stop.location[1]);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestStation = stop.name;
+            }
+        });
+    });
+    return nearestStation;
 }
-
 function findAvailableTrain() {
     return ownedTrains.find(train => !train.currentCargo);
 }
