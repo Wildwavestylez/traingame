@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 119</p>
+    <p>Kupony vlaků: 120</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3068,10 +3068,10 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
     }
 }
 
-// Funkce pro získání názvu zastávky na základě jejích souřadnic
-function getStopName(location) {
-    let stop = lines.flatMap(line => line.stops).find(stop => stop.location[0] === location.lat && stop.location[1] === location.lng);
-    return stop ? stop.name : "Neznámá zastávka";
+// Funkce pro nalezení názvu zastávky na základě souřadnic
+function findStationName(location) {
+    let station = lines.flatMap(line => line.stops).find(stop => stop.location[0] === location.lat && stop.location[1] === location.lng);
+    return station ? station.name : "Neznámá stanice";
 }
 
 function findAvailableTrain() {
