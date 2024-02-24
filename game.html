@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 133</p>
+    <p>Kupony vlaků: 134</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3026,7 +3026,7 @@ function generateCargo() {
 }
 
 function findStartStation(location) {
-    let nearestStation = null;
+    let startStation = null;
     let minDistance = Infinity;
 
     lines.forEach(line => {
@@ -3034,12 +3034,12 @@ function findStartStation(location) {
             let distance = getRealDistance(stop.location, location);
             if (distance < minDistance) {
                 minDistance = distance;
-                nearestStation = stop.name;
+                startStation = stop.name;
             }
         });
     });
 
-    return nearestStation;
+    return startStation;
 }
 
     function findNearestStation(location) {
@@ -3076,9 +3076,8 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
         
-  // Přidání informace o aktuální zakázce do vlaku
 availableTrain.currentCargo = {
-    startStation: findNearestStation(cargoMarker.getLatLng()), // Změňte na počáteční stanici
+    startStation: findStartStation(cargoMarker.getLatLng()),
     destinationStation: findNearestStation(destinationLocation),
     cargoPrice: cargoPrice,
     marker: trainMarker
