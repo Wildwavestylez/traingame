@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 137</p>
+    <p>Kupony vlaků: 138</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3089,18 +3089,22 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
 
         // Přidání obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
-        trainMarker.on('click', function() {
-            let cargoInfo = availableTrain.currentCargo;
-            if (cargoInfo) {
-                let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Startovní stanice: ${cargoInfo.startStation}`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
-                popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
-                this.bindPopup(popupContent).openPopup();
-            }
-        });
+      trainMarker.on('click', function() {
+    let cargoInfo = availableTrain.currentCargo;
+    if (cargoInfo) {
+        if (this.isPopupOpen()) {
+            this.closePopup();
+        } else {
+            let popupContent = document.createElement('div');
+            popupContent.appendChild(document.createTextNode(`Startovní stanice: ${cargoInfo.startStation}`));
+            popupContent.appendChild(document.createElement('br'));
+            popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
+            popupContent.appendChild(document.createElement('br'));
+            popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
+            this.bindPopup(popupContent).openPopup();
+        }
+    }
+});
     } else {
         alert("Nemáte žádný volný vlak k přiřazení nákladu.");
     }
