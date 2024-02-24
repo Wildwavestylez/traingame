@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 130</p>
+    <p>Kupony vlaků: 131</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3025,6 +3025,23 @@ function generateCargo() {
     });
 }
 
+    function findStartStation(location) {
+    let startStation = null;
+    let minDistance = Infinity;
+
+    lines.forEach(line => {
+        line.stops.forEach(stop => {
+            let distance = getRealDistance(stop.location, location);
+            if (distance < minDistance) {
+                minDistance = distance;
+                startStation = stop.name;
+            }
+        });
+    });
+
+    return startStation;
+}
+
     function findNearestStation(location) {
     let nearestStation = null;
     let minDistance = Infinity;
@@ -3060,12 +3077,12 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         map.removeLayer(cargoMarker);
         
   // Přidání informace o aktuální zakázce do vlaku
-        availableTrain.currentCargo = {
-            startStation: findNearestStation(cargoMarker.getLatLng()),
-            destinationStation: findNearestStation(destinationLocation),
-            cargoPrice: cargoPrice,
-            marker: trainMarker
-        };
+       availableTrain.currentCargo = {
+    startStation: findStartStation(cargoMarker.getLatLng()),
+    destinationStation: findNearestStation(destinationLocation),
+    cargoPrice: cargoPrice,
+    marker: trainMarker
+};
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
 
