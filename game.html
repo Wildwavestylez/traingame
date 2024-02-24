@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 134</p>
+    <p>Kupony vlaků: 135</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3005,8 +3005,7 @@ function generateCargo() {
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
 
-                 // Získání názvu startovní stanice
-                let startStationName = startStop.name;
+                
 
                 // Vytvoření tlačítka pro odeslání vlaku pro náklad
                 let assignTrainButton = document.createElement('button');
