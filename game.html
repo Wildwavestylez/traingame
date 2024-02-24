@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 140</p>
+    <p>Kupony vlaků: 141</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3024,24 +3024,7 @@ function generateCargo() {
     });
 }
 
-function findStartStation(location) {
-    let startStation = null;
-    let minDistance = Infinity;
-
-    lines.forEach(line => {
-        line.stops.forEach(stop => {
-            let distance = getRealDistance(stop.location, location);
-            if (distance < minDistance) {
-                minDistance = distance;
-                startStation = stop.name;
-            }
-        });
-    });
-
-    return startStation;
-}
-
-    function findNearestStation(location) {
+function findNearestStation(location) {
     let nearestStation = null;
     let minDistance = Infinity;
 
@@ -3075,16 +3058,15 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
         
-       // Přidání informace o aktuální zakázce do vlaku
+  // Přidání informace o aktuální zakázce do vlaku
         availableTrain.currentCargo = {
-            startStation: findStartStation(cargoMarker.getLatLng()),
+            startStation: findNearestStation(cargoMarker.getLatLng()),
             destinationStation: findNearestStation(destinationLocation),
             cargoPrice: cargoPrice,
             marker: trainMarker
         };
-
-        // Proměnná pro udržení počtu kliknutí na vlak
-        let clickCount = 5;
+        // Spuštění simulace pohybu vlaku směrem k nákladu
+        moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
 
         // Přidání obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
         trainMarker.on('click', function() {
@@ -3096,13 +3078,7 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
                 popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
                 popupContent.appendChild(document.createElement('br'));
                 popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
-                this.bindPopup(popupContent);
-
-                // Zobrazí pop-up okno po druhém kliknutí a poté s každým dalším kliknutím
-                clickCount++;
-                if (clickCount >= 1) {
-                    this.openPopup();
-                }
+                this.bindPopup(popupContent).openPopup();
             }
         });
     } else {
