@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 126</p>
+    <p>Kupony vlaků: 127</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3057,9 +3057,10 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         map.removeLayer(cargoMarker);
         
  // Přidání informace o aktuální zakázce do vlaku
-        availableTrain.currentCargo = {
-            startStation: findNearestStation(cargoMarker.getLatLng()),
-            destinationStation: findNearestStation(destinationLocation),
+         // Přidání informace o aktuální zakázce do vlaku
+        selectedTrain.currentCargo = {
+            startStation: startStationName,
+            destination: destinationLocation,
             cargoPrice: cargoPrice,
             marker: trainMarker
         };
