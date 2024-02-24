@@ -3039,10 +3039,10 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
         
- // Přidání informace o aktuální zakázce do vlaku
+        // Přidání informace o aktuální zakázce do vlaku
         availableTrain.currentCargo = {
-            origin: getStopName(cargoMarker.getLatLng()), // Název zastávky, ze které vlak odjíždí
-            destination: cargoDestination, // Název cílové zastávky
+            origin: findStationName(cargoMarker.getLatLng()),
+            destination: findStationName(destinationLocation),
             cargoPrice: cargoPrice,
             marker: trainMarker
         };
@@ -3055,9 +3055,9 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
             let cargoInfo = availableTrain.currentCargo;
             if (cargoInfo) {
                 let popupContent = document.createElement('div');
-                popupContent.appendChild(document.createTextNode(`Odjezd: ${cargoInfo.origin}`));
+                popupContent.appendChild(document.createTextNode(`Startovní stanice: ${cargoInfo.origin}`));
                 popupContent.appendChild(document.createElement('br'));
-                popupContent.appendChild(document.createTextNode(`Příjezd: ${cargoInfo.destination}`));
+                popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destination}`));
                 popupContent.appendChild(document.createElement('br'));
                 popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
                 this.bindPopup(popupContent).openPopup();
@@ -3067,6 +3067,7 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         alert("Nemáte žádný volný vlak k přiřazení nákladu.");
     }
 }
+
 // Funkce pro získání názvu zastávky na základě jejích souřadnic
 function getStopName(location) {
     let stop = lines.flatMap(line => line.stops).find(stop => stop.location[0] === location.lat && stop.location[1] === location.lng);
