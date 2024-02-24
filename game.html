@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 115</p>
+    <p>Kupony vlaků: 116</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3068,10 +3068,7 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
     }
 }
         
-    } else {
-        alert("Nemáte žádný volný vlak k přiřazení nákladu.");
-    }
-}
+
 
 function findAvailableTrain() {
     return ownedTrains.find(train => !train.currentCargo);
