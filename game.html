@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 118</p>
+    <p>Kupony vlaků: 119</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3039,7 +3039,7 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
         
-        // Přidání informace o aktuální zakázce do vlaku
+ // Přidání informace o aktuální zakázce do vlaku
         availableTrain.currentCargo = {
             origin: getStopName(cargoMarker.getLatLng()), // Název zastávky, ze které vlak odjíždí
             destination: cargoDestination, // Název cílové zastávky
