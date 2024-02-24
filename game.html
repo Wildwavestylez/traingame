@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>Kupony vlaků: 113</p>
+    <p>Kupony vlaků: 114</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3049,6 +3049,7 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
            // Přidání obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
+               // Přidání obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
         trainMarker.on('click', function() {
             let cargoInfo = availableTrain.currentCargo;
             if (cargoInfo) {
