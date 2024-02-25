@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: AA</p>
+    <p>VERZE: AB</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3151,12 +3151,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-    const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
-    minZoom: 2,
-    maxZoom: 19,
-    tileSize: 256
-}).addTo(map);
+    const openRailwayMapLayer = new L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png').addTo(map);
 
 
 
