@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: AE</p>
+    <p>VERZE: AF</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3152,13 +3152,12 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Nová tileLayer z OpenCycleMap
-const openCycleMapLayer = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png');
+const openCycleMapLayer = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png').addTo(map);
 
-// Odstranění původní druhé vrstvy (openRailwayMapLayer)
-map.removeLayer(openRailwayMapLayer);
-
-// Přidání nové druhé vrstvy (openCycleMapLayer)
-openCycleMapLayer.addTo(map);
+// Odstranění původní druhé vrstvy (openRailwayMapLayer), pokud existuje
+if (openRailwayMapLayer) {
+    map.removeLayer(openRailwayMapLayer);
+}
 
 // Skrytí linek na začátku hry
 lines.forEach(line => {
@@ -3168,6 +3167,7 @@ lines.forEach(line => {
 
 function getRailwayFeaturesInBounds(bounds) {
     // Získání vektorových prvků (tratí) v daných hranicích oblasti mapy
+    // Nyní používáme openCycleMapLayer místo openRailwayMapLayer
     const railwayFeatures = openCycleMapLayer.queryRenderedFeatures(bounds, {
         layers: ['railways'] // Specifikace vrstvy tratí
     });
