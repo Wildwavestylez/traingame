@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: AG</p>
+    <p>VERZE: AH</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -3146,15 +3146,15 @@ lines.forEach(line => {
     });
 });
 // Inicializace mapy Leaflet
-// Původní tileLayer z OpenStreetMap
+const map = L.map('map').setView([50.0252381, 15.2142544], 7);
+
+// Původní openStreetMap tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Nová tileLayer z OpenCycleMap
+// Nový tile layer s opencyclemap.org
 const openCycleMapLayer = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png').addTo(map);
-
-
 
 // Skrytí linek na začátku hry
 lines.forEach(line => {
@@ -3164,7 +3164,6 @@ lines.forEach(line => {
 
 function getRailwayFeaturesInBounds(bounds) {
     // Získání vektorových prvků (tratí) v daných hranicích oblasti mapy
-    // Nyní používáme openCycleMapLayer místo openRailwayMapLayer
     const railwayFeatures = openCycleMapLayer.queryRenderedFeatures(bounds, {
         layers: ['railways'] // Specifikace vrstvy tratí
     });
