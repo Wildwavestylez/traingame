@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 145</p>
+    <p>VERZE: 146</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -268,6 +268,57 @@ const lines = [
              { name: "České Budějovice severní zastávka", location: [48.9947853, 14.4793767] },
                 { name: "České Budějovice", location: [48.9744872, 14.4886075] }, 
         ]
+    }, 
+
+       {
+        name: "Trať 130 Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí ",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+        
+         { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/4EGn3VT.png', maxSpeed: 500 },
+            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 26, reverse: false, image: 'https://i.imgur.com/4EGn3VT.png', maxSpeed: 500 },
+            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 14, reverse: true, image: 'https://i.imgur.com/4EGn3VT.png', maxSpeed: 500 },
+            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 12, reverse: false, image: 'https://i.imgur.com/4EGn3VT.png', maxSpeed: 500 },
+            
+           
+        ],
+         stops: [
+             { name: "Děčín hlavní nádraží", location: [50.7735633, 14.2012986] },
+                { name: "Vilsnice", location: [50.7472650, 14.1809253] },
+                { name: "Choratice", location: [50.7238083, 14.1860867] }, 
+                { name: "Povrly-Roztoky", location: [50.6875114, 14.1874733] },
+                { name: "Povrly", location: [50.6706772, 14.1571292] },
+                { name: "Neštědice", location: [50.6702422, 14.1398611] },
+                { name: "Mojžíř", location: [50.6786347, 14.1257631] },
+                { name: "Neštěmice", location: [50.6725731, 14.1069289] },
+                { name: "Ústí nad Labem sever ", location: [50.6642267, 14.0806397] },
+                { name: "Ústí nad Labem hlavní nádraží", location: [50.6594886, 14.0445767] },
+                { name: "Ústí nad Labem západ", location: [50.6581497, 14.0297089] },
+                { name: "Trmice", location: [50.6474647, 13.9870053] },
+                { name: "Chabařovice", location: [50.6803978, 13.9211878] },
+                { name: "Krupka-Bohosudov", location: [50.6723442, 13.8749000] },
+                { name: "Proboštov", location: [50.6615831, 13.8387003] },
+                 { name: "Teplice v Čechách", location: [50.6464578, 13.8292283] },
+                { name: "Řetenice", location: [50.6424636, 13.8008594] },
+                { name: "Jeníkov-Oldřichov", location: [50.6359864, 13.7549706] },
+                { name: "Duchcov", location: [50.6174736, 13.7549142] },
+                { name: "Želénky", location: [50.6013564, 13.7717294] },
+                { name: "Chotějovice", location: [50.5756644, 13.7846175] },
+                { name: "Bílina", location: [50.5540581, 13.7720814] },
+                { name: "Bílina kyselka", location: [50.5415117, 13.7596397] },
+                { name: "Želenice nad Bílinou", location: [50.5252000, 13.7255975] },
+                { name: "Most", location: [50.5112153, 13.6582633] },
+                { name: "Třebušice", location: [50.5233994, 13.5797406] },
+                { name: "Jirkov zastávka", location: [50.4855653, 13.4476319] },
+                { name: "Chomutov město", location: [50.4699250, 13.4139453] },
+                { name: "Chomutov", location: [50.4565658, 13.3989133] },
+                { name: "Málkov", location: [50.4418031, 13.3304042] },
+                { name: "Kadaň-Prunéřov", location: [50.4117583, 13.2584953] }, 
+                { name: "Kadaň-Bystřice", location: [50.3963050, 13.2757167] },
+                { name: "Kadaň", location: [50.3818664, 13.2769928] },
+                { name: "Kadaň předměstí", location: [50.3763236, 13.2770175] },
+    ]
     }, 
 
      {
@@ -3240,7 +3291,7 @@ const trainTypes = [
     { name: '230 031-7', price: 10000, speed: 400, image: 'https://i.imgur.com/Cz4rWDM.png', location: [6.1246406, 81.1212572] },
     { name: '140 004-3', price: 10200, speed: 400, image: 'https://i.imgur.com/SlZRKNi.png', location: [6.1246406, 81.1212572] },
     { name: '124 601-6', price: 10400, speed: 400, image: 'https://i.imgur.com/nlnPd6i.png', location: [6.1246406, 81.1212572] },
-    { name: '123 020-0', price: 106000, speed: 400, image: 'https://i.imgur.com/kxPjJcI.png', location: [6.1246406, 81.1212572] },
+    { name: '123 020-0', price: 10600, speed: 400, image: 'https://i.imgur.com/kxPjJcI.png', location: [6.1246406, 81.1212572] },
      { name: '130 038-3', price: 10800, speed: 400, image: 'https://i.imgur.com/A6NWdDo.png', location: [6.1246406, 81.1212572] },
     { name: '151 001-5', price: 11000, speed: 400, image: 'https://i.imgur.com/5gMQhg4.png', location: [6.1246406, 81.1212572] },
       { name: '363 077-9', price: 11200, speed: 400, image: 'https://i.imgur.com/CWbHmdW.png', location: [6.1246406, 81.1212572] },
