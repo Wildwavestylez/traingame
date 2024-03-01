@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 147</p>
+    <p>VERZE: 148</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -146,6 +146,39 @@ const lines = [
                 { name: "Trebišov", location: [48.6329881, 21.7118856] },  
                 ]
     },  
+
+    {
+        name: "Trať 252  Brno - Břeclav",
+        color: "#FFFFFF00",
+        category: "B",
+        trains: [
+            { name: "Brno - Břeclav", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/gfB2d2O.png', maxSpeed: 600 },
+            { name: "Brno - Břeclav", startingIndex: 15, reverse: false, image: 'https://i.imgur.com/gfB2d2O.png', maxSpeed: 600 },
+            { name: "Brno - Břeclav", startingIndex: 9, reverse: true, image: 'https://i.imgur.com/gfB2d2O.png', maxSpeed: 600 },
+            { name: "Brno - Břeclav", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/gfB2d2O.png', maxSpeed: 600 },
+        ],
+         stops: [
+                { name: "Brno hlavní nádraží", location: [49.1905822, 16.6128025] },
+                { name: "Brno-Horní Heršpice", location: [49.1674539, 16.6068917] },
+                { name: "Modřice", location: [49.1337775, 16.6061706] },
+                { name: "Popovice u Rajhradu", location: [49.1031533, 16.6056253] },
+                { name: "Rajhrad", location: [49.0853006, 16.6053639] },
+                { name: "Vojkovice nad Svratkou", location: [49.0561522, 16.5974256] },
+                { name: "Hrušovany u Brna", location: [49.0344353, 16.5913258] },
+                { name: "Žabčice", location: [49.0112114, 16.5948658] },
+                { name: "Vranovice", location: [48.9637222, 16.6047744] },
+                { name: "Pouzdřany", location: [48.9420242, 16.6304894] },
+                { name: "Popice", location: [48.9243011, 16.6681594] },
+                { name: "Šakvice", location: [48.9125594, 16.7065067] },
+                { name: "Zaječí", location: [48.8894119, 16.7820206] },
+                { name: "Rakvice", location: [48.8668481, 16.8214911] },
+                { name: "Podivín", location: [48.8374786, 16.8540553] },
+                { name: "Ladná", location: [48.8130914, 16.8809661] },
+                { name: "Břeclav", location: [48.7536203, 16.8930283] },
+                
+               
+        ]
+    }, 
           {
         name: "Trať 113 Lovosice - Most",
         color: "#FFFFFF00",
@@ -270,16 +303,116 @@ const lines = [
         ]
     }, 
 
+    {
+        name: "Praha - Ústí nad Labem - Cheb, Krušnohor",
+        color: "#FFFFFF00",
+        category: "B",
+        trains: [
+            { name: "Praha - Ústí nad Labem - Cheb, Krušnohor", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/TBJ9mUQ.png', maxSpeed: 600 },
+            { name: "Praha - Ústí nad Labem - Cheb, Krušnohor", startingIndex: 76, reverse: false, image: 'https://i.imgur.com/TBJ9mUQ.png', maxSpeed: 600 },
+            { name: "Praha - Ústí nad Labem - Cheb, Krušnohor", startingIndex: 33, reverse: true, image: 'https://i.imgur.com/TBJ9mUQ.png', maxSpeed: 600 },
+            { name: "Praha - Ústí nad Labem - Cheb, Krušnohor", startingIndex: 31, reverse: false, image: 'https://i.imgur.com/TBJ9mUQ.png', maxSpeed: 600 },
+            { name: "Praha - Ústí nad Labem - Cheb, Krušnohor", startingIndex: 52, reverse: true, image: 'https://i.imgur.com/TBJ9mUQ.png', maxSpeed: 600 },
+            { name: "Praha - Ústí nad Labem - Cheb, Krušnohor", startingIndex: 50, reverse: false, image: 'https://i.imgur.com/TBJ9mUQ.png', maxSpeed: 600 }
+           
+        ],
+         stops: [
+         { name: "Praha hlavní nádraží", location: [50.0829886, 14.4369822] },
+         { name: "Praha-Holešovice", location: [50.1106567, 14.4396819] },
+         { name: "Praha-Podbaba", location: [50.1125106, 14.3952836] },
+         { name: "Praha-Sedlec", location: [50.1319733, 14.3944942] },
+         { name: "Roztoky u Prahy", location: [50.1596450, 14.3984175] },
+         { name: "Roztoky-Žalov", location: [50.1679267, 14.3644667] },
+         { name: "Úholičky", location: [50.1700211, 14.3519736] },
+         { name: "Řež", location: [50.1794053, 14.3557061] },
+         { name: "Libčice nad Vltavou-Letky", location: [50.1893844, 14.3727244] },
+         { name: "Libčice nad Vltavou", location: [50.2000314, 14.3641214] },
+         { name: "Dolany nad Vltavou", location: [50.2246094, 14.3487214] },
+         { name: "Kralupy nad Vltavou", location: [50.2383881, 14.3135492] },
+         { name: "Nelahozeves zámek", location: [50.2630692, 14.3025350] },
+         { name: "Nelahozeves", location: [50.2835389, 14.3088408] },
+         { name: "Nové Ouholice", location: [50.3019714, 14.3167631] },
+         { name: "Mlčechvosty", location: [50.3190497, 14.3475056] },
+         { name: "Vraňany", location: [50.3352203, 14.3717164] },
+         { name: "Cítov", location: [50.3663292, 14.4187125] },
+         { name: "Dolní Beřkovice", location: [50.3888550, 14.4365903] },
+         { name: "Horní Počaply", location: [50.4226722, 14.3866092] },
+         { name: "Hněvice", location: [50.4530906, 14.3614464] },
+         { name: "Záluží", location: [50.4567908, 14.3254253] },
+         { name: "Dobříň", location: [50.4371300, 14.2962256] },
+         { name: "Roudnice nad Labem-Bezděkov", location: [50.4286575, 14.2820922] },
+         { name: "Roudnice nad Labem", location: [50.4264947, 14.2646056] },
+         { name: "Hrobce", location: [50.4598656, 14.2290697] },
+         { name: "Oleško", location: [50.4776839, 14.1944028] },
+         { name: "Hrdly", location: [50.4851036, 14.1744136] },
+         { name: "Bohušovice nad Ohří", location: [50.4913139, 14.1495200] },
+         { name: "Nové Kopisty", location: [50.4972192, 14.1205253] },
+         { name: "Lukavec", location: [50.5030211, 14.0921717] },
+         { name: "Lovosice", location: [50.5097847, 14.0594703] },
+         { name: "Lovosice město", location: [50.5216256, 14.0453711] },
+         { name: "Malé Žernoseky", location: [50.5386772, 14.0562600] },
+         { name: "Litochovice nad Labem", location: [50.5587386, 14.0333833] },
+         { name: "Prackovice nad Labem ", location: [50.5726700, 14.0363789] },
+         { name: "Dolní Zálezly", location: [50.5968742, 14.0483656] },
+         { name: "Ústí nad Labem hlavní nádraží", location: [50.6594886, 14.0445767] },
+         { name: "Ústí nad Labem západ", location: [50.6581497, 14.0297089] },
+         { name: "Trmice", location: [50.6474647, 13.9870053] },
+         { name: "Chabařovice", location: [50.6803978, 13.9211878] },
+         { name: "Krupka-Bohosudov", location: [50.6723442, 13.8749000] },
+         { name: "Proboštov", location: [50.6615831, 13.8387003] },
+         { name: "Teplice v Čechách", location: [50.6464578, 13.8292283] },
+         { name: "Řetenice", location: [50.6424636, 13.8008594] },
+         { name: "Jeníkov-Oldřichov", location: [50.6359864, 13.7549706] },
+         { name: "Duchcov", location: [50.6174736, 13.7549142] },
+         { name: "Želénky", location: [50.6013564, 13.7717294] },
+         { name: "Chotějovice", location: [50.5756644, 13.7846175] },
+         { name: "Bílina", location: [50.5540581, 13.7720814] },
+         { name: "Bílina kyselka", location: [50.5415117, 13.7596397] },
+         { name: "Želenice nad Bílinou", location: [50.5252000, 13.7255975] },
+         { name: "Most", location: [50.5112153, 13.6582633] },
+         { name: "Třebušice", location: [50.5233994, 13.5797406] },
+         { name: "Jirkov zastávka", location: [50.4855653, 13.4476319] },
+         { name: "Chomutov město", location: [50.4699250, 13.4139453] },
+         { name: "Chomutov", location: [50.4565658, 13.3989133] },
+         { name: "Málkov", location: [50.4418031, 13.3304042] },
+         { name: "Kadaň-Prunéřov", location: [50.4117583, 13.2584953] },
+        { name: "Klášterec nad Ohří", location: [50.3851089, 13.1961261] },
+                { name: "Kotvina", location: [50.3669853, 13.1553556] },
+                { name: "Perštejn", location: [50.3676186, 13.1129867] },
+                { name: "Boč", location: [50.3594819, 13.0822258] },
+                { name: "Stráž nad Ohří ", location: [50.3404731, 13.0587197] },
+                { name: "Vojkovice nad Ohří", location: [50.3073883, 13.0160322] },
+                { name: "Ostrov nad Ohří", location: [50.3017158, 12.9577675] },
+                { name: "Hájek", location: [50.2802086, 12.9378461] },
+                { name: "Dalovice", location: [50.2548522, 12.8866006] },
+                { name: "Karlovy Vary", location: [50.2354850, 12.8666886] },
+                { name: "Karlovy Vary-Dvory", location: [50.2288781, 12.8319139] },
+                { name: "Chodov", location: [50.2315217, 12.7538281] },
+                 { name: "Nové Sedlo u Lokte", location: [50.2141189, 12.7455731] },
+                { name: "Královské Poříčí", location: [50.1893158, 12.6750192] },
+                { name: "Sokolov", location: [50.1860733, 12.6447925] },
+                { name: "Citice", location: [50.1647072, 12.6156378] },
+                { name: "Hlavno", location: [50.1536025, 12.6071797] },
+                { name: "Dasnice", location: [50.1396522, 12.5672456] },
+                { name: "Kynšperk nad Ohří", location: [50.1257783, 12.5194656] },
+                { name: "Nebanice", location: [50.1174164, 12.4785528] },
+                { name: "Tršnice", location: [50.1140861, 12.3995408] },
+                { name: "Cheb", location: [50.0735856, 12.3806992] },
+
+            ]
+    }, 
+
+
        {
         name: "Trať 130 Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí ",
         color: "#FFFFFF00",
         category: "A",
         trains: [
         
-         { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/4EGn3VT.png', maxSpeed: 500 },
-            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 26, reverse: false, image: 'https://i.imgur.com/4EGn3VT.png', maxSpeed: 500 },
-            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 14, reverse: true, image: 'https://i.imgur.com/4EGn3VT.png', maxSpeed: 500 },
-            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 12, reverse: false, image: 'https://i.imgur.com/4EGn3VT.png', maxSpeed: 500 },
+         { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 500 },
+            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 33, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 500 },
+            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 17, reverse: true, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 500 },
+            { name: "Děčín – Ústí nad Labem – Chomutov – Kadaň Předměstí", startingIndex: 15, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 500 },
             
            
         ],
@@ -318,6 +451,49 @@ const lines = [
                 { name: "Kadaň-Bystřice", location: [50.3963050, 13.2757167] },
                 { name: "Kadaň", location: [50.3818664, 13.2769928] },
                 { name: "Kadaň předměstí", location: [50.3763236, 13.2770175] },
+    ]
+    }, 
+
+      {
+        name: "Trať 140 Chomutov – Karlovy Vary – Cheb",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+        
+         { name: "Chomutov – Karlovy Vary – Cheb", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 500 },
+            { name: "Chomutov – Karlovy Vary – Cheb", startingIndex: 23, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 500 },
+            { name: "Chomutov – Karlovy Vary – Cheb", startingIndex: 13, reverse: true, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 500 },
+            { name: "Chomutov – Karlovy Vary – Chebí", startingIndex: 11, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 500 },
+            
+           
+        ],
+         stops: [
+             { name: "Chomutov", location: [50.4565658, 13.3989133] },
+                { name: "Málkov", location: [50.4418031, 13.3304042] },
+                { name: "Kadaň-Prunéřov", location: [50.4117583, 13.2584953] }, 
+                { name: "Klášterec nad Ohří", location: [50.3851089, 13.1961261] },
+                { name: "Kotvina", location: [50.3669853, 13.1553556] },
+                { name: "Perštejn", location: [50.3676186, 13.1129867] },
+                { name: "Boč", location: [50.3594819, 13.0822258] },
+                { name: "Stráž nad Ohří ", location: [50.3404731, 13.0587197] },
+                { name: "Vojkovice nad Ohří", location: [50.3073883, 13.0160322] },
+                { name: "Ostrov nad Ohří", location: [50.3017158, 12.9577675] },
+                { name: "Hájek", location: [50.2802086, 12.9378461] },
+                { name: "Dalovice", location: [50.2548522, 12.8866006] },
+                { name: "Karlovy Vary", location: [50.2354850, 12.8666886] },
+                { name: "Karlovy Vary-Dvory", location: [50.2288781, 12.8319139] },
+                { name: "Chodov", location: [50.2315217, 12.7538281] },
+                 { name: "Nové Sedlo u Lokte", location: [50.2141189, 12.7455731] },
+                { name: "Královské Poříčí", location: [50.1893158, 12.6750192] },
+                { name: "Sokolov", location: [50.1860733, 12.6447925] },
+                { name: "Citice", location: [50.1647072, 12.6156378] },
+                { name: "Hlavno", location: [50.1536025, 12.6071797] },
+                { name: "Dasnice", location: [50.1396522, 12.5672456] },
+                { name: "Kynšperk nad Ohří", location: [50.1257783, 12.5194656] },
+                { name: "Nebanice", location: [50.1174164, 12.4785528] },
+                { name: "Tršnice", location: [50.1140861, 12.3995408] },
+                { name: "Cheb", location: [50.0735856, 12.3806992] },
+                
     ]
     }, 
 
@@ -1135,8 +1311,70 @@ const lines = [
                 { name: "Bílovice nad Svitavou", location: [49.2427139, 16.6736775] },
                 { name: "Brno-Židenice", location: [49.2042044, 16.6360225] },
                 { name: "Brno hlavní nádraží", location: [49.1905822, 16.6128025] },
+                { name: "Brno-Horní Heršpice", location: [49.1674539, 16.6068917] },
+                { name: "Modřice", location: [49.1337775, 16.6061706] },
+                { name: "Popovice u Rajhradu", location: [49.1031533, 16.6056253] },
+                { name: "Rajhrad", location: [49.0853006, 16.6053639] },
+                { name: "Vojkovice nad Svratkou", location: [49.0561522, 16.5974256] },
+                { name: "Hrušovany u Brna", location: [49.0344353, 16.5913258] },
+                { name: "Žabčice", location: [49.0112114, 16.5948658] },
+                { name: "Vranovice", location: [48.9637222, 16.6047744] },
+                { name: "Pouzdřany", location: [48.9420242, 16.6304894] },
+                { name: "Popice", location: [48.9243011, 16.6681594] },
+                { name: "Šakvice", location: [48.9125594, 16.7065067] },
+                { name: "Zaječí", location: [48.8894119, 16.7820206] },
+                { name: "Rakvice", location: [48.8668481, 16.8214911] },
+                { name: "Podivín", location: [48.8374786, 16.8540553] },
+                { name: "Ladná", location: [48.8130914, 16.8809661] },
+                { name: "Břeclav", location: [48.7536203, 16.8930283] },
+                { name: "Lanžhot", location: [48.7328392, 16.9628181] },
+                { name: "Brodské", location: [48.6925011, 17.0225792] },
+                { name: "Kúty", location: [48.6618844, 17.0475158] },
+                { name: "Sekule", location: [48.6076889, 17.0188197] },
+            { name: "Moravský Svätý Ján", location: [48.5865403, 17.0086194] },
+                { name: "Závod", location: [48.5394097, 17.0076503] },
+                { name: "Veľké Leváre", location: [48.5092011, 17.0184403] },
+                { name: "Malacky", location: [48.4330903, 17.0228692] },
+                { name: "Plavecký Štvrtok", location: [48.3731994, 17.0075206] },
+                { name: "Zohor", location: [48.3257789, 16.9907608] },
+                { name: "Devínske Jazero", location: [48.2504997, 16.9606494] },
+                { name: "Devínska Nová Ves", location: [48.2190208, 16.9770108] },
+                { name: "Bratislava-Lamač", location: [48.1848717, 17.0504800] },
+                { name: "Bratislava-Železná studienka", location: [48.1744689, 17.0727997] },
+                { name: "Bratislava hlavná stanica", location: [48.1591225, 17.1065044] },
+                
         ]
     }, 
+
+      {
+        name: "ŽSSR xxx Bratislava - Kúty",    
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Bratislava - Kúty", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/Vy6nw4C.png', maxSpeed: 500 },
+            { name: "Bratislava - Kúty", startingIndex: 11, reverse: false, image: 'https://i.imgur.com/Vy6nw4C.png', maxSpeed: 500 },
+            { name: "Bratislava - Kúty", startingIndex: 6, reverse: true, image: 'https://i.imgur.com/Vy6nw4C.png', maxSpeed: 500 },
+            { name: "Bratislava - Kúty", startingIndex: 5, reverse: false, image: 'https://i.imgur.com/Vy6nw4C.png', maxSpeed: 500 },
+             ],
+        stops: [
+            
+    { name: "Bratislava hlavná stanica", location: [48.1591225, 17.1065044] },
+    { name: "Bratislava-Železná studienka", location: [48.1744689, 17.0727997] },
+    { name: "Bratislava-Lamač", location: [48.1848717, 17.0504800] },
+    { name: "Devínska Nová Ves", location: [48.2190208, 16.9770108] },
+    { name: "Devínske Jazero", location: [48.2504997, 16.9606494] },
+    { name: "Zohor", location: [48.3257789, 16.9907608] },
+    { name: "Plavecký Štvrtok", location: [48.3731994, 17.0075206] },
+    { name: "Malacky", location: [48.4330903, 17.0228692] },
+    { name: "Veľké Leváre", location: [48.5092011, 17.0184403] },
+    { name: "Závod", location: [48.5394097, 17.0076503] },
+    { name: "Moravský Svätý Ján", location: [48.5865403, 17.0086194] },
+    { name: "Sekule", location: [48.6076889, 17.0188197] },
+    { name: "Kúty", location: [48.6618844, 17.0475158] }
+ ]
+    },
+
+    
 
     {
         name: "Dresden S1 Meißen S-Bf. Triebischtal -  Bad Schandau",
