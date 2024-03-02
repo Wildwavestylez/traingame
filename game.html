@@ -425,7 +425,77 @@ const lines = [
                 { name: "Moldava v Krušných horách", location: [50.7178878, 13.6913356] },
                 ]
     },  
-    
+
+     {
+        name: "Trať 144  Nová Role – Chodov - Loket",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Nová Role – Chodov - Loket", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/0wL4K2Q.png', maxSpeed: 600 },
+        ],
+         stops: [
+                { name: "Nová Role", location: [50.2734947, 12.7800675] },
+                { name: "Božičany", location: [50.2563478, 12.7752275] },  
+                { name: "Mírová", location: [50.2395478, 12.7637911] },
+                { name: "Chodov", location: [50.2315217, 12.7538281] },   
+                { name: "Nové Sedlo u Lokte", location: [50.2141189, 12.7455731] },
+                { name: "Loučky", location: [50.2039642, 12.7517861] },
+                 { name: "Loket", location: [50.1898042, 12.7528353] },
+                { name: "Loket předměstí", location: [50.1855697, 12.7605408] },
+                
+                ]
+    },  
+
+     {
+        name: "Trať 145  Sokolov – Kraslice – Zwotental",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Sokolov – Kraslice – Zwotental", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/9BcEjpf.png', maxSpeed: 600 },
+            { name: "Sokolov – Kraslice – Zwotental", startingIndex: 12, reverse: false, image: 'https://i.imgur.com/9BcEjpf.png', maxSpeed: 600 },
+        ],
+         stops: [
+                { name: "Sokolov", location: [50.1860733, 12.6447925] },
+                { name: "Svatava", location: [50.1901322, 12.6246833] },  
+                { name: "Svatava zastávka", location: [50.1974106, 12.6072542] },
+                { name: "Luh nad Svatavou", location: [50.2178192, 12.5873689] },   
+                { name: "Hřebeny", location: [50.2217942, 12.5806600] },
+                { name: "Oloví", location: [50.2546272, 12.5582628] },
+                 { name: "Rotava", location: [50.2870139, 12.5355472] },
+                { name: "Kraslice předměstí", location: [50.3119011, 12.5186786] },
+               { name: "Kraslice", location: [50.3306083, 12.5028639] },
+                { name: "Kraslice-Pod vlekem", location: [50.3403778, 12.4969492] },  
+                { name: "Klingenthal", location: [50.3571511, 12.4619494] },
+                { name: "Zwota", location: [50.3526153, 12.4277344] },
+                { name: "Zwota-Zechenbach", location: [50.3511353, 12.3999872] },  
+                { name: "Zwotental", location: [50.3622017, 12.3638553] },
+                
+                ]
+    },  
+
+     {
+        name: "Trať 146   Cheb – Luby u Chebu",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: " Cheb – Luby u Chebu", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: " Cheb – Luby u Chebu", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+        ],
+         stops: [
+                { name: "Cheb", location: [50.0735856, 12.3806992] },
+                { name: "Tršnice", location: [50.1140861, 12.3995408] },  
+                { name: "Třebeň", location: [50.1315078, 12.4039478] },
+                { name: "Nový Drahov", location: [50.1469842, 12.3992547] },   
+                { name: "Vonšov", location: [50.1558953, 12.3798914] },
+                { name: "Skalná", location: [50.1661833, 12.3687858] },
+                 { name: "Velký Luh", location: [50.1967125, 12.3724775] },
+                { name: "Nový Kostel", location: [50.2203597, 12.4210558] },
+               { name: "Dolní Luby", location: [50.2391167, 12.4127522] },
+                { name: "Luby u Chebu", location: [50.2534028, 12.4009514] },  
+               
+                
+                ]
+    },  
     {
 
      name: "Trať 198 Strakonice - Volary",
@@ -4046,7 +4116,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.002) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.001) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
