@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 150</p>
+    <p>VERZE: 151</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -291,6 +291,53 @@ const lines = [
                 ]
     },  
 
+    {
+        name: "Trať 164 Kadaň – Kaštice",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Kadaň – Kaštice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Kadaň – Kaštice", startingIndex: 12, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            
+            
+        ],
+         stops: [
+                { name: "Kadaň-Prunéřov", location: [50.4117583, 13.2584953] },
+                { name: "Kadaň-Bystřice", location: [50.3963050, 13.2757167] },
+                { name: "Kadaň", location: [50.3818664, 13.2769928] },   
+                { name: "Kadaň předměstí", location: [50.3763236, 13.2770175] },
+                { name: "Želina", location: [50.3634186, 13.2854844] },
+                 { name: "Hradec u Kadaně", location: [50.3590928, 13.3080739] },
+                { name: "Poláky", location: [50.3363761, 13.3500433] },
+                 { name: "Pětipsy", location: [50.3193244, 13.3451711] },
+                { name: "Vilémov u Kadaně", location: [50.3080825, 13.3319436] },
+                { name: "Vitčice", location: [50.2825583, 13.3383044] },   
+                { name: "Chotěbudice", location: [50.2677575, 13.3513050] },
+                { name: "Krásný Dvůr", location: [50.2557336, 13.3683319] },
+                 { name: "Vysoké Třebušice", location: [50.2604369, 13.3917503] },
+                { name: "Kaštice", location: [50.2616425, 13.4179258] },
+                ]
+    },  
+  {
+        name: "Trať 164a  Vilémov u Kadaně – Kadaňský Rohozec",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: " Vilémov u Kadaně – Kadaňský Rohozec", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/qgahT4b.png', maxSpeed: 600 },
+            
+            
+        ],
+         stops: [
+                { name: "Vilémov u Kadaně", location: [50.3080825, 13.3319436] },
+                { name: "Vilémov u Kadaně město", location: [50.3041000, 13.3112383] },  
+                { name: "Radonice u Kadaně", location: [50.2980422, 13.2773581] },
+                { name: "Ždov", location: [50.2902069, 13.2395372] },   
+                { name: "Kadaňský Rohozec", location: [50.2836569, 13.2257453] },
+               
+                ]
+    },  
+
+    
      {
         name: "Trať 147 F Cheb – Františkovy Lázně – Adorf",
         color: "#FFFFFF00",
@@ -462,11 +509,72 @@ const lines = [
                 { name: "Bečov nad Teplou", location: [50.0830728, 12.8310822] },
                  ]
     }, 
+            {
+        name: "Trať 170  Praha– Plzeň – Klatovy",
+        color: "#FFFFFF00",
+        category: "B",
+        trains: [
+            { name: "Praha– Plzeň – Klatovy", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/88hSu6z.png', maxSpeed: 600 },
+            { name: "Praha– Plzeň – Klatovy", startingIndex: 53, reverse: false, image: 'https://i.imgur.com/88hSu6z.png', maxSpeed: 600 },
+            { name: "Praha– Plzeň – Klatovy", startingIndex: 28, reverse: true, image: 'https://i.imgur.com/88hSu6z.png', maxSpeed: 600 },
+            { name: "Praha– Plzeň – Klatovy", startingIndex: 25, reverse: false, image: 'https://i.imgur.com/88hSu6z.png', maxSpeed: 600 },
+        ],
+         stops: [
+                { name: "Praha hlavní nádraží", location: [50.0829886, 14.4369822] },
+                { name: "Praha-Smíchov", location: [50.0612869, 14.4080581] },
+                { name: "Praha-Velká Chuchle", location: [50.0098611, 14.3889533] },
+                { name: "Praha-Radotín", location: [49.9860114, 14.3642472] },
+                { name: "Černošice", location: [49.9595489, 14.3234225] },
+                { name: "Černošice-Mokropsy", location: [49.9462508, 14.3303414] },
+                { name: "Všenory", location: [49.9328383, 14.3050528] },
+                { name: "Dobřichovice", location: [49.9274903, 14.2878808] },
+                { name: "Řevnice", location: [49.9164886, 14.2388239] },
+                { name: "Zadní Třebaň", location: [49.9187394, 14.2030467] },
+                { name: "Karlštejn", location: [49.9320258, 14.1754953] },
+                { name: "Srbsko", location: [49.9370042, 14.1311397] },
+                { name: "Beroun", location: [49.9571725, 14.0764922] },
+                { name: "Králův Dvůr", location: [49.9430083, 14.0406428] },
+                { name: "Králův Dvůr-Popovice", location: [49.9283103, 14.0204114] },
+                { name: "Zdice", location: [49.9077719, 13.9796342] },
+                { name: "Stašov", location: [49.8859253, 13.9593983] },
+                 { name: "Praskolesy", location: [49.8687514, 13.9293289] },
+                { name: "Hořovice", location: [49.8432808, 13.8989953] },
+                { name: "Cerhovice", location: [49.8369867, 13.8364553] },
+                { name: "Kařez", location: [49.8226014, 13.7791386] },   
+                { name: "Kařízek", location: [49.8008042, 13.7679444] },
+                { name: "Mýto", location: [49.7834739, 13.7401894] },
+                 { name: "Holoubkov", location: [49.7741242, 13.6999731] },
+                { name: "Svojkovice", location: [49.7551767, 13.6567964] },
+                { name: "Rokycany", location: [49.7401236, 13.5920478] },
+                { name: "Klabava", location: [49.7491494, 13.5383025] }, 
+                { name: "Ejpovice", location: [49.7516442, 13.5117283] },
+                { name: "Plzeň-Doubravka", location: [49.7585219, 13.4160586] },
+                { name: "Plzeň hlavní nádraží", location: [49.7435456, 13.3880578] },
+                { name: "Plzeň zastávka", location: [49.7367211, 13.3748883] },
+                { name: "Plzeň-Doudlevce", location: [49.7216264, 13.3830442] },
+                { name: "Plzeň-Valcha", location: [49.7131169, 13.3369244] },
+                { name: "Dobřany zastávka", location: [49.6819650, 13.3244094] },
+                 { name: "Dobřany", location: [49.6563950, 13.3033181] },
+                { name: "Chlumčany u Dobřan", location: [49.6228828, 13.2920150] },
+                { name: "Přeštice-Zastávka", location: [49.6007842, 13.2991172] },
+                { name: "Přeštice", location: [49.5751686, 13.3225422] },
+                { name: "Lužany", location: [49.5482064, 13.3145733] },
+                { name: "Borovy", location: [49.5268478, 13.2994567] },
+                { name: "Červené Poříčí", location: [49.4962311, 13.3052283] },
+                { name: "Švihov u Klatov", location: [49.4736633, 13.2907867] },
+                { name: "Dehtín", location: [49.4502067, 13.2865714] },
+                { name: "Točník", location: [49.4295233, 13.3093919] },
+                { name: "Klatovy", location: [49.4014014, 13.2738275] },
+                
+                
+        ]
+    }, 
+    
     
       {
         name: "Trať 137  Chomutov–Cranzahl-Chemnitz",
         color: "#FFFFFF00",
-        category: "B",
+        category: "A",
         trains: [
             { name: "Chomutov–Cranzahl-Chemnitz", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
             { name: "Chomutov–Cranzahl-Chemnitzv", startingIndex: 39, reverse: false, image: 'https://i.imgur.com/7PHogQX.png', maxSpeed: 600 },
@@ -4288,7 +4396,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.001) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.0025) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
