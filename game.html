@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 153</p>
+    <p>VERZE: 154</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -334,6 +334,37 @@ const lines = [
                 
                 ]
     },  
+
+    
+    {
+        name: "Trať 184 Domažlice – Planá u Mariánských Lázní",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Domažlice – Planá u Mariánských Lázní", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/sgF74F8.png', maxSpeed: 600 },
+            { name: "Domažlice – Planá u Mariánských Lázní", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/5V3WrS7.png', maxSpeed: 600 },
+            
+        ],
+         stops: [ 
+              { name: "Domažlice", location: [49.4350586, 12.9431506] },
+                { name: "Domažlice město", location: [49.4357033, 12.9250678] },
+                { name: "Havlovice", location: [49.4165803, 12.8752603] },
+                { name: "Pila", location: [49.4145850, 12.8588678] },   
+                { name: "Trhanov", location: [49.4203758, 12.8393811] },
+                { name: "Klenčí pod Čerchovem", location: [49.4389533, 12.8224792] },
+                 { name: "Postřekov", location: [49.4588356, 12.8148547] },
+                { name: "Nový Kramolín", location: [49.4776000, 12.8125619] },
+                { name: "Vlkanov", location: [49.4867325, 12.8150636] },
+                { name: "Poběžovice", location: [49.5133744, 12.8114472] }, 
+             { name: "Mutěnín", location: [49.5446969, 12.7732544] },
+                { name: "Hostouň", location: [49.5603675, 12.7778711] },
+                { name: "Svržno", location: [49.5739747, 12.7697725] },
+                { name: "Újezd Svatého Kříže", location: [49.5779686, 12.7497131] },
+              { name: "Bělá nad Radbuzou", location: [49.5887147, 12.7210264] },
+                { name: "Bělá nad Radbuzou zastávka", location: [49.5920639, 12.7086667] },
+                ]
+    },  
+
 
     {
         name: "Trať 139 Děčín – Oldřichov u Duchcova",
@@ -5086,12 +5117,12 @@ function showRandomOffer() {
 
     switch (offerLine.category) {
         case "A":
-            offerPrice = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
+            offerPrice = Math.floor(Math.random() * (30000 - 25000 + 1)) + 25000;
             earningMin = 100;
             earningMax = 200;
             break;
         case "B":
-            offerPrice = Math.floor(Math.random() * (50000 - 30000 + 1)) + 30000;
+            offerPrice = Math.floor(Math.random() * (70000 - 60000 + 1)) + 60000;
             earningMin = 300;
             earningMax = 500;
             break;
