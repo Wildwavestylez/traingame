@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 154</p>
+    <p>VERZE: 1555</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -4877,7 +4877,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.0025) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.001) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
