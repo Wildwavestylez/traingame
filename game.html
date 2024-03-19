@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 163</p>
+    <p>VERZE: 164</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -6007,7 +6007,7 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
 // Odstranění aktuální obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
 trainMarker.off('click');
 
-// Přidání nové obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
+// Přidání obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
 trainMarker.on('click', function() {
     let cargoInfo = availableTrain.currentCargo;
     if (cargoInfo) {
@@ -6017,9 +6017,12 @@ trainMarker.on('click', function() {
         popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
         popupContent.appendChild(document.createElement('br'));
         popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
-        this.bindPopup(popupContent).openPopup();
+        
+        // Vytvoření nového vyskakovacího okna a jeho otevření
+        let popup = L.popup().setContent(popupContent);
+        this.bindPopup(popup).openPopup();
     }
-        });
+});
     } else {
         alert("Nemáte žádný volný vlak k přiřazení nákladu.");
     }
