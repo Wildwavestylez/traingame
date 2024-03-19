@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 161</p>
+    <p>VERZE: 162</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -6004,7 +6004,10 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
 
-       // Přidání obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
+// Odstranění aktuální obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
+trainMarker.off('click');
+
+// Přidání nové obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
 trainMarker.on('click', function() {
     let cargoInfo = availableTrain.currentCargo;
     if (cargoInfo) {
@@ -6014,10 +6017,9 @@ trainMarker.on('click', function() {
         popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
         popupContent.appendChild(document.createElement('br'));
         popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
-        
-        // Odstranění předchozího popupu, pokud existuje
-        this.unbindPopup().bindPopup(popupContent).openPopup();
+        this.bindPopup(popupContent).openPopup();
     }
+});
 });
         });
     } else {
