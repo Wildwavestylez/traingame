@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 165</p>
+    <p>VERZE: 166</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -5994,37 +5994,38 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         // Odstranění ikony nákladu
         map.removeLayer(cargoMarker);
         
-  // Přidání informace o aktuální zakázce do vlaku
+        // Přidání informace o aktuální zakázce do vlaku
         availableTrain.currentCargo = {
             startStation: findNearestStation(cargoMarker.getLatLng()),
             destinationStation: findNearestStation(destinationLocation),
             cargoPrice: cargoPrice,
             marker: trainMarker
         };
+        
         // Spuštění simulace pohybu vlaku směrem k nákladu
         moveTrainToDestination(trainMarker, destinationLocation, cargoPrice);
 
-// Odstranění aktuální obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
-trainMarker.off('click');
-
-// Přidání obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
-trainMarker.on('click', function() {
-    let cargoInfo = availableTrain.currentCargo;
-    if (cargoInfo) {
-        let popupContent = document.createElement('div');
-        popupContent.appendChild(document.createTextNode(`Startovní stanice: ${cargoInfo.startStation}`));
-        popupContent.appendChild(document.createElement('br'));
-        popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
-        popupContent.appendChild(document.createElement('br'));
-        popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
-        this.bindPopup(popupContent).openPopup(); // Odstraňte .openPopup()
-    }
-});
+        // Přidání obsluhy události pro zobrazení informací o zakázce při kliknutí na vlak
+        trainMarker.on('click', function() {
+            let cargoInfo = availableTrain.currentCargo;
+            if (cargoInfo) {
+                // Odstranění případného existujícího popupu
+                this.unbindPopup();
+                
+                // Vytvoření nového popupu s informacemi o zakázce
+                let popupContent = document.createElement('div');
+                popupContent.appendChild(document.createTextNode(`Startovní stanice: ${cargoInfo.startStation}`));
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
+                popupContent.appendChild(document.createElement('br'));
+                popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
+                this.bindPopup(popupContent).openPopup();
+            }
+        });
     } else {
         alert("Nemáte žádný volný vlak k přiřazení nákladu.");
     }
 }
-
     
 function findAvailableTrain() {
     return ownedTrains.find(train => !train.currentCargo);
