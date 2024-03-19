@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 166</p>
+    <p>VERZE: 167</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -147,6 +147,52 @@ const lines = [
                 ]
     },  
 
+              {
+        name: "Trať 225  Havlíčkův Brod – Veselí nad Lužnicí",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Havlíčkův Brod – Veselí nad Lužnicí", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+            { name: "Havlíčkův Brod – Veselí nad Lužnicí", startingIndex: 30, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+            { name: "Havlíčkův Brod – Veselí nad Lužnicí", startingIndex: 17, reverse: true, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+            { name: "Havlíčkův Brod – Veselí nad Lužnicí", startingIndex: 14, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+        ],
+         stops: [
+                { name: "Havlíčkův Brod", location: [49.5986939, 15.5877361] },
+                { name: "Mírovka", location: [49.5794067, 15.6184550] },  
+                { name: "Šlapanov", location: [49.5451661, 15.6526450] },
+                { name: "Kamenná", location: [49.5072631, 15.6552153] },  
+                { name: "Dobronín", location: [49.4782714, 15.6417169] },
+                { name: "Střítež u Jihlavy", location: [49.4589308, 15.6255761] },   
+                { name: "Jihlava-Bosch Diesel", location: [49.4437906, 15.6084900] },
+                { name: "Jihlava", location: [49.4146881, 15.5994750] },
+                { name: "Jihlava město", location: [49.4039725, 15.5833958] },
+                { name: "Jihlava-Staré Hory", location: [49.4102592, 15.5680581] },
+                { name: "Rantířov", location: [49.4066392, 15.5131378] },
+                { name: "Dvorce", location: [49.3842392, 15.4985247] }, 
+                { name: "Kostelec u Jihlavy", location: [49.3572922, 15.4822675] },
+                { name: "Dolní Cerekev", location: [49.3430481, 15.4620286] },  
+                { name: "Batelov", location: [49.3175164, 15.3982258] },
+                { name: "Švábov", location: [49.3138961, 15.3560122] },  
+                { name: "Horní Cerekev", location: [49.3111419, 15.3246822] },
+                { name: "Horní Ves", location: [49.2908136, 15.3117750] },   
+                { name: "Jihlávka", location: [49.2528050, 15.2947611] },
+                { name: "Horní Vilímeč", location: [49.2344089, 15.2590406] },
+                { name: "Počátky-Žirovnice", location: [49.2369919, 15.2124119] },  
+                { name: "Popelín", location: [49.2201136, 15.1786989] },
+                { name: "Bednáreček", location: [49.2092133, 15.1503511] },  
+                { name: "Bednárec", location: [49.1942178, 15.0923897] },
+                { name: "Jarošov nad Nežárkou", location: [49.1815975, 15.0788261] },   
+                { name: "Rodvínov", location: [49.1681628, 15.0527486] },
+                { name: "Jindřichův Hradec", location: [49.1551858, 15.0040703] },   
+                { name: "Mnich", location: [49.1692925, 14.8833703] },
+                { name: "Kardašova Řečice", location: [49.1835939, 14.8604594] },
+                { name: "Doňov", location: [49.2082594, 14.7998572] },  
+                { name: "Řípec", location: [49.2071533, 14.7326144] },
+                { name: "Veselí nad Lužnicí", location: [49.1937906, 14.7168561] },  
+                 ]
+    }, 
+    
     {
         name: "Trať 252  Brno - Břeclav",
         color: "#FFFFFF00",
@@ -175,11 +221,37 @@ const lines = [
                 { name: "Podivín", location: [48.8374786, 16.8540553] },
                 { name: "Ladná", location: [48.8130914, 16.8809661] },
                 { name: "Břeclav", location: [48.7536203, 16.8930283] },
-                
-               
-        ]
+                   ]
     }, 
 
+     {
+        name: "Trať 226   Veselí nad Lužnicí – České Velenice",
+        color: "#FFFFFF00",
+        category: "B",
+        trains: [
+            { name: "Veselí nad Lužnicí – České Velenice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Veselí nad Lužnicí – České Velenice", startingIndex: 13, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            
+        ],
+         stops: [
+                { name: "Veselí nad Lužnicí", location: [49.1937906, 14.7168561] },
+                { name: "Vlkov nad Lužnicí", location: [49.1481019, 14.7283717] },
+                { name: "Frahelž", location: [49.1185303, 14.7365283] },
+                { name: "Lomnice nad Lužnicí", location: [49.0911675, 14.7302361] },
+                { name: "Lužnice", location: [49.0536767, 14.7501058] },
+                { name: "Třeboň", location: [49.0153617, 14.7607442] },
+                { name: "Třeboň lázně", location: [49.0072669, 14.7777414] },
+                { name: "Majdalena zastávka", location: [48.9649200, 14.8575697] },
+                { name: "Majdalena", location: [48.9506569, 14.8681575] },
+                { name: "Suchdol nad Lužnicí", location: [48.9022675, 14.8828117] },
+                { name: "Suchdol nad Lužnicí zastávka", location: [48.8922158, 14.8803472] },
+                { name: "Hrdlořezy", location: [48.8731194, 14.8796014] },
+                { name: "Dvory nad Lužnicí", location: [48.8550950, 14.8973178] },
+                { name: "Nová Ves nad Lužnicí", location: [48.8118897, 14.9227733] },
+                { name: "České Velenice", location: [48.7695314, 14.9577761] },
+               ]
+    }, 
+    
     {
         name: "Trať 223 Olbramovice – Sedlčany",
         color: "#FFFFFF00",
