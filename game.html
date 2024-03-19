@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 164</p>
+    <p>VERZE: 165</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -6017,10 +6017,7 @@ trainMarker.on('click', function() {
         popupContent.appendChild(document.createTextNode(`Cílová stanice: ${cargoInfo.destinationStation}`));
         popupContent.appendChild(document.createElement('br'));
         popupContent.appendChild(document.createTextNode(`Cena: ${cargoInfo.cargoPrice.toFixed(2)} Kč`));
-        
-        // Vytvoření nového vyskakovacího okna a jeho otevření
-        let popup = L.popup().setContent(popupContent);
-        this.bindPopup(popup).openPopup();
+        this.bindPopup(popupContent).openPopup(); // Odstraňte .openPopup()
     }
 });
     } else {
