@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 172</p>
+    <p>VERZE: 173</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -87,9 +87,9 @@
 let playerFinance = 500;
 let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
-const cargoInterval = 5000; // Interval generování nákladu na zastávkách v ms
+const cargoInterval = 7000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
-const offerInterval = 600000; // Interval nabídek od herního drážního úřadu v ms
+const offerInterval = 60000; // Interval nabídek od herního drážního úřadu v ms
 
 
 
@@ -147,6 +147,121 @@ const lines = [
                 ]
     },  
 
+                 {
+        name: "Plzeň - České Budějovice - Jihlava - Brno",
+        color: "#FFFFFF00",
+        category: "C",
+        trains: [
+            { name: "Plzeň - České Budějovice - Jihlava - Brno", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/kGQIe2f.png', maxSpeed: 600 },
+            { name: "Plzeň - České Budějovice - Jihlava - Brno", startingIndex: 80, reverse: false, image: 'https://i.imgur.com/kGQIe2f.png', maxSpeed: 600 },
+            { name: "Plzeň - České Budějovice - Jihlava - Brno", startingIndex: 45, reverse: true, image: 'https://i.imgur.com/kGQIe2f.png', maxSpeed: 600 },
+            { name: "Plzeň - České Budějovice - Jihlava - Brno", startingIndex: 35, reverse: false, image: 'https://i.imgur.com/kGQIe2f.png', maxSpeed: 600 },
+            
+        ],
+     { name: "Plzeň hlavní nádraží", location: [49.7435456, 13.3880578] },
+                { name: "Plzeň-Slovany", location: [49.7348519, 13.4078303] },
+                { name: "Starý Plzenec", location: [49.6953125, 13.4781703] },
+                { name: "Šťáhlavy", location: [49.6694031, 13.5035172] },
+                { name: "Nezvěstice", location: [49.6423722, 13.5165967] },
+                { name: "Zdemyslice", location: [49.6064719, 13.5170383] },
+                { name: "Blovice", location: [49.5812264, 13.5314531] },
+                { name: "Ždírec u Plzně", location: [49.5506783, 13.5739869] },
+                { name: "Srby", location: [49.5246506, 13.5917739] },
+                { name: "Nepomuk", location: [49.4975547, 13.6088542] },
+                { name: "Mileč", location: [49.4618186, 13.6081772] },
+                { name: "Nekvasovy", location: [49.4383658, 13.6105403] },
+                { name: "Kovčín", location: [49.4135856, 13.6132697] },
+                { name: "Pačejov", location: [49.3913308, 13.6205664] },
+                { name: "Jetenovice", location: [49.3700714, 13.6656181] },
+                { name: "Velký Bor", location: [49.3458594, 13.7009936] },
+                { name: "Horažďovice předměstí", location: [49.3313714, 13.7388486] },
+                { name: "Střelské Hoštice", location: [49.3051414, 13.7788925] },
+                { name: "Dolní Poříčí", location: [49.2886125, 13.8008481] },
+                { name: "Katovice", location: [49.2693519, 13.8235978] },
+                { name: "Pracejovice", location: [49.2582358, 13.8489875] },
+                { name: "Strakonice", location: [49.2551575, 13.9163047] },
+                { name: "Modlešovice", location: [49.2565003, 13.9762058] },  
+                { name: "Čejetice", location: [49.2515564, 14.0157986] },
+                { name: "Sudoměř u Písku", location: [49.2494011, 14.0572156] },
+                { name: "Ražice", location: [49.2446214, 14.1085939] },
+                { name: "Heřmaň obec", location: [49.2364769, 14.1359625] },
+                { name: "Skály", location: [49.2238389, 14.1645900] },
+                { name: "Protivín", location: [49.2125053, 14.2119942] },
+                { name: "Protivín zastávka", location: [49.1964417, 14.2224597] }, 
+                { name: "Milenovice", location: [49.1726953, 14.2206258] },
+                { name: "Číčenice", location: [49.1536025, 14.2215758] },
+                { name: "Záblatíčko", location: [49.1249389, 14.2651444] },
+                { name: "Zbudov", location: [49.0895767, 14.3268633] },
+                { name: "Zliv", location: [49.0654831, 14.3617669] },
+                { name: "Hluboká nad Vltavou", location: [49.0324019, 14.4202061] }, 
+                { name: "České Budějovice severní zastávka", location: [48.9947853, 14.4793767] }, 
+                { name: "České Budějovice", location: [48.9744872, 14.4886075] },
+                { name: "České Budějovice severní zastávka", location: [48.9947853, 14.4793767] },
+                { name: "Hrdějovice", location: [49.0196267, 14.4823197] },
+                { name: "Hosín", location: [49.0349808, 14.4664239] },
+                { name: "Hluboká nad Vltavou-Zámostí", location: [49.0507050, 14.4641819] },
+                { name: "Chotýčany", location: [49.0785828, 14.5292225] },
+                { name: "Ševětín", location: [49.0972558, 14.5743483] },
+                { name: "Neplachov", location: [49.1260222, 14.6058503] },
+                { name: "Dynín zastávka", location: [49.1411628, 14.6228589] },
+                { name: "Horusice", location: [49.1671639, 14.6660194] },
+                { name: "Veselí nad Lužnicí zastávka", location: [49.1771736, 14.6960706] },
+                { name: "Veselí nad Lužnicí", location: [49.1937906, 14.7168561] },
+                { name: "Řípec", location: [49.2071533, 14.7326144] },
+                { name: "Doňov", location: [49.2082594, 14.7998572] },
+                { name: "Kardašova Řečice", location: [49.1835939, 14.8604594] },
+                { name: "Mnich", location: [49.1692925, 14.8833703] },
+                { name: "Jindřichův Hradec", location: [49.1551858, 15.0040703] },
+                { name: "Rodvínov", location: [49.1681628, 15.0527486] },
+                { name: "Jarošov nad Nežárkou", location: [49.1815975, 15.0788261] },
+                { name: "Bednárec", location: [49.1942178, 15.0923897] },
+                { name: "Bednáreček", location: [49.2092133, 15.1503511] },
+                { name: "Popelín", location: [49.2201136, 15.1786989] },
+                { name: "Počátky-Žirovnice", location: [49.2369919, 15.2124119] },
+                { name: "Horní Vilímeč", location: [49.2344089, 15.2590406] },
+                { name: "Jihlávka", location: [49.2528050, 15.2947611] },
+                { name: "Horní Ves", location: [49.2908136, 15.3117750] },
+                { name: "Horní Cerekev", location: [49.3111419, 15.3246822] },
+                { name: "Švábov", location: [49.3138961, 15.3560122] },
+                { name: "Batelov", location: [49.3175164, 15.3982258] },
+                { name: "Dolní Cerekev", location: [49.3430481, 15.4620286] },
+                { name: "Kostelec u Jihlavy", location: [49.3572922, 15.4822675] },
+                { name: "Dvorce", location: [49.3842392, 15.4985247] },
+                { name: "Rantířov", location: [49.4066392, 15.5131378] },
+                { name: "Jihlava-Staré Hory", location: [49.4102592, 15.5680581] },
+                { name: "Jihlava město", location: [49.4039725, 15.5833958] },
+                { name: "Jihlava", location: [49.4146881, 15.5994750] },
+                { name: "Malý Beranov", location: [49.4025650, 15.6317817] },
+                { name: "Luka nad Jihlavou", location: [49.3695564, 15.7100286] },
+                { name: "Bítovčice", location: [49.3628692, 15.7347336] },
+                { name: "Přímělkov", location: [49.3435364, 15.7414561] },
+                { name: "Dolní Smrčné", location: [49.3228569, 15.7473297] },
+                { name: "Bransouze", location: [49.3055611, 15.7494536] },
+                { name: "Číchov", location: [49.2819747, 15.7635250] },
+                { name: "Okříšky", location: [49.2479933, 15.7708692] },
+                { name: "Krahulov", location: [49.2153206, 15.8044233] },
+                { name: "Třebíč-Borovina", location: [49.2088814, 15.8528556] },
+                { name: "Třebíč", location: [49.2114983, 15.8843594] },
+                { name: "Vladislav zastávka", location: [49.2118150, 15.9820719] },
+                { name: "Studenec", location: [49.2225722, 16.0690517] },
+                { name: "Náměšť nad Oslavou", location: [49.2070197, 16.1475372] },
+                { name: "Kralice nad Oslavou", location: [49.1924286, 16.2037239] },
+                { name: "Rapotice", location: [49.1834603, 16.2575358] },
+                { name: "Vysoké Popovice", location: [49.1783600, 16.2913819] },
+                { name: "Zastávka u Brna", location: [49.1874886, 16.3586636] },
+                { name: "Rosice u Brna", location: [49.1783906, 16.3845844] },
+                { name: "Tetčice", location: [49.1722642, 16.4083994] },
+                { name: "Omice", location: [49.1610336, 16.4467372] },
+                { name: "Střelice", location: [49.1539153, 16.4829253] },
+                { name: "Střelice dolní", location: [49.1565589, 16.5062047] },
+                { name: "Troubsko", location: [49.1640244, 16.5266169] },
+                { name: "Ostopovice", location: [49.1646728, 16.5446453] },
+                { name: "Brno-Starý Lískovec", location: [49.1622125, 16.5704175] },
+                { name: "Brno-Horní Heršpice", location: [49.1674539, 16.6068917] },
+                { name: "Brno hlavní nádraží", location: [49.1905822, 16.6128025] }
+                   ]
+    },  
+    
               {
         name: "Trať 225  Havlíčkův Brod – Veselí nad Lužnicí",
         color: "#FFFFFF00",
@@ -190,6 +305,51 @@ const lines = [
                 { name: "Doňov", location: [49.2082594, 14.7998572] },  
                 { name: "Řípec", location: [49.2071533, 14.7326144] },
                 { name: "Veselí nad Lužnicí", location: [49.1937906, 14.7168561] },  
+                 ]
+    }, 
+
+          {
+        name: "Trať 240 Brno - Jihlava",
+        color: "#FFFFFF00",
+        category: "B",
+        trains: [
+            { name: "Brno – Jihlava", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+            { name: "Brno – Jihlava", startingIndex: 27, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+            { name: "Brno – Jihlava", startingIndex: 15, reverse: true, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+            { name: "Brno – Jihlava", startingIndex: 12, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
+        ],
+         stops: [
+                { name: "Brno hlavní nádraží", location: [49.1905822, 16.6128025] },
+                { name: "Brno-Horní Heršpice", location: [49.1674539, 16.6068917] },  
+                { name: "Brno-Starý Lískovec", location: [49.1622125, 16.5704175] },
+                { name: "Ostopovice", location: [49.1646728, 16.5446453] },  
+                { name: "Troubsko", location: [49.1640244, 16.5266169] },
+                { name: "Střelice dolní", location: [49.1565589, 16.5062047] },   
+                { name: "Střelice", location: [49.1539153, 16.4829253] },
+                { name: "Omice", location: [49.1610336, 16.4467372] },
+                { name: "Tetčice", location: [49.1722642, 16.4083994] },
+                { name: "Rosice u Brna", location: [49.1783906, 16.3845844] },
+                { name: "Zastávka u Brna", location: [49.1874886, 16.3586636] },
+                { name: "Vysoké Popovice", location: [49.1783600, 16.2913819] }, 
+                { name: "Rapotice", location: [49.1834603, 16.2575358] },
+                { name: "Kralice nad Oslavou", location: [49.1924286, 16.2037239] },  
+                { name: "Náměšť nad Oslavou", location: [49.2070197, 16.1475372] },
+                { name: "Studenec", location: [49.2225722, 16.0690517] },  
+                { name: "Vladislav zastávka", location: [49.2118150, 15.9820719] },
+                { name: "Třebíč", location: [49.2114983, 15.8843594] },   
+                { name: "Třebíč-Borovina", location: [49.2088814, 15.8528556] },
+                { name: "Krahulov", location: [49.2153206, 15.8044233] },
+                { name: "Okříšky", location: [49.2479933, 15.7708692] },  
+                { name: "Číchov", location: [49.2819747, 15.7635250] },
+                { name: "Bransouze", location: [49.3055611, 15.7494536] },  
+                { name: "Dolní Smrčné", location: [49.3228569, 15.7473297] },
+                { name: "Přímělkov", location: [49.3435364, 15.7414561] },   
+                { name: "Bítovčice", location: [49.3628692, 15.7347336] },
+                { name: "Luka nad Jihlavou", location: [49.3695564, 15.7100286] },   
+                { name: "Malý Beranov", location: [49.4025650, 15.6317817] },
+                { name: "Jihlava", location: [49.4146881, 15.5994750] },
+              
+               
                  ]
     }, 
     
