@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500 Kč</p>
-    <p>VERZE: 174</p>
+    <p>VERZE: 175</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -89,7 +89,7 @@ let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 7000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
-const offerInterval = 60000; // Interval nabídek od herního drážního úřadu v ms
+const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
 
 
 
@@ -414,6 +414,126 @@ const lines = [
                 { name: "Okrouhlice", location: [49.6306494, 15.4877606] },
                  { name: "Havlíčkův Brod-Perknov", location: [49.6142350, 15.5396081] },
                 { name: "Havlíčkův Brod", location: [49.5986939, 15.5877361] },
+                
+                   ]
+    }, 
+
+    {
+        name: "Trať 244 Brno – Hrušovany nad Jevišovkou - Hevlín",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Brno – Hrušovany nad Jevišovkou - Hevlín", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/gE0YWq2.png', maxSpeed: 600 },
+            { name: "Brno – Hrušovany nad Jevišovkou - Hevlín", startingIndex: 17, reverse: false, image: 'https://i.imgur.com/gE0YWq2.png', maxSpeed: 600 },
+            
+        ],
+         stops: [
+                { name: "Brno hlavní nádraží", location: [49.1905822, 16.6128025] },
+                { name: "Brno-Horní Heršpice", location: [49.1674539, 16.6068917] },
+                { name: "Brno-Starý Lískovec", location: [49.1622125, 16.5704175] },
+                { name: "Ostopovice", location: [49.1646728, 16.5446453] },
+                { name: "Troubsko", location: [49.1640244, 16.5266169] },
+                { name: "Střelice dolní", location: [49.1565589, 16.5062047] },
+                { name: "Střelice", location: [49.1539153, 16.4829253] },
+                { name: "Radostice", location: [49.1342736, 16.4615936] },
+                { name: "Silůvky", location: [49.1081619, 16.4627000] },
+                { name: "Moravské Bránice", location: [49.0851592, 16.4289722] },
+                { name: "Moravský Krumlov", location: [49.0464631, 16.3384056] },
+                { name: "Rakšice", location: [49.0143203, 16.3450281] },
+                { name: "Bohutice", location: [48.9879722, 16.3560792] },
+                { name: "Našiměřice", location: [48.9630736, 16.3506222] },
+                { name: "Miroslav", location: [48.9353522, 16.3625392] },
+                { name: "Dolenice", location: [48.9121933, 16.3678761] },
+                { name: "Břežany", location: [48.8730658, 16.3675156] },
+                 { name: "Pravice", location: [48.8487167, 16.3702239] },
+                { name: "Hrušovany nad Jevišovkou-Šanov", location: [48.8100739, 16.3830606] },
+                { name: "Šanov", location: [48.7988942, 16.3852069] },
+                { name: "Hevlín", location: [48.7517061, 16.3899661] },
+                
+                   ]
+    }, 
+
+     {
+        name: "Trať 244a   Moravské Bránice – Oslavany",    
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: " Moravské Bránice – Oslavany", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 500 },    
+        ],
+        stops: [
+              { name: "Moravské Bránice", location: [49.0851592, 16.4289722] },
+                { name: "Ivančice letovisko", location: [49.0945206, 16.4021378] },
+                { name: "Ivančice město", location: [49.0990258, 16.3826483] },  
+                { name: "Ivančice", location: [49.0982017, 16.3726158] },
+                { name: "Oslavany", location: [49.1190842, 16.3462828] },
+                ]
+    },
+
+
+    {
+        name: "Trať 242  Dobronín – Polná",    
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Čáslav – Třemošnice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 500 },    
+        ],
+        stops: [
+              { name: "Dobronín", location: [49.4782714, 15.6417169] },
+                { name: "Dobronín cihelna", location: [49.4802158, 15.6794131] },
+                { name: "Polná", location: [49.4865619, 15.7040508] },  
+                ]
+    },
+
+     {
+        name: "Trať 243 Moravské Budějovice – Jemnice",    
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Moravské Budějovice – Jemnice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/hJnFTrT.png', maxSpeed: 500 },
+            
+            
+        ],
+        stops: [
+              { name: "Moravské Budějovice", location: [49.0575675, 15.8093778] },
+                { name: "Jackov", location: [49.0367928, 15.7645006] },
+                { name: "Dědice", location: [49.0342597, 15.7252969] },
+                { name: "Rácovice", location: [49.0239486, 15.6872147] },
+                { name: "Třebelovice", location: [49.0208892, 15.6578342] },
+                { name: "Lhotice u Jemnice", location: [49.0219994, 15.6067647] },
+                { name: "Jemnice", location: [49.0160103, 15.5809411] },
+                
+              
+                
+                ]
+    },
+
+    {
+        name: "Trať 241 Znojmo – Okříšky",
+        color: "#FFFFFF00",
+        category: "B",
+        trains: [
+            { name: "Znojmo – Okříšky", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/TaoyxXt.png', maxSpeed: 600 },
+            { name: "Znojmo – Okříšky", startingIndex: 14, reverse: false, image: 'https://i.imgur.com/TaoyxXt.png', maxSpeed: 600 },
+            
+        ],
+         stops: [
+                { name: "Znojmo", location: [48.8527717, 16.0592767] },
+                { name: "Znojmo nemocnice", location: [48.8654747, 16.0484161] },
+                { name: "Citonice", location: [48.8788872, 15.9775172] },
+                { name: "Olbramkostel", location: [48.9031639, 15.9490319] },
+                { name: "Šumná", location: [48.9231339, 15.8743333] },
+                { name: "Grešlové Mýto", location: [48.9845925, 15.8743850] },
+                { name: "Blížkovice", location: [49.0043031, 15.8543053] },
+                { name: "Vesce", location: [49.0189819, 15.8314572] },
+                { name: "Moravské Budějovice", location: [49.0575675, 15.8093778] },
+                { name: "Bohušice", location: [49.0862731, 15.8524467] },
+                { name: "Jaroměřice nad Rokytnou", location: [49.0941506, 15.8654108] },
+                { name: "Šebkovice", location: [49.1222344, 15.8324414] },
+                { name: "Kojetice na Moravě", location: [49.1494981, 15.8257942] },
+                { name: "Stařeč", location: [49.1951636, 15.8043242] },
+                { name: "Hvězdoňovice", location: [49.2228317, 15.7583533] },
+                { name: "Okříšky", location: [49.2479933, 15.7708692] },
+                
                 
                    ]
     }, 
