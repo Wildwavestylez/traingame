@@ -6625,22 +6625,16 @@ function buyTrain(trainIndex, button) {
     if (playerFinance >= selectedTrain.price) {
         playerFinance -= selectedTrain.price;
         document.getElementById('finance').innerText = `Finance: ${playerFinance} Kč`;
-        // Vytvoření ikony vlaku a umístění na mapu
-        let trainIcon = L.icon({
-            iconUrl: selectedTrain.image,
-            iconSize: [10, 10],
-            iconAnchor: [5, 5],
-            popupAnchor: [0, 0]
-        });
-        // Přidání ikony vlaku do stanice
-        let station = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map);
-        station.bindPopup(selectedTrain.name);
-        station.bindTooltip(selectedTrain.name, { permanent: true, direction: 'bottom' }).openTooltip();
+
         closeTrainModal();
         // Odstranění tlačítka po zakoupení vlaku
         button.parentNode.removeChild(button);
         // Přidání zakoupeného vlaku do pole ownedTrains
+        selectedTrain.type = 'cargo'; // Nastavení typu vlaku
         ownedTrains.push(selectedTrain);
+
+        // Přiřadit vlak k prvnímu nákladu
+        assignTrainToInitialCargo(selectedTrain);
     } else {
         alert("Nemáte dostatek financí na zakoupení tohoto vlaku.");
     }
@@ -6713,6 +6707,42 @@ function findNearestStation(location) {
     return nearestStation;
 }
 
+    function assignTrainToInitialCargo(train) {
+    const nearbyStops = getNearbyStops(train.location, 20); // Získej zastávky do 20 km
+
+    if (nearbyStops.length > 0) {
+        const randomStop = nearbyStops[Math.floor(Math.random() * nearbyStops.length)];
+        const cargoPrice = calculateCargoPrice(getRealDistance(train.location, [randomStop.lat, randomStop.lon]));
+
+        // Vytvoření ikony nákladu a umístění na mapu
+        let cargoIcon = L.icon({
+            iconUrl: 'https://i.imgur.com/cYbr4oG.png',
+            iconSize: [50, 50],
+            iconAnchor: [20, 20],
+            popupAnchor: [0, 0]
+        });
+
+        let cargoMarker = L.marker([randomStop.lat, randomStop.lon], { icon: cargoIcon }).addTo(map);
+
+        // Automaticky přiřadit vlak k nákladu
+        assignTrainForCargo(cargoMarker, [randomStop.lat, randomStop.lon], cargoPrice);
+
+        // Umístění vlaku na zastávku s nákladem
+        let trainIcon = L.icon({
+            iconUrl: train.image,
+            iconSize: [106, 106],
+            iconAnchor: [53, 53],
+            popupAnchor: [0, 0]
+        });
+
+        let trainMarker = L.marker([randomStop.lat, randomStop.lon], { icon: trainIcon }).addTo(map);
+        trainMarker.bindPopup(train.name);
+        train.marker = trainMarker; // Uložení markeru do dat vlaku
+
+        // Spuštění simulace pohybu vlaku směrem k nákladu
+        moveCargoTrainToDestination(trainMarker, [randomStop.lat, randomStop.lon], cargoPrice);
+    }
+}
 function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
     let availableTrain = findAvailableCargoTrain();
     if (availableTrain) {
