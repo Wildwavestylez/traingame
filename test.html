@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +64,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>VERZE: 176</p>
+    <p>VERZE: 175</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -6659,12 +6660,13 @@ function generateCargo() {
         line.stops.forEach(startStop => {
             const destinationStop = line.stops[Math.floor(Math.random() * line.stops.length)];
 
+            // Oprava načítání souřadnic
             let realDistance = getRealDistance(
                 [startStop.lat, startStop.lon],
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.00055) {  // Probability of generating cargo at the stop
+            if (Math.random() < 0.00055) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
@@ -6676,13 +6678,14 @@ function generateCargo() {
 
                 let cargoMarker = L.marker(startStop.location, { icon: cargoIcon }).addTo(map);
 
-                cargoMarker.options.destinationLocation = destinationStop.location;
-                cargoMarker.options.cargoPrice = cargoPrice;
+                
 
+                // Vytvoření tlačítka pro odeslání vlaku pro náklad
                 let assignTrainButton = document.createElement('button');
                 assignTrainButton.innerText = 'Přiřadit vlak';
                 assignTrainButton.onclick = function() { assignTrainForCargo(cargoMarker, destinationStop.location, cargoPrice); };
 
+                // Přidání tlačítka do popup okna
                 let popupContent = document.createElement('div');
                 popupContent.appendChild(document.createTextNode(`Náklad na cestu do ${destinationStop.name} (${realDistance.toFixed(2)} km) - Cena: ${cargoPrice.toFixed(2)} Kč`));
                 popupContent.appendChild(document.createElement('br'));
@@ -6694,36 +6697,6 @@ function generateCargo() {
     });
 }
 
-function findAndAssignNearestCargo(train) {
-    // Initialize variables to keep track of the nearest cargo and distance
-    let nearestCargo = null;
-    let minDistance = Infinity;
-
-    // Iterate through all cargo markers on the map
-    map.eachLayer(function(layer) {
-        if (layer instanceof L.Marker && layer.options.icon.options.iconUrl === 'https://i.imgur.com/cYbr4oG.png') {
-            let distance = getRealDistance(train.marker.getLatLng(), layer.getLatLng());
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearestCargo = layer;
-            }
-        }
-    });
-
-    if (nearestCargo) {
-        let destinationLocation = nearestCargo.options.destinationLocation;
-        let cargoPrice = nearestCargo.options.cargoPrice;
-
-        // Assign the train to the nearest cargo
-        assignTrainForCargo(nearestCargo, destinationLocation, cargoPrice);
-    } else {
-        // No cargo found
-        alert("No nearby cargo available.");
-        // Optionally, move the train back to a default location or idle state
-    }
-}
-
-    
 function findNearestStation(location) {
     let nearestStation = null;
     let minDistance = Infinity;
@@ -6834,15 +6807,16 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
 
     
 function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
-    const maxSpeed = 560; // Maximum speed of the train in km/h
-    const interval = 1000; // Interval to update train position in ms
+    const maxSpeed = 560; // Maximální rychlost vlaku v km/h
+    const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
     const startLocation = trainMarker.getLatLng();
     const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
-    const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Travel time in ms
+    const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas v ms
 
     const startTime = new Date().getTime();
 
+    // Aktualizace polohy vlaku v pravidelných intervalech
     const moveInterval = setInterval(() => {
         const currentTime = new Date().getTime();
         const elapsedTime = currentTime - startTime;
@@ -6854,25 +6828,25 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
 
             trainMarker.setLatLng([newLat, newLng]);
         } else {
+            // Vlak dorazil na místo určení
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
+             // Uvolnění vlaku pro další zakázku
             trainTypes.forEach(train => {
                 if (train.currentCargo && train.currentCargo.marker === trainMarker) {
                     train.currentCargo = null;
                 }
             });
 
-            playerFinance += cargoPrice;
-            playerFinance = Math.round(playerFinance);
-            document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`;
-
-            // Automatically find and assign the nearest cargo
-            findAndAssignNearestCargo({ marker: trainMarker });
+            // Při doručení nákladu získej náhodnou částku peněz
+            // Zaokrouhlení na celé číslo
+  playerFinance += cargoPrice;
+playerFinance = Math.round(playerFinance); // Zaokrouhlení na celé číslo
+document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`; // Zobrazení s jedním desetinným místem
         }
     }, interval);
 }
-
 
 
 
