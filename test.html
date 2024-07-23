@@ -6762,6 +6762,32 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         alert("Nemáte žádný volný vlak k přiřazení nákladu.");
     }
 }
+
+    function assignNextCargo(trainMarker) {
+    // Najdi nejbližší dostupný náklad
+    let nearestCargo = null;
+    let minDistance = Infinity;
+
+    lines.forEach(line => {
+        line.stops.forEach(stop => {
+            const cargos = map.getLayers().filter(layer => layer.options.icon && layer.options.icon.options.iconUrl === 'https://i.imgur.com/cYbr4oG.png');
+            cargos.forEach(cargoMarker => {
+                const distance = getRealDistance(trainMarker.getLatLng(), cargoMarker.getLatLng());
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestCargo = cargoMarker;
+                }
+            });
+        });
+    });
+
+    if (nearestCargo) {
+        const destinationStop = lines.flatMap(line => line.stops).find(stop => stop.location[0] === nearestCargo.getLatLng().lat && stop.location[1] === nearestCargo.getLatLng().lng);
+        const cargoPrice = calculateCargoPrice(minDistance);
+        assignTrainForCargo(nearestCargo, destinationStop.location, cargoPrice);
+    }
+}
+
     
 function findAvailableTrain() {
     return ownedTrains.find(train => !train.currentCargo);
@@ -6805,6 +6831,7 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
 }
 
     
+// Rozšířená funkce pro přesun vlaku, která zavolá assignNextCargo po doručení nákladu
 function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
@@ -6831,18 +6858,20 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
-             // Uvolnění vlaku pro další zakázku
-            trainTypes.forEach(train => {
+            // Uvolnění vlaku pro další zakázku
+            ownedTrains.forEach(train => {
                 if (train.currentCargo && train.currentCargo.marker === trainMarker) {
                     train.currentCargo = null;
                 }
             });
 
             // Při doručení nákladu získej náhodnou částku peněz
-            // Zaokrouhlení na celé číslo
-  playerFinance += cargoPrice;
-playerFinance = Math.round(playerFinance); // Zaokrouhlení na celé číslo
-document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`; // Zobrazení s jedním desetinným místem
+            playerFinance += cargoPrice;
+            playerFinance = Math.round(playerFinance); // Zaokrouhlení na celé číslo
+            document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`; // Zobrazení s jedním desetinným místem
+
+            // Automatické přiřazení dalšího nákladu
+            assignNextCargo(trainMarker);
         }
     }, interval);
 }
