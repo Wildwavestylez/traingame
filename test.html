@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>VERZE: 175</p>
+    <p>VERZE: 176</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -6763,22 +6763,20 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
     }
 }
 
-    function assignNextCargo(trainMarker) {
+   // Funkce pro automatizaci přiřazování nákladu vlakům
+function assignNextCargo(trainMarker) {
     // Najdi nejbližší dostupný náklad
     let nearestCargo = null;
     let minDistance = Infinity;
 
-    lines.forEach(line => {
-        line.stops.forEach(stop => {
-            const cargos = map.getLayers().filter(layer => layer.options.icon && layer.options.icon.options.iconUrl === 'https://i.imgur.com/cYbr4oG.png');
-            cargos.forEach(cargoMarker => {
-                const distance = getRealDistance(trainMarker.getLatLng(), cargoMarker.getLatLng());
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearestCargo = cargoMarker;
-                }
-            });
-        });
+    map.eachLayer(layer => {
+        if (layer.options.icon && layer.options.icon.options.iconUrl === 'https://i.imgur.com/cYbr4oG.png') {
+            const distance = getRealDistance(trainMarker.getLatLng(), layer.getLatLng());
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestCargo = layer;
+            }
+        }
     });
 
     if (nearestCargo) {
