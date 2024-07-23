@@ -6894,7 +6894,9 @@ function generateRandomEarning() {
     return Math.floor(Math.random() * (maxEarning - minEarning + 1)) + minEarning;
 }
 
-
+function findAvailableCargoTrain() {
+    return ownedTrains.find(train => !train.currentCargo && train.type === 'cargo');
+}
     
 // Funkce pro získání náhodné destinace z okolních stanic
 function getRandomDestination(stops, currentStop) {
