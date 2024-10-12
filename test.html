@@ -57,6 +57,42 @@
             margin-top: 15px;
             text-align: center;
         }
+
+        .modal {
+    display: none; /* Skryté ve výchozím nastavení */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
         #buyButton {
             margin-top: 10px;
             padding: 10px;
@@ -75,6 +111,7 @@
 <body>
 
     <button id="toggleButton" onclick="toggleSidebar()">☰</button>
+     
 
     <div id="sidebar">
         <h1>Výběr Nákladního Vlaku</h1>
@@ -106,6 +143,14 @@
         <div id="trainDetails"></div>
         <button id="buyButton" onclick="buyTrain()" disabled>Koupit Vlak</button>
     </div>
+     <div id="station-selection-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="close-modal">&times;</span>
+        <h2>Vyberte startovní stanici</h2>
+        <div id="station-list"></div>
+        <button id="start-game-btn">Začít hru</button>
+    </div>
+</div>
 
     <div id="map"></div>
 
@@ -194,6 +239,8 @@
                     trainSelect.appendChild(option);
                 });
 
+            
+
             trainSelect.onchange = showTrainDetails; // Přidejte akci pro zobrazení detailů
         }
 
@@ -238,6 +285,55 @@
                 alert(`Vlak ${selectedTrain.specificTrain} zakoupen za ${selectedTrain.price} Kč!`);
             }
         }
+
+        // Seznam stanic na základě linků
+function getStationsFromLines(lines) {
+    const stations = new Set();
+    lines.forEach(line => {
+        line.stops.forEach(stop => {
+            stations.add(stop.name);
+        });
+    });
+    return Array.from(stations);
+}
+
+// Inicializace vyskakovacího okna
+const stationModal = document.getElementById('station-selection-modal');
+const stationList = document.getElementById('station-list');
+const closeModal = document.getElementById('close-modal');
+const startGameBtn = document.getElementById('start-game-btn');
+
+function showStationSelection() {
+    const stations = getStationsFromLines(lines);
+    stationList.innerHTML = stations.map(station => `<button class="station-btn">${station}</button>`).join('');
+    stationModal.style.display = 'block';
+}
+
+closeModal.onclick = function() {
+    stationModal.style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target === stationModal) {
+        stationModal.style.display = 'none';
+    }
+}
+
+stationList.addEventListener('click', function(event) {
+    if (event.target.classList.contains('station-btn')) {
+        // Zpracování výběru stanice
+        const selectedStation = event.target.textContent;
+        console.log("Vybraná stanice: ", selectedStation);
+        // Uložení výběru a zavření modalu
+        stationModal.style.display = 'none';
+        // Můžete pokračovat s logikou pro zahájení hry zde
+    }
+});
+
+// Spustí se po načtení stránky
+window.onload = function() {
+    showStationSelection();
+}
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
