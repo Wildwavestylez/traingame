@@ -197,7 +197,14 @@
 
         function buyTrain() {
             if (selectedTrain) {
-                const marker = L.marker(selectedTrain.location).addTo(map)
+                // Vytvoření značky s vlastní ikonou
+                const trainIcon = L.icon({
+                    iconUrl: selectedTrain.image, // Použijeme ikonu z objektu vlaku
+                    iconSize: [32, 32], // Velikost ikony
+                    iconAnchor: [16, 32], // Kotvící bod
+                });
+
+                const marker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map)
                     .bindPopup(`Zakoupený vlak: ${selectedTrain.specificTrain}`)
                     .openPopup();
 
