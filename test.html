@@ -231,8 +231,11 @@
                 });
 
                 L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map); // Přidání vlaku na mapu
-                toggleSidebar(); // Zavření postranního panelu
-                alert(`Vlak ${selectedTrain.specificTrain} byl zakoupen a přidán na mapu.`);
+                alert(`Koupili jste vlak ${selectedTrain.specificTrain}!`); // Informace o nákupu
+
+                // Reset výběru po koupi
+                document.getElementById('trainSelect').value = '';
+                showTrainDetails();
             }
         }
     </script>
