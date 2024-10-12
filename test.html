@@ -4,65 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hra s Vláky</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             margin: 0;
-            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+        #sidebar {
+            width: 250px;
+            background: #f4f4f4;
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
         }
         #map {
-            height: 600px;
-            width: 100%;
-            max-width: 800px;
+            flex: 1;
+        }
+        h1 {
+            text-align: center;
         }
         select {
+            width: 100%;
             margin: 10px 0;
             padding: 8px;
         }
         #trainDetails {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <h1>Hra s Vláky</h1>
+    <div id="sidebar">
+        <h1>Výběr Nákladního Vlaku</h1>
+        <div>
+            <label for="stateSelect">Stát:</label>
+            <select id="stateSelect" onchange="updateSeries()">
+                <option value="">Vyberte stát</option>
+                <option value="CZ">Česká republika</option>
+                <option value="AT">Rakousko</option>
+                <option value="SK">Slovensko</option>
+                <!-- Přidejte další státy podle potřeby -->
+            </select>
+        </div>
+
+        <div>
+            <label for="seriesSelect">Řada Vlaků:</label>
+            <select id="seriesSelect" onchange="updateTrains()">
+                <option value="">Vyberte řadu</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="trainSelect">Konkrétní Vlak:</label>
+            <select id="trainSelect">
+                <option value="">Vyberte vlak</option>
+            </select>
+        </div>
+
+        <div id="trainDetails"></div>
+    </div>
+
     <div id="map"></div>
 
-    <h2>Výběr Nákladního Vlaku</h2>
-    <div>
-        <label for="stateSelect">Stát:</label>
-        <select id="stateSelect" onchange="updateSeries()">
-            <option value="">Vyberte stát</option>
-            <option value="CZ">Česká republika</option>
-            <option value="AT">Rakousko</option>
-            <option value="SK">Slovensko</option>
-            <!-- Přidejte další státy podle potřeby -->
-        </select>
-    </div>
-
-    <div>
-        <label for="seriesSelect">Řada Vlaků:</label>
-        <select id="seriesSelect" onchange="updateTrains()">
-            <option value="">Vyberte řadu</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="trainSelect">Konkrétní Vlak:</label>
-        <select id="trainSelect">
-            <option value="">Vyberte vlak</option>
-        </select>
-    </div>
-
-    <div id="trainDetails"></div>
-
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script>
         // Inicializace mapy Leaflet
         const map = L.map('map').setView([50.0252381, 15.2142544], 7);
@@ -71,7 +79,7 @@
         }).addTo(map);
 
         const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
-            attribution: '© OpenRailwayMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
+            attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
             minZoom: 2,
             maxZoom: 19,
             tileSize: 256
