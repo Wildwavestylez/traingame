@@ -10,7 +10,6 @@
             margin: 0;
             display: flex;
             height: 100vh;
-            overflow: hidden; /* Zabráníme skrolování */
         }
         #sidebar {
             width: 250px;
@@ -18,16 +17,27 @@
             padding: 15px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             overflow-y: auto;
-            position: absolute;
-            left: -250px; /* Skrýváme postranní panel */
-            transition: left 0.3s ease; /* Přidání animace */
+            position: fixed; /* Fixed position for sliding */
+            left: -250px; /* Hidden off-screen */
+            transition: left 0.3s; /* Animation for sliding */
         }
-        #sidebar.open {
-            left: 0; /* Otevře postranní panel */
+        #sidebar.visible {
+            left: 0; /* Slide into view */
         }
         #map {
             flex: 1;
-            position: relative; /* Zajištění pozice mapy */
+            transition: margin-left 0.3s; /* Adjust map position */
+        }
+        #toggleButton {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 1000; /* Ensure button is on top */
         }
         h1 {
             text-align: center;
@@ -54,22 +64,11 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
-        #toggleSidebar {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            position: absolute;
-            top: 10px;
-            right: 10px; /* Přesun na pravou stranu */
-            cursor: pointer;
-            z-index: 1000; /* Zajištění, aby byl tlačítko nad mapou */
-        }
     </style>
 </head>
 <body>
 
-    <button id="toggleSidebar" onclick="toggleSidebar()">☰</button> <!-- Tlačítko pro zasouvání -->
+    <button id="toggleButton" onclick="toggleSidebar()">☰</button> <!-- Button to toggle sidebar -->
 
     <div id="sidebar">
         <h1>Výběr Nákladního Vlaku</h1>
@@ -153,11 +152,6 @@
 
         let selectedTrain = null; // Uchovává vybraný vlak
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('open');
-        }
-
         function updateSeries() {
             const stateSelect = document.getElementById('stateSelect');
             const seriesSelect = document.getElementById('seriesSelect');
@@ -230,13 +224,30 @@
                     iconAnchor: [16, 32], // Kotvící bod
                 });
 
-                L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map); // Přidání vlaku na mapu
-                alert(`Koupili jste vlak ${selectedTrain.specificTrain}!`); // Informace o nákupu
+                const marker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map)
+                    .bindPopup(`Zakoupený vlak: ${selectedTrain.specificTrain}`)
+                    .openPopup();
 
-                // Reset výběru po koupi
-                document.getElementById('trainSelect').value = '';
-                showTrainDetails();
+                alert(`Zakoupený vlak ${selectedTrain.specificTrain} byl přidán na mapu!`);
+                // Po nákupu můžeme resetovat výběr vlaku
+                resetSelections();
             }
+        }
+
+        function resetSelections() {
+            document.getElementById('stateSelect').selectedIndex = 0;
+            document.getElementById('seriesSelect').innerHTML = '<option value="">Vyberte řadu</option>';
+            document.getElementById('trainSelect').innerHTML = '<option value="">Vyberte vlak</option>';
+            document.getElementById('trainDetails').innerHTML = '';
+            document.getElementById('buyButton').disabled = true;
+            selectedTrain = null; // Reset selected train
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('visible'); // Toggle visibility
+            const map = document.getElementById('map');
+            map.style.marginLeft = sidebar.classList.contains('visible') ? '250px' : '0'; // Adjust map position
         }
     </script>
 </body>
