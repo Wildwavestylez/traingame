@@ -113,7 +113,7 @@
 
     <button id="toggleButton" onclick="toggleSidebar()">☰</button>
 
-    <div id="sidebar">
+     <div id="sidebar">
         <h1>Výběr Nákladního Vlaku</h1>
         <div>
             <label for="stateSelect">Stát:</label>
@@ -143,15 +143,16 @@
         <div id="trainDetails"></div>
         <button id="buyButton" onclick="buyTrain()" disabled>Koupit Vlak</button>
     </div>
-      <div id="station-modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Vyberte startovní stanici</h2>
-        <ul id="station-list">
-            <!-- Stanice se načtou dynamicky pomocí JavaScriptu -->
-        </ul>
+
+    <div id="station-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Vyberte startovní stanici</h2>
+            <ul id="station-list">
+                <!-- Stanice se načtou dynamicky pomocí JavaScriptu -->
+            </ul>
+        </div>
     </div>
-</div>
 
     <div id="map"></div>
 
