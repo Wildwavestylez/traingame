@@ -10,6 +10,7 @@
             margin: 0;
             display: flex;
             height: 100vh;
+            overflow: hidden; /* Aby se panel mohl schovat */
         }
         #sidebar {
             width: 250px;
@@ -17,27 +18,14 @@
             padding: 15px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             overflow-y: auto;
-            position: fixed; /* Fixed position for sliding */
-            left: -250px; /* Hidden off-screen */
-            transition: left 0.3s; /* Animation for sliding */
+            transition: transform 0.3s ease; /* Animace pro zasouvání */
+            transform: translateX(-100%); /* Skryté mimo obrazovku */
         }
-        #sidebar.visible {
-            left: 0; /* Slide into view */
+        #sidebar.active {
+            transform: translateX(0); /* Zobrazit panel */
         }
         #map {
             flex: 1;
-            transition: margin-left 0.3s; /* Adjust map position */
-        }
-        #toggleButton {
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            z-index: 1000; /* Ensure button is on top */
         }
         h1 {
             text-align: center;
@@ -64,11 +52,20 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
+        #toggleButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1000; /* Aby byl tlačítko nad ostatními prvky */
+        }
     </style>
 </head>
 <body>
-
-    <button id="toggleButton" onclick="toggleSidebar()">☰</button> <!-- Button to toggle sidebar -->
 
     <div id="sidebar">
         <h1>Výběr Nákladního Vlaku</h1>
@@ -102,6 +99,7 @@
     </div>
 
     <div id="map"></div>
+    <button id="toggleButton" onclick="toggleSidebar()">☰</button>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -229,25 +227,19 @@
                     .openPopup();
 
                 alert(`Zakoupený vlak ${selectedTrain.specificTrain} byl přidán na mapu!`);
-                // Po nákupu můžeme resetovat výběr vlaku
-                resetSelections();
+                // Po nákupu můžeme resetovat výběr
+                resetSelection();
             }
         }
 
-        function resetSelections() {
-            document.getElementById('stateSelect').selectedIndex = 0;
-            document.getElementById('seriesSelect').innerHTML = '<option value="">Vyberte řadu</option>';
-            document.getElementById('trainSelect').innerHTML = '<option value="">Vyberte vlak</option>';
-            document.getElementById('trainDetails').innerHTML = '';
-            document.getElementById('buyButton').disabled = true;
-            selectedTrain = null; // Reset selected train
+        function resetSelection() {
+            document.getElementById('trainSelect').selectedIndex = 0;
+            showTrainDetails();
         }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('visible'); // Toggle visibility
-            const map = document.getElementById('map');
-            map.style.marginLeft = sidebar.classList.contains('visible') ? '250px' : '0'; // Adjust map position
+            sidebar.classList.toggle('active'); // Přepne aktivní stav
         }
     </script>
 </body>
