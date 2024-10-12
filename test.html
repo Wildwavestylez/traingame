@@ -3,166 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hra s Vláčky</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <title>Hra s Vláky</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+        #sidebar {
+            width: 250px;
+            background: #f4f4f4;
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            right: -250px; /* Skrýt panel mimo obrazovku */
+            height: 100%;
+            transition: right 0.3s ease; /* Přechod pro animaci */
+        }
+        #sidebar.active {
+            right: 0; /* Zobrazit panel */
         }
         #map {
-            height: 100vh; /* Celá výška okna */
+            flex: 1;
+            transition: margin-right 0.3s ease; /* Přechod pro mapu */
         }
-        /* Styl pro vyskakovací okno */
-        .modal {
-            display: none; /* Skryté ve výchozím nastavení */
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
+        #map.shifted {
+            margin-right: 250px; /* Posunout mapu, když je panel otevřený */
         }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
+        #toggleButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
             cursor: pointer;
+            padding: 10px;
+            z-index: 1000; /* Zajištění, že tlačítko je nad mapou */
         }
-
-        .station-btn {
-            display: block;
-            margin: 5px 0;
+        h1 {
+            text-align: center;
+        }
+        select {
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+        }
+        #trainDetails {
+            margin-top: 15px;
+            text-align: center;
+        }
+        #buyButton {
+            margin-top: 10px;
             padding: 10px;
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
+            width: 100%;
         }
-
-        .station-btn:hover {
-            background-color: #45a049;
+        #buyButton:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
 
-<div id="map"></div>
+    <button id="toggleButton" onclick="toggleSidebar()">☰</button>
 
-<!-- Vyskakovací okno pro výběr stanice -->
-<div id="station-selection-modal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="close-modal">&times;</span>
-        <h2>Vyberte startovní stanici</h2>
-        <div id="station-list"></div>
-        <button id="start-game-btn">Začít hru</button>
+    <div id="sidebar">
+        <h1>Výběr Nákladního Vlaku</h1>
+        <div>
+            <label for="stateSelect">Stát:</label>
+            <select id="stateSelect" onchange="updateSeries()">
+                <option value="">Vyberte stát</option>
+                <option value="CZ">Česká republika</option>
+                <option value="AT">Rakousko</option>
+                <option value="SK">Slovensko</option>
+                <!-- Přidejte další státy podle potřeby -->
+            </select>
+        </div>
+
+        <div>
+            <label for="seriesSelect">Řada Vlaků:</label>
+            <select id="seriesSelect" onchange="updateTrains()">
+                <option value="">Vyberte řadu</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="trainSelect">Konkrétní Vlak:</label>
+            <select id="trainSelect">
+                <option value="">Vyberte vlak</option>
+            </select>
+        </div>
+
+        <div id="trainDetails"></div>
+        <button id="buyButton" onclick="buyTrain()" disabled>Koupit Vlak</button>
     </div>
-</div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-    // Inicializace mapy Leaflet
-    const map = L.map('map').setView([50.0252381, 15.2142544], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+    <div id="map"></div>
 
-    const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
-        attribution: '© OpenRailwayMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
-        minZoom: 2,
-        maxZoom: 19,
-        tileSize: 256
-    }).addTo(map);
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script>
+        // Inicializace mapy Leaflet
+        const map = L.map('map').setView([50.0252381, 15.2142544], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-    // Definice linek
-    const lines = [
-        {
-            name: "Trať 253 Břeclav – Lednice",    
-            color: "#FFFFFF00",
-            category: "A",
-            trains: [
-                { name: "Břeclav – Lednice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/qjrg4Ow.png', maxSpeed: 500 }
-            ],
-            stops: [
-                { name: "Břeclav", location: [48.7536203, 16.8930283] },
-                { name: "Boří les", location: [48.7379150, 16.8671475] },
-                { name: "Poštorná", location: [48.7508392, 16.8519497] },  
-                { name: "Charvátská Nová Ves", location: [48.7598800, 16.8422889] },
-                { name: "Lednice rybníky", location: [48.7810556, 16.8032456] },
-                { name: "Lednice", location: [48.7941400, 16.8016453] },
-            ]
-        }
-    ];
+        const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
+            minZoom: 2,
+            maxZoom: 19,
+            tileSize: 256
+        }).addTo(map);
 
-    // Seznam stanic na základě linek
-    function getStationsFromLines(lines) {
-        const stations = new Set();
-        lines.forEach(line => {
-            line.stops.forEach(stop => {
-                stations.add(stop.name);
+        const trains = [
+            {
+                state: 'CZ',
+                series: '141',
+                specificTrain: '141.057',
+                price: 200,
+                speed: 400,
+                image: 'https://i.imgur.com/BvE0s27.png',
+                location: [50.0755, 14.4378]
+            },
+            {
+                state: 'AT',
+                series: '183',
+                specificTrain: '183.084',
+                price: 250,
+                speed: 450,
+                image: 'https://i.imgur.com/someImage.png',
+                location: [48.2082, 16.3738]
+            },
+            {
+                state: 'SK',
+                series: '220',
+                specificTrain: '220.001',
+                price: 300,
+                speed: 480,
+                image: 'https://i.imgur.com/anotherImage.png',
+                location: [48.1482, 17.1067]
+            }
+            // Přidejte další vlaky podle potřeby
+        ];
+
+        let selectedTrain = null; // Uchovává vybraný vlak
+
+        function updateSeries() {
+            const stateSelect = document.getElementById('stateSelect');
+            const seriesSelect = document.getElementById('seriesSelect');
+            const selectedState = stateSelect.value;
+
+            seriesSelect.innerHTML = '<option value="">Vyberte řadu</option>'; // Reset
+
+            const series = new Set(trains
+                .filter(train => train.state === selectedState)
+                .map(train => train.series)
+            );
+
+            series.forEach(seriesItem => {
+                const option = document.createElement('option');
+                option.value = seriesItem;
+                option.textContent = seriesItem;
+                seriesSelect.appendChild(option);
             });
-        });
-        return Array.from(stations);
-    }
-
-    // Inicializace vyskakovacího okna
-    const stationModal = document.getElementById('station-selection-modal');
-    const stationList = document.getElementById('station-list');
-    const closeModal = document.getElementById('close-modal');
-
-    function showStationSelection() {
-        const stations = getStationsFromLines(lines);
-        stationList.innerHTML = stations.map(station => `<button class="station-btn">${station}</button>`).join('');
-        stationModal.style.display = 'block';
-    }
-
-    closeModal.onclick = function() {
-        stationModal.style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        if (event.target === stationModal) {
-            stationModal.style.display = 'none';
         }
-    }
 
-    stationList.addEventListener('click', function(event) {
-        if (event.target.classList.contains('station-btn')) {
-            // Zpracování výběru stanice
-            const selectedStation = event.target.textContent;
-            console.log("Vybraná stanice: ", selectedStation);
-            // Uložení výběru a zavření modalu
-            stationModal.style.display = 'none';
-            // Můžete pokračovat s logikou pro zahájení hry zde
+        function updateTrains() {
+            const seriesSelect = document.getElementById('seriesSelect');
+            const trainSelect = document.getElementById('trainSelect');
+            const selectedSeries = seriesSelect.value;
+
+            trainSelect.innerHTML = '<option value="">Vyberte vlak</option>'; // Reset
+
+            trains
+                .filter(train => train.series === selectedSeries)
+                .forEach(train => {
+                    const option = document.createElement('option');
+                    option.value = train.specificTrain;
+                    option.textContent = train.specificTrain;
+                    trainSelect.appendChild(option);
+                });
+
+            trainSelect.onchange = showTrainDetails; // Přidejte akci pro zobrazení detailů
         }
-    });
 
-    // Spustí se po načtení stránky
-    window.onload = function() {
-        showStationSelection();
-    }
-</script>
+        function showTrainDetails() {
+            const trainSelect = document.getElementById('trainSelect');
+            selectedTrain = trains.find(train => train.specificTrain === trainSelect.value);
+            const detailsDiv = document.getElementById('trainDetails');
+            const buyButton = document.getElementById('buyButton');
 
+            if (selectedTrain) {
+                detailsDiv.innerHTML = `
+                    <h2>Detaily Vláku:</h2>
+                    <img src="${selectedTrain.image}" alt="${selectedTrain.specificTrain}" style="width:200px;">
+                    <p>Stát: ${selectedTrain.state}</p>
+                    <p>Řada: ${selectedTrain.series}</p>
+                    <p>Konkrétní vlak: ${selectedTrain.specificTrain}</p>
+                    <p>Cena: ${selectedTrain.price} Kč</p>
+                    <p>Rychlost: ${selectedTrain.speed} km/h</p>
+                    <p>Lokace: [${selectedTrain.location[0]}, ${selectedTrain.location[1]}]</p>
+                `;
+                buyButton.disabled = false; // Aktivujte tlačítko pro nákup
+            } else {
+                detailsDiv.innerHTML = '';
+                buyButton.disabled = true; // Deaktivujte tlačítko pro nákup
+            }
+        }
+
+        function buyTrain() {
+            if (selectedTrain) {
+                // Vytvoření značky s vlastní ikonou
+                const trainIcon = L.icon({
+                    iconUrl: selectedTrain.image, // Použijeme ikonu z objektu vlaku
+                    iconSize: [32, 32], // Velikost ikony
+                    iconAnchor: [16, 32], // Kotvící bod
+                });
+
+                const marker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map)
+                    .bindPopup(`${selectedTrain.specificTrain}`)
+                    .openPopup();
+
+                // Zde můžete přidat logiku pro odečtení ceny od hráče nebo další funkce
+                alert(`Vlak ${selectedTrain.specificTrain} zakoupen za ${selectedTrain.price} Kč!`);
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mapContainer = document.getElementById('map');
+            sidebar.classList.toggle('active'); // Přepíná třídu pro zobrazení/zavření panelu
+            mapContainer.classList.toggle('shifted'); // Posun mapy, když je panel otevřený
+        }
+    </script>
 </body>
 </html>
-
