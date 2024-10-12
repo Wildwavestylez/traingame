@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vlaková hra</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         * {
             margin: 0;
@@ -50,12 +51,6 @@
         #map {
             width: 100%;
             height: 100%;
-            background-color: #ccc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #333;
-            font-size: 1.5em;
         }
 
         /* Line Item Styling */
@@ -137,7 +132,21 @@
         <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
     </div>
 
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
+        // Inicializace mapy Leaflet
+        const map = L.map('map').setView([50.0252381, 15.2142544], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const openRailwayMapLayer = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors, Style: CC-BY-SA 2.0 OpenRailwayMap and OpenStreetMap',
+            minZoom: 2,
+            maxZoom: 19,
+            tileSize: 256
+        }).addTo(map);
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             if (sidebar.style.display === 'none' || sidebar.style.display === '') {
