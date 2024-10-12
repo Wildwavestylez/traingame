@@ -231,7 +231,8 @@
                 });
 
                 L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map); // Přidání vlaku na mapu
-                alert(`Vlak ${selectedTrain.specificTrain} byl zakoupen!`); // Zobrazí zprávu
+                toggleSidebar(); // Zavření postranního panelu
+                alert(`Vlak ${selectedTrain.specificTrain} byl zakoupen a přidán na mapu.`);
             }
         }
     </script>
