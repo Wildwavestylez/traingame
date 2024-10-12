@@ -33,6 +33,19 @@
             margin-top: 15px;
             text-align: center;
         }
+        #buyButton {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        #buyButton:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -65,6 +78,7 @@
         </div>
 
         <div id="trainDetails"></div>
+        <button id="buyButton" onclick="buyTrain()" disabled>Koupit Vlak</button>
     </div>
 
     <div id="map"></div>
@@ -116,6 +130,8 @@
             // Přidejte další vlaky podle potřeby
         ];
 
+        let selectedTrain = null; // Uchovává vybraný vlak
+
         function updateSeries() {
             const stateSelect = document.getElementById('stateSelect');
             const seriesSelect = document.getElementById('seriesSelect');
@@ -157,8 +173,9 @@
 
         function showTrainDetails() {
             const trainSelect = document.getElementById('trainSelect');
-            const selectedTrain = trains.find(train => train.specificTrain === trainSelect.value);
+            selectedTrain = trains.find(train => train.specificTrain === trainSelect.value);
             const detailsDiv = document.getElementById('trainDetails');
+            const buyButton = document.getElementById('buyButton');
 
             if (selectedTrain) {
                 detailsDiv.innerHTML = `
@@ -171,9 +188,31 @@
                     <p>Rychlost: ${selectedTrain.speed} km/h</p>
                     <p>Lokace: [${selectedTrain.location[0]}, ${selectedTrain.location[1]}]</p>
                 `;
+                buyButton.disabled = false; // Aktivujte tlačítko pro nákup
             } else {
                 detailsDiv.innerHTML = '';
+                buyButton.disabled = true; // Deaktivujte tlačítko pro nákup
             }
+        }
+
+        function buyTrain() {
+            if (selectedTrain) {
+                const marker = L.marker(selectedTrain.location).addTo(map)
+                    .bindPopup(`Zakoupený vlak: ${selectedTrain.specificTrain}`)
+                    .openPopup();
+
+                alert(`Zakoupený vlak ${selectedTrain.specificTrain} byl přidán na mapu!`);
+                // Po nákupu můžeme resetovat výběr vlaku
+                resetSelections();
+            }
+        }
+
+        function resetSelections() {
+            document.getElementById('trainSelect').selectedIndex = 0;
+            document.getElementById('seriesSelect').selectedIndex = 0;
+            document.getElementById('stateSelect').selectedIndex = 0;
+            document.getElementById('trainDetails').innerHTML = '';
+            document.getElementById('buyButton').disabled = true; // Deaktivujte tlačítko pro nákup
         }
     </script>
 </body>
