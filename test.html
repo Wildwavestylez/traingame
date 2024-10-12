@@ -87,6 +87,10 @@
 let playerFinance = 500000;
 let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
+let availableStations = ['Plzeň hlavní nádraží', 'Jihlava', 'Strakonice', ]; // Seznam velkých stanic
+let unlockedStations = []; // Odemčené stanice
+let lockedStations = availableStations.slice(); // Na začátku jsou všechny stanice zamčené kromě jedné
+let playerTrains = []; // Seznam hráčových vlaků
 const cargoInterval = 7000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
@@ -6646,7 +6650,71 @@ function buyTrain(trainIndex, button) {
     }
 }
 
+// Funkce pro výběr počáteční stanice
+function chooseStartingStation(stationName) {
+    unlockedStations.push(stationName); // Odemčení zvolené stanice
+    lockedStations = lockedStations.filter(station => station !== stationName); // Zamykaní ostatních
+    updateStationUI(); // Aktualizace uživatelského rozhraní
+}
 
+// Funkce pro generování nákladů pouze na odemčených stanicích
+function generateCargo() {
+    unlockedStations.forEach(station => {
+        let stationData = getStationDataByName(station);
+        let destinationStation = getRandomLockedStation(); // Náklad doručí do zamčené stanice
+
+        // Generování nákladu
+        let cargoPrice = calculateCargoPrice(getRealDistance(stationData.location, destinationStation.location));
+        let cargoMarker = L.marker(stationData.location, { icon: cargoIcon }).addTo(map);
+
+        // Ovládání přiřazení vlaku pro náklad
+        cargoMarker.bindPopup(`
+            Náklad do ${destinationStation.name} - Cena: ${cargoPrice.toFixed(2)} Kč 
+            <button onclick="assignTrainForCargo('${station}', '${destinationStation.name}', ${cargoPrice})">
+                Přiřadit vlak
+            </button>
+        `);
+    });
+}
+
+// Funkce přiřazení vlaku a doručení nákladu
+function assignTrainForCargo(startStation, destinationStation, cargoPrice) {
+    let availableTrain = findAvailableTrain(); // Najdi dostupný vlak
+    if (!availableTrain) {
+        alert("Nemáte volný vlak.");
+        return;
+    }
+
+    let startData = getStationDataByName(startStation);
+    let destinationData = getStationDataByName(destinationStation);
+
+    moveTrainToDestination(availableTrain, startData.location, destinationData.location, cargoPrice);
+
+    // Po doručení se odemkne cílová stanice
+    unlockedStations.push(destinationStation);
+    lockedStations = lockedStations.filter(station => station !== destinationStation);
+
+    updateStationUI();
+}
+
+// Aktualizace UI pro stanice (odemčené a zamčené)
+function updateStationUI() {
+    // Zde můžeš přidat logiku pro zobrazení/zamčení stanic na mapě
+}
+
+// Funkce pro získání náhodné zamčené stanice jako cílové
+function getRandomLockedStation() {
+    let randomIndex = Math.floor(Math.random() * lockedStations.length);
+    return getStationDataByName(lockedStations[randomIndex]);
+}
+
+// Funkce pro přesun vlaku k cíli
+function moveTrainToDestination(train, startLocation, destinationLocation, cargoPrice) {
+    // Logika pro pohyb vlaku (podobná té, kterou už máš)
+    // Po doručení odemknout cílovou stanici a zobrazit nové možnosti nákladů
+    train.currentLocation = destinationLocation;
+    train.available = true; // Vlak je opět volný pro další zakázku
+}
 
 // Funkce pro výpočet ceny za odvoz nákladu
 function calculateCargoPrice(distance) {
