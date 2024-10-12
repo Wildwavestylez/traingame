@@ -10,7 +10,7 @@
             margin: 0;
             display: flex;
             height: 100vh;
-            overflow: hidden; /* Aby se panel mohl schovat */
+            position: relative;
         }
         #sidebar {
             width: 250px;
@@ -18,14 +18,32 @@
             padding: 15px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             overflow-y: auto;
-            transition: transform 0.3s ease; /* Animace pro zasouvání */
-            transform: translateX(-100%); /* Skryté mimo obrazovku */
+            position: absolute;
+            top: 0;
+            right: -250px; /* Skrýt panel mimo obrazovku */
+            height: 100%;
+            transition: right 0.3s ease; /* Přechod pro animaci */
         }
         #sidebar.active {
-            transform: translateX(0); /* Zobrazit panel */
+            right: 0; /* Zobrazit panel */
         }
         #map {
             flex: 1;
+            transition: margin-right 0.3s ease; /* Přechod pro mapu */
+        }
+        #map.shifted {
+            margin-right: 250px; /* Posunout mapu, když je panel otevřený */
+        }
+        #toggleButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1000; /* Zajištění, že tlačítko je nad mapou */
         }
         h1 {
             text-align: center;
@@ -52,20 +70,11 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
-        #toggleButton {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            z-index: 1000; /* Aby byl tlačítko nad ostatními prvky */
-        }
     </style>
 </head>
 <body>
+
+    <button id="toggleButton" onclick="toggleSidebar()">☰</button>
 
     <div id="sidebar">
         <h1>Výběr Nákladního Vlaku</h1>
@@ -99,7 +108,6 @@
     </div>
 
     <div id="map"></div>
-    <button id="toggleButton" onclick="toggleSidebar()">☰</button>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -223,23 +231,19 @@
                 });
 
                 const marker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map)
-                    .bindPopup(`Zakoupený vlak: ${selectedTrain.specificTrain}`)
+                    .bindPopup(`${selectedTrain.specificTrain}`)
                     .openPopup();
 
-                alert(`Zakoupený vlak ${selectedTrain.specificTrain} byl přidán na mapu!`);
-                // Po nákupu můžeme resetovat výběr
-                resetSelection();
+                // Zde můžete přidat logiku pro odečtení ceny od hráče nebo další funkce
+                alert(`Vlak ${selectedTrain.specificTrain} zakoupen za ${selectedTrain.price} Kč!`);
             }
-        }
-
-        function resetSelection() {
-            document.getElementById('trainSelect').selectedIndex = 0;
-            showTrainDetails();
         }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active'); // Přepne aktivní stav
+            const mapContainer = document.getElementById('map');
+            sidebar.classList.toggle('active'); // Přepíná třídu pro zobrazení/zavření panelu
+            mapContainer.classList.toggle('shifted'); // Posun mapy, když je panel otevřený
         }
     </script>
 </body>
