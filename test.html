@@ -63,7 +63,7 @@
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
     <p id="finance">Finance: 500000 Kč</p>
-    <p>VERZE: 177</p>
+    <p>VERZE: 175</p>
     
     <!-- Doplnit další informace podle potřeby -->
 </div>
@@ -87,7 +87,7 @@
 let playerFinance = 500000;
 let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
-const cargoInterval = 700; // Interval generování nákladu na zastávkách v ms
+const cargoInterval = 7000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
 const offerInterval = 180000; // Interval nabídek od herního drážního úřadu v ms
 
@@ -6762,30 +6762,6 @@ function assignTrainForCargo(cargoMarker, destinationLocation, cargoPrice) {
         alert("Nemáte žádný volný vlak k přiřazení nákladu.");
     }
 }
-
-   // Funkce pro automatizaci přiřazování nákladu vlakům
-function assignNextCargo(trainMarker) {
-    // Najdi nejbližší dostupný náklad
-    let nearestCargo = null;
-    let minDistance = Infinity;
-
-    map.eachLayer(layer => {
-        if (layer.options.icon && layer.options.icon.options.iconUrl === 'https://i.imgur.com/cYbr4oG.png') {
-            const distance = getRealDistance(trainMarker.getLatLng(), layer.getLatLng());
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearestCargo = layer;
-            }
-        }
-    });
-
-    if (nearestCargo) {
-        const destinationStop = lines.flatMap(line => line.stops).find(stop => stop.location[0] === nearestCargo.getLatLng().lat && stop.location[1] === nearestCargo.getLatLng().lng);
-        const cargoPrice = calculateCargoPrice(minDistance);
-        assignTrainForCargo(nearestCargo, destinationStop.location, cargoPrice);
-    }
-}
-
     
 function findAvailableTrain() {
     return ownedTrains.find(train => !train.currentCargo);
@@ -6829,7 +6805,6 @@ function sendTrainForCargo(trainName, cargoMarker, destinationLocation, cargoPri
 }
 
     
-// Rozšířená funkce pro přesun vlaku, která zavolá assignNextCargo po doručení nákladu
 function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
     const maxSpeed = 560; // Maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
@@ -6856,20 +6831,18 @@ function moveTrainToDestination(trainMarker, destinationLocation, cargoPrice) {
             clearInterval(moveInterval);
             map.removeLayer(trainMarker);
 
-            // Uvolnění vlaku pro další zakázku
-            ownedTrains.forEach(train => {
+             // Uvolnění vlaku pro další zakázku
+            trainTypes.forEach(train => {
                 if (train.currentCargo && train.currentCargo.marker === trainMarker) {
                     train.currentCargo = null;
                 }
             });
 
             // Při doručení nákladu získej náhodnou částku peněz
-            playerFinance += cargoPrice;
-            playerFinance = Math.round(playerFinance); // Zaokrouhlení na celé číslo
-            document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`; // Zobrazení s jedním desetinným místem
-
-            // Automatické přiřazení dalšího nákladu
-            assignNextCargo(trainMarker);
+            // Zaokrouhlení na celé číslo
+  playerFinance += cargoPrice;
+playerFinance = Math.round(playerFinance); // Zaokrouhlení na celé číslo
+document.getElementById('finance').innerText = `Finance: ${playerFinance.toFixed(0)} Kč`; // Zobrazení s jedním desetinným místem
         }
     }, interval);
 }
