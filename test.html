@@ -323,21 +323,29 @@ lines.forEach(line => {
             }
         }
 
-        function buyTrain() {
-    if (selectedTrain) {
+       function buyTrain() {
+    if (selectedTrain && selectedStation) { // Zkontrolujeme, zda je vybrán vlak i stanice
+        // Vytvoření značky s vlastní ikonou
         const trainIcon = L.icon({
-            iconUrl: selectedTrain.image,
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
+            iconUrl: selectedTrain.image, // Použijeme ikonu z objektu vlaku
+            iconSize: [32, 32], // Velikost ikony
+            iconAnchor: [16, 32], // Kotvící bod
         });
 
-        // Zde vytvoříme vlak a uložíme do globální proměnné
-        trainMarker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map)
-            .bindPopup(`${selectedTrain.specificTrain}`)
+        // Umístíme vlak na mapu na souřadnice vybrané stanice
+        const marker = L.marker(selectedStation.location, { icon: trainIcon }).addTo(map)
+            .bindPopup(`${selectedTrain.specificTrain} umístěn ve stanici ${selectedStation.name}`)
             .openPopup();
 
         // Zde můžete přidat logiku pro odečtení ceny od hráče nebo další funkce
-        alert(`Vlak ${selectedTrain.specificTrain} zakoupen za ${selectedTrain.price} Kč!`);
+        alert(`Vlak ${selectedTrain.specificTrain} zakoupen za ${selectedTrain.price} Kč ve stanici ${selectedStation.name}!`);
+    } else {
+        // Pokud nebyla vybrána stanice nebo vlak, zobrazíme upozornění
+        if (!selectedStation) {
+            alert("Vyberte startovní stanici před nákupem vlaku.");
+        } else if (!selectedTrain) {
+            alert("Vyberte vlak, který chcete koupit.");
+        }
     }
 }
 
