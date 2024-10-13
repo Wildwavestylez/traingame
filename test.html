@@ -148,7 +148,14 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script>
 
-
+ document.getElementById('buyTrainButton').addEventListener('click', function() {
+  const selectedTrain = buyTrain(); // Předpokládáme, že tato funkce vybere koupený vlak
+  if (selectedTrain) {
+    purchaseTrain(selectedTrain); // Zavoláme funkci pro koupi vlaku
+  } else {
+    alert("Vyberte vlak.");
+  }
+});
 
         // Fiktivní data pro linky a zastávky
 const lines = [
@@ -434,14 +441,7 @@ function placeTrainOnMap(location, train) {
     .bindPopup(`${train.name} umístěn ve stanici ${selectedStation.name}!`)
     .openPopup();
 }
-        document.getElementById('buyTrainButton').addEventListener('click', function() {
-  const selectedTrain = buyTrain(); // Předpokládáme, že tato funkce vybere koupený vlak
-  if (selectedTrain) {
-    purchaseTrain(selectedTrain); // Zavoláme funkci pro koupi vlaku
-  } else {
-    alert("Vyberte vlak.");
-  }
-});
+        
 
 
 
