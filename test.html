@@ -676,7 +676,7 @@ function moveTrainToDestination(train, cargo) {
  const maxSpeed = 400; // Simulovaná maximální rychlost vlaku v km/h
     const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
-    const startLocation = trainMarker.getLatLng();
+    const startLocation = trainIcon.getLatLng();
     const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
     const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas cesty v ms
 
@@ -696,7 +696,7 @@ function moveTrainToDestination(train, cargo) {
         } else {
             // Vlak dorazil na místo určení
             clearInterval(moveInterval);
-            trainMarker.setLatLng(destinationLocation); // Zajistí, že vlak skončí přesně v cíli
+            trainIcon.setLatLng(destinationLocation); // Zajistí, že vlak skončí přesně v cíli
 
             // Připsání odměny hráči
             addMoney(cargoPrice);
