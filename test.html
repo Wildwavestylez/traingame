@@ -99,6 +99,39 @@
   #stationList li:hover {
     background-color: #f0f0f0;
   }
+
+        .cargo-modal {
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
     </style>
 </head>
 <body>
@@ -258,7 +291,7 @@ lines.forEach(line => {
         let purchasedTrain = null; // Globální proměnná pro koupený vlak
         let trainMarker; // Globální proměnná pro vlak
         let cargoMarkers = []; // Pole pro uchování nákladových markerů
-   
+        let cargos = []; // Pole pro sledování všech generovaných nákladů
 
         function updateSeries() {
             const stateSelect = document.getElementById('stateSelect');
@@ -479,7 +512,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c; // Vzdálenost v km
 }
 
-// Funkce pro generování nákladu
+
+        
 function generateCargo() {
     if (selectedStation) {
         const targetStation = lines.flatMap(line => line.stops)
@@ -494,45 +528,49 @@ function generateCargo() {
             location: selectedStation.location
         };
 
+        // Uložení generovaného nákladu do pole
+        cargos.push(cargo);
+
+        // Vytvoření ikony pro náklad
         const cargoIcon = L.icon({
             iconUrl: 'https://i.imgur.com/cYbr4oG.png',
             iconSize: [32, 32],
             iconAnchor: [16, 32],
         });
 
-        // Vytvoření markeru pro náklad a přidání do pole
-        const cargoMarker = L.marker(cargo.location, { icon: cargoIcon })
+        const marker = L.marker(cargo.location, { icon: cargoIcon })
             .addTo(map)
             .bindPopup(`Cíl: ${cargo.target.name}, Odměna: ${cargo.price} Kč`)
             .openPopup();
 
-        // Přidáme náklad do pole pro pozdější použití
-        cargoMarkers.push(cargoMarker);
-
-        // Přidání event listeneru na náklad
-        cargoMarker.on('click', function() {
-            selectCargo(cargo); // Vyber náklad
+        // Při kliknutí na marker otevři nabídku
+        marker.on('click', () => {
+            showCargoSelection(cargo);
         });
     }
 }
 
-// Funkce pro výběr nákladu
-function selectCargo(cargo) {
-    if (trainMarker) {
-        // Zeptejte se hráče, co chce vybrat
-        const selection = confirm(`Chcete vybrat náklad na cílovou stanici: ${cargo.target.name}? (OK pro náklad, Cancel pro vlak)`);
+function showCargoSelection(cargo) {
+    const cargoModal = document.createElement('div');
+    cargoModal.className = 'cargo-modal';
+    cargoModal.innerHTML = `
+        <div class="modal-content">
+            <span class="close" onclick="this.parentElement.parentElement.remove();">&times;</span>
+            <h2>Vyberte náklad</h2>
+            <p>Cíl: ${cargo.target.name}</p>
+            <p>Odměna: ${cargo.price} Kč</p>
+            <button onclick="selectCargo(cargo)">Vybrat náklad</button>
+        </div>
+    `;
 
-        if (selection) {
-            alert(`Vybrali jste náklad na cílovou stanici: ${cargo.target.name}. Odměna: ${cargo.price} Kč.`);
-            // Zde můžete přidat logiku pro zpracování vybraného nákladu
-        } else {
-            alert(`Vybrali jste vlak: ${trainMarker.getPopup().getContent()}`);
-        }
-    } else {
-        alert('Žádný vlak není na stanici.');
-    }
+    document.body.appendChild(cargoModal);
 }
 
+function selectCargo(cargo) {
+    // Zde můžeš přidat logiku pro zpracování výběru nákladu
+    alert(`Náklad na stanici ${cargo.target.name} vybrán! Odměna: ${cargo.price} Kč.`);
+    // Můžeš přidat i další akce, jako je zrušení nákladu na mapě, atd.
+}
 
 // Funkce pro získání odemčených stanic
 function getUnlockedStops() {
