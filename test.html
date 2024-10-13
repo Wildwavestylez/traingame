@@ -450,27 +450,45 @@ const cargoIcon = L.icon({
 
 let cargoList = []; // Seznam aktivních nákladů
 
+// Funkce pro výpočet vzdálenosti mezi dvěma souřadnicemi (v km)
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Poloměr Země v kilometrech
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Vzdálenost v km
+}
+
 // Funkce pro generování nákladu
 function generateCargo() {
-    if (unlockedStations.length > 0) {
-        const randomStop = unlockedStations[0]; // Vybíráme první odemčenou stanici
-        const randomTarget = getRandomStop(); // Získání náhodné cílové stanice
-        const cargo = {
-            origin: randomStop,
-            destination: randomTarget,
-            price: Math.floor(Math.random() * 1000) + 500, // Cena nákladu
-        };
-        
-        // Vytvoření markeru pro náklad na mapě
-        const cargoMarker = L.marker([randomStop.location[0], randomStop.location[1]], { icon: cargoIcon })
-            .addTo(map)
-            .bindPopup(`Náklad: ${randomStop.name} -> ${randomTarget.name}<br>Cena: ${cargo.price} Kč`);
+    if (selectedStation) {
+        const targetStation = lines.flatMap(line => line.stops)
+            .filter(stop => stop.name !== selectedStation.name)[Math.floor(Math.random() * lines.flatMap(line => line.stops).length)];
 
-        cargoMarker.on('click', () => {
-            handleCargoClick(cargo, cargoMarker);
+        const distance = calculateDistance(selectedStation.location[0], selectedStation.location[1], targetStation.location[0], targetStation.location[1]);
+        const reward = distance * 16; // Odměna za ujetou vzdálenost
+
+        const cargo = {
+            target: targetStation,
+            price: reward, // Nastavíme cenu na základě vzdálenosti
+            location: selectedStation.location
+        };
+
+        // Vytvoření ikony pro náklad
+        const cargoIcon = L.icon({
+            iconUrl: 'https://i.imgur.com/cYbr4oG.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
         });
-        
-        alert(`Náklad generován: ${cargo.origin.name} -> ${cargo.destination.name} za ${cargo.price} Kč`);
+
+        L.marker(cargo.location, { icon: cargoIcon })
+            .addTo(map)
+            .bindPopup(`Cíl: ${cargo.target.name}, Odměna: ${cargo.price} Kč`)
+            .openPopup();
     }
 }
 
