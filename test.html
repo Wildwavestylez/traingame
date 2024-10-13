@@ -280,6 +280,73 @@
             sidebar.classList.toggle('active'); // Přepíná třídu pro zobrazení/zavření panelu
             mapContainer.classList.toggle('shifted'); // Posun mapy, když je panel otevřený
         }
+
+        // Stanice odpovídající krajským městům
+const stations = [
+  { name: "Praha", location: [50.0755, 14.4378] },
+  { name: "Brno", location: [49.1951, 16.6068] },
+  { name: "Ostrava", location: [49.8209, 18.2625] },
+  { name: "Plzeň", location: [49.7384, 13.3736] },
+  { name: "Liberec", location: [50.7671, 15.0562] },
+  { name: "Olomouc", location: [49.5955, 17.2515] },
+  { name: "Ústí nad Labem", location: [50.6611, 14.0325] },
+  { name: "Hradec Králové", location: [50.2092, 15.8328] },
+  { name: "Pardubice", location: [50.0404, 15.7766] },
+  { name: "Zlín", location: [49.2244, 17.6627] },
+  { name: "Jihlava", location: [49.3965, 15.5906] },
+  { name: "České Budějovice", location: [48.9757, 14.4800] },
+  { name: "Karlovy Vary", location: [50.2310, 12.8710] }
+];
+
+// Otevření modálního okna na začátku hry
+window.onload = function() {
+  const modal = document.getElementById('stationModal');
+  const stationList = document.getElementById('stationList');
+  modal.style.display = 'block';
+
+  // Vygenerování seznamu stanic
+  stations.forEach(station => {
+    const listItem = document.createElement('li');
+    listItem.textContent = station.name;
+    listItem.addEventListener('click', () => selectStation(station));
+    stationList.appendChild(listItem);
+  });
+};
+
+let selectedStation = null;
+
+function selectStation(station) {
+  selectedStation = station;
+  console.log('Vybraná stanice:', station.name);
+  // Změna stylu u vybrané stanice (např. zvýraznění)
+  document.querySelectorAll('#stationList li').forEach(li => li.style.backgroundColor = '');
+  event.target.style.backgroundColor = '#f0f0f0';
+}
+
+// Potvrzení výběru a zavření modálního okna
+document.getElementById('confirmStation').addEventListener('click', function() {
+  if (selectedStation) {
+    console.log('Potvrzená stanice:', selectedStation.name);
+    document.getElementById('stationModal').style.display = 'none';
+    // Přidej vlak na mapu na zvolené startovní stanici
+    placeTrainOnMap(selectedStation.location);
+  } else {
+    alert('Vyberte stanici, prosím.');
+  }
+});
+
+// Funkce pro umístění vlaku na zvolené startovní místo
+function placeTrainOnMap(location) {
+  const trainIcon = L.icon({
+    iconUrl: 'https://i.imgur.com/BvE0s27.png', // Vzorová ikona vlaku
+    iconSize: [38, 38],
+  });
+
+  L.marker(location, { icon: trainIcon }).addTo(map)
+    .bindPopup('Vlak umístěn zde!')
+    .openPopup();
+}
+
     </script>
 </body>
 </html>
