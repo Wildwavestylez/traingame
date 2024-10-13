@@ -463,6 +463,19 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c; // Vzdálenost v km
 }
 
+// Funkce pro výpočet vzdálenosti mezi dvěma souřadnicemi (v km)
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Poloměr Země v kilometrech
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Vzdálenost v km
+}
+
 // Funkce pro generování nákladu
 function generateCargo() {
     if (selectedStation) {
@@ -470,7 +483,7 @@ function generateCargo() {
             .filter(stop => stop.name !== selectedStation.name)[Math.floor(Math.random() * lines.flatMap(line => line.stops).length)];
 
         const distance = calculateDistance(selectedStation.location[0], selectedStation.location[1], targetStation.location[0], targetStation.location[1]);
-        const reward = distance * 16; // Odměna za ujetou vzdálenost
+        const reward = Math.round(distance * 16); // Odměna za ujetou vzdálenost, zaokrouhlena na celé koruny
 
         const cargo = {
             target: targetStation,
