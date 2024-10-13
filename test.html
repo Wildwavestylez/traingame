@@ -545,46 +545,53 @@ function generateCargo() {
 
         // Při kliknutí na marker otevři nabídku
         marker.on('click', () => {
-            showCargoSelection(cargo);
+            // Zkontroluj, zda je ve stejné stanici i vlak
+            const trainAtStation = checkTrainAtStation(cargo.location);
+            showCargoAndTrainSelection(cargo, trainAtStation);
         });
     }
 }
 
-function showCargoSelection(cargo) {
-    const availableTrains = lines.flatMap(line => line.trains)
-        .filter(train => trainIsAtStation(train, selectedStation.name)); // Zkontroluj, zda vlak je ve vybrané stanici
+function checkTrainAtStation(location) {
+    // Předpokládejme, že vlaky jsou uloženy v poli `trains` a mají atribut location
+    for (let train of trains) {
+        if (train.location[0] === location[0] && train.location[1] === location[1]) {
+            return train; // Vlak je na stejné pozici jako náklad
+        }
+    }
+    return null; // Žádný vlak na této pozici není
+}
 
-    const cargoModal = document.createElement('div');
-    cargoModal.className = 'cargo-modal';
-    cargoModal.innerHTML = `
+function showCargoAndTrainSelection(cargo, train) {
+    const selectionModal = document.createElement('div');
+    selectionModal.className = 'selection-modal';
+    selectionModal.innerHTML = `
         <div class="modal-content">
             <span class="close" onclick="this.parentElement.parentElement.remove();">&times;</span>
-            <h2>Vyberte náklad</h2>
-            <p>Cíl: ${cargo.target.name}</p>
-            <p>Odměna: ${cargo.price} Kč</p>
+            <h2>Vyberte akci</h2>
+            ${train ? `<p><strong>Vlak:</strong> ${train.name}</p>
+            <button onclick="selectTrain(train)">Vybrat vlak</button>` : ''}
+            <p><strong>Náklad:</strong> Cíl: ${cargo.target.name}, Odměna: ${cargo.price} Kč</p>
             <button onclick="selectCargo(cargo)">Vybrat náklad</button>
-            ${availableTrains.length > 0 ? '<h3>Dostupné vlaky:</h3>' + availableTrains.map(train => `<button onclick="selectTrain('${train.name}')">Vybrat ${train.name}</button>`).join('') : '<p>Žádné dostupné vlaky.</p>'}
         </div>
     `;
 
-    document.body.appendChild(cargoModal);
+    document.body.appendChild(selectionModal);
 }
 
-function trainIsAtStation(train, stationName) {
-    // Zde bys měl implementovat logiku pro zjištění, zda se vlak nachází na dané stanici
-    // Například, pokud máš informace o aktuální poloze vlaku, můžeš porovnat jeho lokaci se stanicí
-    // Předpokládejme, že máš pole `trains` s aktuálními pozicemi vlaků
-    // Tento příklad pouze porovná název vlaku s názvem stanice
-    return train.currentStation === stationName; // Nahraď `currentStation` skutečnou logikou
+function selectTrain(train) {
+    alert(`Vlak ${train.name} byl vybrán.`);
+    // Další logika pro výběr vlaku
 }
-
-
 
 function selectCargo(cargo) {
-    // Zde můžeš přidat logiku pro zpracování výběru nákladu
     alert(`Náklad na stanici ${cargo.target.name} vybrán! Odměna: ${cargo.price} Kč.`);
-    // Můžeš přidat i další akce, jako je zrušení nákladu na mapě, atd.
+    // Další logika pro výběr nákladu
 }
+
+
+
+
 
 // Funkce pro získání odemčených stanic
 function getUnlockedStops() {
