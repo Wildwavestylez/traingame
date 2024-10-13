@@ -414,8 +414,36 @@ function purchaseTrain(train) {
     alert("Nejprve musíte vybrat startovní stanici.");
     return;
   }
- // Generování nákladu na odemčených zastávkách
-function generateCargo() {
+
+  // Uložíme koupený vlak do globální proměnné
+  purchasedTrain = train;
+  console.log("Koupený vlak:", purchasedTrain.name);
+  
+  // Přidáme vlak na mapu na startovní stanici
+  placeTrainOnMap(selectedStation.location, purchasedTrain);
+}
+
+// Funkce pro umístění vlaku na startovní stanici
+function placeTrainOnMap(location, train) {
+  const trainIcon = L.icon({
+    iconUrl: train.image, // Vezmeme ikonu vlaku z definice vlaku
+    iconSize: [38, 38],
+  });
+
+  L.marker(location, { icon: trainIcon }).addTo(map)
+    .bindPopup(`${train.name} umístěn ve stanici ${selectedStation.name}!`)
+    .openPopup();
+}
+        document.getElementById('buyTrainButton').addEventListener('click', function() {
+  const selectedTrain = buyTrain(); // Předpokládáme, že tato funkce vybere koupený vlak
+  if (selectedTrain) {
+    purchaseTrain(selectedTrain); // Zavoláme funkci pro koupi vlaku
+  } else {
+    alert("Vyberte vlak.");
+  }
+});
+
+        function generateCargo() {
     // Filtrování odemčených zastávek
     const unlockedStops = [];
     lines.forEach(line => {
@@ -457,34 +485,6 @@ function generateCargo() {
         alert('Žádné odemčené zastávky pro generování nákladu.');
     }
 }
-
-  // Uložíme koupený vlak do globální proměnné
-  purchasedTrain = train;
-  console.log("Koupený vlak:", purchasedTrain.name);
-  
-  // Přidáme vlak na mapu na startovní stanici
-  placeTrainOnMap(selectedStation.location, purchasedTrain);
-}
-
-// Funkce pro umístění vlaku na startovní stanici
-function placeTrainOnMap(location, train) {
-  const trainIcon = L.icon({
-    iconUrl: train.image, // Vezmeme ikonu vlaku z definice vlaku
-    iconSize: [38, 38],
-  });
-
-  L.marker(location, { icon: trainIcon }).addTo(map)
-    .bindPopup(`${train.name} umístěn ve stanici ${selectedStation.name}!`)
-    .openPopup();
-}
-        document.getElementById('buyTrainButton').addEventListener('click', function() {
-  const selectedTrain = buyTrain(); // Předpokládáme, že tato funkce vybere koupený vlak
-  if (selectedTrain) {
-    purchaseTrain(selectedTrain); // Zavoláme funkci pro koupi vlaku
-  } else {
-    alert("Vyberte vlak.");
-  }
-});
 
     </script>
 </body>
