@@ -329,9 +329,9 @@ lines.forEach(line => {
             iconAnchor: [16, 32], // Kotvící bod
         });
 
-        // Umístíme vlak na mapu na souřadnice vybrané stanice
-        const marker = L.marker(selectedStation.location, { icon: trainIcon }).addTo(map)
-            .bindPopup(`${selectedTrain.specificTrain} umístěn ve stanici ${selectedStation.name}`)
+       // Zde vytvoříme vlak a uložíme do globální proměnné
+        trainMarker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map)
+            .bindPopup(`${selectedTrain.specificTrain}`)
             .openPopup();
 
         // Zde můžete přidat logiku pro odečtení ceny od hráče nebo další funkce
@@ -483,27 +483,53 @@ function generateCargo() {
             .filter(stop => stop.name !== selectedStation.name)[Math.floor(Math.random() * lines.flatMap(line => line.stops).length)];
 
         const distance = calculateDistance(selectedStation.location[0], selectedStation.location[1], targetStation.location[0], targetStation.location[1]);
-        const reward = Math.round(distance * 16); // Odměna za ujetou vzdálenost, zaokrouhlena na celé koruny
+        const reward = Math.round(distance * 16);
 
         const cargo = {
             target: targetStation,
-            price: reward, // Nastavíme cenu na základě vzdálenosti
+            price: reward,
             location: selectedStation.location
         };
 
-        // Vytvoření ikony pro náklad
         const cargoIcon = L.icon({
             iconUrl: 'https://i.imgur.com/cYbr4oG.png',
             iconSize: [32, 32],
             iconAnchor: [16, 32],
         });
 
-        L.marker(cargo.location, { icon: cargoIcon })
+        // Vytvoření markeru pro náklad a přidání do pole
+        const cargoMarker = L.marker(cargo.location, { icon: cargoIcon })
             .addTo(map)
             .bindPopup(`Cíl: ${cargo.target.name}, Odměna: ${cargo.price} Kč`)
             .openPopup();
+
+        // Přidáme náklad do pole pro pozdější použití
+        cargoMarkers.push(cargoMarker);
+
+        // Přidání event listeneru na náklad
+        cargoMarker.on('click', function() {
+            selectCargo(cargo); // Vyber náklad
+        });
     }
 }
+
+// Funkce pro výběr nákladu
+function selectCargo(cargo) {
+    if (trainMarker) {
+        // Zeptejte se hráče, co chce vybrat
+        const selection = confirm(`Chcete vybrat náklad na cílovou stanici: ${cargo.target.name}? (OK pro náklad, Cancel pro vlak)`);
+
+        if (selection) {
+            alert(`Vybrali jste náklad na cílovou stanici: ${cargo.target.name}. Odměna: ${cargo.price} Kč.`);
+            // Zde můžete přidat logiku pro zpracování vybraného nákladu
+        } else {
+            alert(`Vybrali jste vlak: ${trainMarker.getPopup().getContent()}`);
+        }
+    } else {
+        alert('Žádný vlak není na stanici.');
+    }
+}
+
 
 // Funkce pro získání odemčených stanic
 function getUnlockedStops() {
