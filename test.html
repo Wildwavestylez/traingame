@@ -551,6 +551,9 @@ function generateCargo() {
 }
 
 function showCargoSelection(cargo) {
+    const availableTrains = lines.flatMap(line => line.trains)
+        .filter(train => trainIsAtStation(train, selectedStation.name)); // Zkontroluj, zda vlak je ve vybrané stanici
+
     const cargoModal = document.createElement('div');
     cargoModal.className = 'cargo-modal';
     cargoModal.innerHTML = `
@@ -560,11 +563,22 @@ function showCargoSelection(cargo) {
             <p>Cíl: ${cargo.target.name}</p>
             <p>Odměna: ${cargo.price} Kč</p>
             <button onclick="selectCargo(cargo)">Vybrat náklad</button>
+            ${availableTrains.length > 0 ? '<h3>Dostupné vlaky:</h3>' + availableTrains.map(train => `<button onclick="selectTrain('${train.name}')">Vybrat ${train.name}</button>`).join('') : '<p>Žádné dostupné vlaky.</p>'}
         </div>
     `;
 
     document.body.appendChild(cargoModal);
 }
+
+function trainIsAtStation(train, stationName) {
+    // Zde bys měl implementovat logiku pro zjištění, zda se vlak nachází na dané stanici
+    // Například, pokud máš informace o aktuální poloze vlaku, můžeš porovnat jeho lokaci se stanicí
+    // Předpokládejme, že máš pole `trains` s aktuálními pozicemi vlaků
+    // Tento příklad pouze porovná název vlaku s názvem stanice
+    return train.currentStation === stationName; // Nahraď `currentStation` skutečnou logikou
+}
+
+
 
 function selectCargo(cargo) {
     // Zde můžeš přidat logiku pro zpracování výběru nákladu
@@ -601,6 +615,11 @@ function handleCargoClick(cargo, cargoMarker) {
         // Žádný vlak na stanici, pouze náklad
         alert(`Vybrali jste náklad: ${cargo.origin.name} -> ${cargo.destination.name}`);
     }
+}
+
+        function selectTrain(trainName) {
+    // Zde můžeš přidat logiku pro zpracování výběru vlaku
+    alert(`Vlak ${trainName} vybrán!`);
 }
 
 // Funkce pro nalezení vlaku na stanici
