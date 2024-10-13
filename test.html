@@ -485,36 +485,38 @@ function getRandomStop() {
     return allStops[Math.floor(Math.random() * allStops.length)];
 }
 
-// Funkce pro řešení interakce mezi vlakem a nákladem
-function handleCargoClick(cargo, marker) {
-    const trainAtLocation = checkTrainAtLocation(marker.getLatLng());
-
-    if (trainAtLocation) {
-        const choice = confirm("Vyberte: OK pro vlak, Cancel pro náklad.");
+// Funkce pro zpracování kliknutí na náklad nebo vlak
+function handleCargoClick(cargo, cargoMarker) {
+    const trainAtStation = findTrainAtStation(selectedStation); // Hledáme vlak na vybrané stanici
+    if (trainAtStation) {
+        const choice = confirm(`Na této stanici se nachází vlak: ${trainAtStation.name}. Chcete zvolit náklad nebo vlak? Klikněte na 'OK' pro vlak, nebo 'Zrušit' pro náklad.`);
         if (choice) {
-            // Interakce s vlakem
-            alert(`Označen vlak: ${trainAtLocation.name}`);
+            // Hráč zvolil vlak
+            alert(`Vybrali jste vlak: ${trainAtStation.name}`);
+            // Zde můžete přidat další logiku pro vlak
         } else {
-            // Interakce s nákladem
-            alert(`Náklad přijat: ${cargo.origin.name} -> ${cargo.destination.name}`);
-            // Můžete zde přidat logiku pro přidání nákladu do vlaku atd.
+            // Hráč zvolil náklad
+            alert(`Vybrali jste náklad: ${cargo.origin.name} -> ${cargo.destination.name}`);
+            // Zde můžete přidat další logiku pro náklad
         }
     } else {
-        alert(`Náklad přijat: ${cargo.origin.name} -> ${cargo.destination.name}`);
+        // Žádný vlak na stanici, pouze náklad
+        alert(`Vybrali jste náklad: ${cargo.origin.name} -> ${cargo.destination.name}`);
     }
 }
 
-// Funkce pro kontrolu, zda je vlak na stejné pozici jako náklad
-function checkTrainAtLocation(location) {
-    for (let i = 0; i < trainsOnMap.length; i++) {
-        const train = trainsOnMap[i];
-        const trainLatLng = L.latLng(train.marker.getLatLng());
-
-        if (trainLatLng.equals(location)) {
-            return train;
+// Funkce pro nalezení vlaku na stanici
+function findTrainAtStation(station) {
+    // Prohledáme všechny vlaky, jestli jsou na vybrané stanici
+    for (const line of lines) {
+        for (const train of line.trains) {
+            // Předpokládáme, že 'location' vlaku odpovídá souřadnicím stanice
+            if (train.location[0] === station.location[0] && train.location[1] === station.location[1]) {
+                return train; // Vracíme vlak, pokud je na stanici
+            }
         }
     }
-    return null;
+    return null; // Pokud žádný vlak na stanici není
 }
 
 // Generování nákladu každou minutu
