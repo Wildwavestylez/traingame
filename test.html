@@ -70,50 +70,13 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
-
-        .modal {
-    display: none; /* Skryté ve výchozím stavu */
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-    padding-top: 60px;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
     </style>
 </head>
 <body>
 
     <button id="toggleButton" onclick="toggleSidebar()">☰</button>
 
-     <div id="sidebar">
+    <div id="sidebar">
         <h1>Výběr Nákladního Vlaku</h1>
         <div>
             <label for="stateSelect">Stát:</label>
@@ -142,16 +105,6 @@
 
         <div id="trainDetails"></div>
         <button id="buyButton" onclick="buyTrain()" disabled>Koupit Vlak</button>
-    </div>
-
-    <div id="station-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Vyberte startovní stanici</h2>
-            <ul id="station-list">
-                <!-- Stanice se načtou dynamicky pomocí JavaScriptu -->
-            </ul>
-        </div>
     </div>
 
     <div id="map"></div>
@@ -292,61 +245,6 @@
             sidebar.classList.toggle('active'); // Přepíná třídu pro zobrazení/zavření panelu
             mapContainer.classList.toggle('shifted'); // Posun mapy, když je panel otevřený
         }
-
-        const stations = [
-    { name: "Praha", location: [50.0755, 14.4375] },
-    { name: "Brno", location: [49.1951, 16.6068] },
-    { name: "Ostrava", location: [49.8345, 18.2922] },
-    { name: "Plzeň", location: [49.7384, 13.3730] },
-    { name: "Liberec", location: [50.7671, 15.0582] },
-    { name: "Ústí nad Labem", location: [50.6613, 14.0937] },
-    { name: "Hradec Králové", location: [50.2092, 15.8253] },
-    { name: "Pardubice", location: [50.0345, 15.7760] },
-    { name: "Zlin", location: [49.2238, 17.6627] },
-    { name: "Olomouc", location: [49.5932, 17.2510] },
-];
-
-const modal = document.getElementById("station-modal");
-const stationList = document.getElementById("station-list");
-const closeBtn = document.getElementsByClassName("close")[0];
-
-// Načíst stanice do seznamu
-stations.forEach(station => {
-    const li = document.createElement("li");
-    li.textContent = station.name;
-    li.onclick = () => {
-        selectStation(station);
-    };
-    stationList.appendChild(li);
-});
-
-// Otevřít modal
-modal.style.display = "block";
-
-// Zavřít modal
-closeBtn.onclick = function() {
-    modal.style.display = "none";
-};
-
-window.onclick = function(event) {
-    if (event.target === modal) {
-        modal.style.display = "none";
-    }
-};
-
-// Funkce pro výběr stanice
-function selectStation(station) {
-    modal.style.display = "none";
-    buyTrainAtStation(station);
-}
-
-// Funkce pro nákup vlaku na stanici
-function buyTrainAtStation(station) {
-    // Zde implementujte logiku pro nákup vlaku na zvolené stanici
-    alert(`Vybrali jste stanici: ${station.name}`);
-    // Dále se použije předchozí funkce pro koupi vlaku a přidání na mapu
-}
-
     </script>
 </body>
 </html>
