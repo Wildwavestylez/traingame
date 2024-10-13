@@ -671,18 +671,13 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * c; // Vzdálenost v kilometrech
 }
 
+// Funkce pro přepravu nákladu
 function transportCargo(selectedCargo) {
-    // Získání vlaku z mapy
     const trainMarker = findTrainAtStation(selectedStation);
 
     if (trainMarker) {
-        // Získání cílové stanice z vybraného nákladu
         const destinationStation = selectedCargo.destination;
-
-        // Vypočítání vzdálenosti mezi aktuální a cílovou stanicí
         const distance = calculateDistance(trainMarker.getLatLng(), getStationLocation(destinationStation));
-        
-        // Výpočet doby potřebné k přepravě
         const travelTime = (distance / 500) * 60; // v minutách
 
         // Zobrazit zprávu o zahájení přepravy
@@ -702,35 +697,38 @@ function transportCargo(selectedCargo) {
 // Funkce pro pohyb vlaku k cílové stanici
 function moveTrainToDestination(trainMarker, destinationStation, travelTime) {
     const destinationLocation = getStationLocation(destinationStation);
+    const travelInterval = 1000; // interval v milisekundách
+    const totalSteps = travelTime * 60; // celkový počet kroků v sekundách
+    let currentStep = 0; // aktuální krok
 
     const interval = setInterval(() => {
+        currentStep++;
+
         const currentLocation = trainMarker.getLatLng();
         
-        // Vypočítání nové pozice vlaku (toto je zjednodušená logika)
-        const newLat = currentLocation.lat + (destinationLocation[0] - currentLocation.lat) / (travelTime * 60);
-        const newLng = currentLocation.lng + (destinationLocation[1] - currentLocation.lng) / (travelTime * 60);
+        // Vypočítání nového pozice vlaku
+        const newLat = currentLocation.lat + (destinationLocation[0] - currentLocation.lat) / (totalSteps);
+        const newLng = currentLocation.lng + (destinationLocation[1] - currentLocation.lng) / (totalSteps);
         
         trainMarker.setLatLng([newLat, newLng]);
 
         // Kontrola, zda vlak dorazil do cílové stanice
-        if (Math.abs(newLat - destinationLocation[0]) < 0.0001 && Math.abs(newLng - destinationLocation[1]) < 0.0001) {
+        if (currentStep >= totalSteps) {
             clearInterval(interval);
             alert(`Vlak dorazil do cílové stanice ${destinationStation}.`);
             trainMarker.bindPopup(`Vlak čeká na další náklad.`).openPopup();
             unlockStation(destinationStation); // Odemknout cílovou stanici
         }
-    }, 1000); // Aktualizace pozice každou sekundu
+    }, travelInterval); // Aktualizace pozice každou sekundu
 }
 
 // Funkce pro nalezení vlaku ve stanici
 function findTrainAtStation(station) {
-    // Procházení všech vlaků a vrátí vlak, který je ve stanici
     return Object.values(allTrains).find(train => train.station === station);
 }
 
 // Funkce pro získání umístění stanice
 function getStationLocation(stationName) {
-    // Hledá souřadnice stanice podle názvu
     for (let line of lines) {
         const stop = line.stops.find(s => s.name === stationName);
         if (stop) return stop.location;
@@ -746,11 +744,9 @@ function addRewardToPlayer(amount) {
 
 // Funkce pro odemknutí stanice
 function unlockStation(stationName) {
-    // Logika pro odemčení stanice, například přidáním do seznamu odemčených stanic
     unlockedStations.push(stationName);
     alert(`Stanice ${stationName} byla odemčena pro generaci nových nákladů.`);
 }
-
        document.getElementById('buyButton').addEventListener('click', function() {
             // Logika pro koupení vlaku
 
