@@ -192,6 +192,7 @@
         ];
 
         let selectedTrain = null; // Uchovává vybraný vlak
+        let purchasedTrain = null; // Globální proměnná pro koupený vlak
 
         function updateSeries() {
             const stateSelect = document.getElementById('stateSelect');
@@ -257,22 +258,30 @@
         }
 
         function buyTrain() {
-            if (selectedTrain) {
-                // Vytvoření značky s vlastní ikonou
-                const trainIcon = L.icon({
-                    iconUrl: selectedTrain.image, // Použijeme ikonu z objektu vlaku
-                    iconSize: [32, 32], // Velikost ikony
-                    iconAnchor: [16, 32], // Kotvící bod
-                });
+    if (selectedTrain && selectedStation) { // Zkontrolujeme, zda je vybrán vlak i stanice
+        // Vytvoření značky s vlastní ikonou
+        const trainIcon = L.icon({
+            iconUrl: selectedTrain.image, // Použijeme ikonu z objektu vlaku
+            iconSize: [32, 32], // Velikost ikony
+            iconAnchor: [16, 32], // Kotvící bod
+        });
 
-                const marker = L.marker(selectedTrain.location, { icon: trainIcon }).addTo(map)
-                    .bindPopup(`${selectedTrain.specificTrain}`)
-                    .openPopup();
+        // Umístíme vlak na mapu na souřadnice vybrané stanice
+        const marker = L.marker(selectedStation.location, { icon: trainIcon }).addTo(map)
+            .bindPopup(`${selectedTrain.specificTrain} umístěn ve stanici ${selectedStation.name}`)
+            .openPopup();
 
-                // Zde můžete přidat logiku pro odečtení ceny od hráče nebo další funkce
-                alert(`Vlak ${selectedTrain.specificTrain} zakoupen za ${selectedTrain.price} Kč!`);
-            }
+        // Zde můžete přidat logiku pro odečtení ceny od hráče nebo další funkce
+        alert(`Vlak ${selectedTrain.specificTrain} zakoupen za ${selectedTrain.price} Kč ve stanici ${selectedStation.name}!`);
+    } else {
+        // Pokud nebyla vybrána stanice nebo vlak, zobrazíme upozornění
+        if (!selectedStation) {
+            alert("Vyberte startovní stanici před nákupem vlaku.");
+        } else if (!selectedTrain) {
+            alert("Vyberte vlak, který chcete koupit.");
         }
+    }
+}
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -303,7 +312,7 @@ window.onload = function() {
   const modal = document.getElementById('stationModal');
   const stationList = document.getElementById('stationList');
   modal.style.display = 'block';
-
+    
   // Vygenerování seznamu stanic
   stations.forEach(station => {
     const listItem = document.createElement('li');
@@ -315,37 +324,59 @@ window.onload = function() {
 
 let selectedStation = null;
 
+// Funkce pro výběr stanice
 function selectStation(station) {
-  selectedStation = station;
+  selectedStation = station; // Uložíme vybranou stanici
   console.log('Vybraná stanice:', station.name);
-  // Změna stylu u vybrané stanice (např. zvýraznění)
   document.querySelectorAll('#stationList li').forEach(li => li.style.backgroundColor = '');
-  event.target.style.backgroundColor = '#f0f0f0';
+  event.target.style.backgroundColor = '#f0f0f0'; // Zvýrazníme vybranou stanici
 }
 
-// Potvrzení výběru a zavření modálního okna
+// Potvrzení výběru startovní stanice
 document.getElementById('confirmStation').addEventListener('click', function() {
   if (selectedStation) {
     console.log('Potvrzená stanice:', selectedStation.name);
-    document.getElementById('stationModal').style.display = 'none';
-    // Přidej vlak na mapu na zvolené startovní stanici
-    placeTrainOnMap(selectedStation.location);
+    document.getElementById('stationModal').style.display = 'none'; // Zavře modální okno
   } else {
     alert('Vyberte stanici, prosím.');
   }
 });
 
-// Funkce pro umístění vlaku na zvolené startovní místo
-function placeTrainOnMap(location) {
+
+// Funkce pro nákup vlaku, kterou zavoláme po výběru z postranního panelu
+function purchaseTrain(train) {
+  if (!selectedStation) {
+    alert("Nejprve musíte vybrat startovní stanici.");
+    return;
+  }
+
+  // Uložíme koupený vlak do globální proměnné
+  purchasedTrain = train;
+  console.log("Koupený vlak:", purchasedTrain.name);
+  
+  // Přidáme vlak na mapu na startovní stanici
+  placeTrainOnMap(selectedStation.location, purchasedTrain);
+}
+
+// Funkce pro umístění vlaku na startovní stanici
+function placeTrainOnMap(location, train) {
   const trainIcon = L.icon({
-    iconUrl: 'https://i.imgur.com/BvE0s27.png', // Vzorová ikona vlaku
+    iconUrl: train.image, // Vezmeme ikonu vlaku z definice vlaku
     iconSize: [38, 38],
   });
 
   L.marker(location, { icon: trainIcon }).addTo(map)
-    .bindPopup('Vlak umístěn zde!')
+    .bindPopup(`${train.name} umístěn ve stanici ${selectedStation.name}!`)
     .openPopup();
 }
+        document.getElementById('buyTrainButton').addEventListener('click', function() {
+  const selectedTrain = buyTrain(); // Předpokládáme, že tato funkce vybere koupený vlak
+  if (selectedTrain) {
+    purchaseTrain(selectedTrain); // Zavoláme funkci pro koupi vlaku
+  } else {
+    alert("Vyberte vlak.");
+  }
+});
 
     </script>
 </body>
