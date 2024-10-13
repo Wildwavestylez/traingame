@@ -147,6 +147,69 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script>
+
+
+
+        // Fiktivní data pro linky a zastávky
+const lines = [
+  {
+    name: "Trať 192 STRÁŽSKÉ - TREBIŠOV",
+    color: "#FFFFFF00",
+    category: "A",
+    trains: [
+      { name: "Train 1", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/sgF74F8.png', maxSpeed: 600 },
+      { name: "Train 2", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/5V3WrS7.png', maxSpeed: 600 }
+    ],
+    stops: [
+      { name: "Strážské", location: [48.8675378, 21.8248364] },
+      { name: "Nižný Hrabovec", location: [48.8570392, 21.7518606] },
+      { name: "Hencovce", location: [48.8570392, 21.7518606] },
+      { name: "Vranovské Dlhé", location: [48.8695603, 21.7053108] },
+      { name: "Vranov nad Topľou", location: [48.8900675, 21.6740197] },
+      { name: "Komárany", location: [48.9131272, 21.6385608] },
+      { name: "Soľ", location: [48.9319739, 21.6005106] },
+      { name: "Hlinné", location: [48.9529000, 21.5841294] },
+      { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306] },
+      { name: "Bystré", location: [49.0033111, 21.5423933] }
+    ]
+  },
+  {
+    name: "Trať 012 Pečky - Kouřim - Bečváry",
+    color: "#FFFFFF00",
+    category: "A",
+    trains: [
+      { name: "Train 38", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+      { name: "Train 39", startingIndex: 7, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+      { name: "Train 40", startingIndex: 14, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
+      { name: "Train 41", startingIndex: 7, reverse: true, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 }
+    ],
+    stops: [
+      { name: "Pečky", location: [50.0897636, 15.0275592] },
+      { name: "Radim", location: [50.0735283, 15.0075103] },
+      { name: "Chotutice", location: [50.0715103, 14.9964619] },
+      { name: "Chroustov", location: [50.0649261, 14.9973392] },
+      { name: "Vrbčany", location: [50.0546722, 15.0003767] },
+      { name: "Plaňany", location: [50.0494500, 15.0161972] },
+      { name: "Plaňany zastávka", location: [50.0455894, 15.0239439] },
+      { name: "Žabonosy", location: [50.0396194, 15.0241231] },
+      { name: "Zalešany", location: [50.0349389, 15.0084142] },
+      { name: "Bošice", location: [50.0152817, 15.0153122] },
+      { name: "Kouřim", location: [50.0056572, 14.9877950] },
+      { name: "Votelež", location: [49.9997339, 15.0125294] },
+      { name: "Toušice", location: [49.9852383, 15.0151517] },
+      { name: "Zásmuky", location: [49.9626142, 15.0317814] },
+      { name: "Bečváry", location: [49.9560622, 15.0710583] }
+    ]
+  }
+];
+
+// Přidání souřadnic do stop pro pozdější použití
+lines.forEach(line => {
+  line.stops.forEach(stop => {
+    stop.lat = stop.location[0];
+    stop.lon = stop.location[1];
+  });
+});
         // Inicializace mapy Leaflet
         const map = L.map('map').setView([50.0252381, 15.2142544], 7);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
