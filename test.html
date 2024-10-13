@@ -646,6 +646,69 @@ function findTrainAtStation(station) {
 // Generování nákladu každou minutu
 setInterval(generateCargo, 60000); // Náklad generován každých 60 sekund
 
+        // Funkce pro výpočet vzdálenosti mezi dvěma body (v km)
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Poloměr Země v kilometrech
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Vzdálenost v kilometrech
+}
+
+// Simulace pohybu vlaku
+function moveTrainToDestination(train, cargo) {
+  const start = selectedStation.location;
+  const destination = cargo.destination.location;
+  
+  const distance = calculateDistance(start[0], start[1], destination[0], destination[1]);
+  const travelTime = (distance / 400) * 3600; // Cesta v sekundách při rychlosti 400 km/h
+
+  let currentTime = 0;
+  const interval = setInterval(() => {
+    currentTime += 1; // Počítáme sekundy
+    const progress = currentTime / travelTime;
+
+    if (progress >= 1) {
+      clearInterval(interval);
+      // Vlak dorazil do cíle
+      map.removeLayer(train.marker); // Odstranění vlaku z aktuální pozice
+      train.marker = L.marker(destination).addTo(map)
+        .bindPopup(`${train.specificTrain} dorazil do ${cargo.destination.name}`)
+        .openPopup();
+      
+      alert(`Vlak dorazil do ${cargo.destination.name}!`);
+      
+      // Přidání odměny hráči
+      const reward = Math.round(distance * 16); // Zaokrouhlení odměny
+      alert(`Odměna: ${reward} Kč za přepravu nákladu.`);
+      
+      // Odemčení cílové stanice
+      cargo.destination.unlocked = true;
+      
+      // Vlak je připravený přijmout další náklad
+      train.location = destination;
+    } else {
+      // Aktualizace pozice vlaku
+      const lat = start[0] + (destination[0] - start[0]) * progress;
+      const lon = start[1] + (destination[1] - start[1]) * progress;
+      train.marker.setLatLng([lat, lon]);
+    }
+  }, 1000); // Aktualizace každou sekundu
+}
+
+// Funkce pro přijetí nákladu
+function acceptCargo(train, cargo) {
+  alert(`Náklad přijat! Cíl: ${cargo.destination.name}`);
+  
+  // Spustíme přepravu
+  moveTrainToDestination(train, cargo);
+}
+
+
        document.getElementById('buyButton').addEventListener('click', function() {
             // Logika pro koupení vlaku
 
