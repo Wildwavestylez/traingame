@@ -211,11 +211,7 @@ lines.forEach(line => {
   });
 });
 
-        // Skrytí linek na začátku hry
-lines.forEach(line => {
-    line.hidden = true;
-    availableLines.push(line);
-});
+   
         // Inicializace mapy Leaflet
         const map = L.map('map').setView([50.0252381, 15.2142544], 7);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -418,6 +414,49 @@ function purchaseTrain(train) {
     alert("Nejprve musíte vybrat startovní stanici.");
     return;
   }
+ // Generování nákladu na odemčených zastávkách
+function generateCargo() {
+    // Filtrování odemčených zastávek
+    const unlockedStops = [];
+    lines.forEach(line => {
+        line.stops.forEach(stop => {
+            if (stop.unlocked) {
+                unlockedStops.push(stop);
+            }
+        });
+    });
+
+    if (unlockedStops.length > 0) {
+        // Vyber náhodnou zastávku z odemčených jako výchozí stanici
+        const originStop = unlockedStops[Math.floor(Math.random() * unlockedStops.length)];
+
+        // Vyber náhodnou cílovou stanici z celé sítě
+        const allStops = [];
+        lines.forEach(line => {
+            line.stops.forEach(stop => allStops.push(stop));
+        });
+        const destinationStop = allStops[Math.floor(Math.random() * allStops.length)];
+
+        // Náhodná cena (můžeme použít i vzdálenost mezi zastávkami pro výpočet ceny)
+        const price = Math.floor(Math.random() * (1000 - 300 + 1)) + 300; // Náhodná cena mezi 300 a 1000
+
+        // Generovaný náklad
+        const cargo = {
+            origin: originStop.name,
+            destination: destinationStop.name,
+            price: price
+        };
+
+        // Zobrazení nákladu (můžeme zde přidat další logiku podle potřeby)
+        console.log(`Náklad generován: ${cargo.origin} -> ${cargo.destination}, Cena: ${cargo.price} Kč`);
+        alert(`Náklad: ${cargo.origin} -> ${cargo.destination}, Cena: ${cargo.price} Kč`);
+
+        // Zde můžeme přidat další logiku, například přiřazení nákladu vlaku atd.
+    } else {
+        console.log('Žádné odemčené zastávky pro generování nákladu.');
+        alert('Žádné odemčené zastávky pro generování nákladu.');
+    }
+}
 
   // Uložíme koupený vlak do globální proměnné
   purchasedTrain = train;
