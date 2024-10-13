@@ -149,7 +149,6 @@
     <script>
 
 
-const unlockedStops = []; // Odemčené stanice
 
         // Fiktivní data pro linky a zastávky
 const lines = [
@@ -446,54 +445,87 @@ function placeTrainOnMap(location, train) {
 
 
 
+// Definice nákladu
+const cargoIcon = L.icon({
+    iconUrl: 'https://i.imgur.com/cYbr4oG.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+});
+
+let unlockedStations = []; // Odemčené stanice (počáteční stanice je odemčena automaticky)
+let cargoList = []; // Seznam aktivních nákladů
+
+// Funkce pro generování nákladu
 function generateCargo() {
+    const unlockedStops = getUnlockedStops();
     if (unlockedStops.length > 0) {
-        const randomUnlockedStop = unlockedStops[Math.floor(Math.random() * unlockedStops.length)];
-        const randomDestinationStop = getRandomStop();
-        const cargoPrice = Math.floor(Math.random() * 5000) + 1000; // Cena nákladu
-
+        const randomStop = unlockedStops[Math.floor(Math.random() * unlockedStops.length)];
+        const randomTarget = getRandomStop();
         const cargo = {
-            startStop: randomUnlockedStop,
-            destinationStop: randomDestinationStop,
-            price: cargoPrice
+            origin: randomStop,
+            destination: randomTarget,
+            price: Math.floor(Math.random() * 1000) + 500, // Cena nákladu
         };
+        
+        // Přidání nákladu do seznamu
+        cargoList.push(cargo);
 
-        placeCargoOnMap(cargo);
+        // Vytvoření markeru pro náklad na mapě
+        const cargoMarker = L.marker([randomStop.lat, randomStop.lon], { icon: cargoIcon })
+            .addTo(map)
+            .bindPopup(`Náklad: ${randomStop.name} -> ${randomTarget.name}<br>Cena: ${cargo.price} Kč`);
+
+        cargoMarker.on('click', () => {
+            handleCargoClick(cargo, cargoMarker);
+        });
     }
 }
 
+// Funkce pro získání odemčených stanic
+function getUnlockedStops() {
+    return unlockedStations;
+}
+
+// Funkce pro získání náhodné stanice (může být i neodemčená)
 function getRandomStop() {
-    const allStops = lines.flatMap(line => line.stops); // Seznam všech zastávek
+    const allStops = lines.flatMap(line => line.stops);
     return allStops[Math.floor(Math.random() * allStops.length)];
 }
 
-function placeCargoOnMap(cargo) {
-    const cargoIcon = L.icon({
-        iconUrl: 'https://i.imgur.com/cYbr4oG.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-    });
+// Funkce pro řešení interakce mezi vlakem a nákladem
+function handleCargoClick(cargo, marker) {
+    const trainAtLocation = checkTrainAtLocation(marker.getLatLng());
 
-    const marker = L.marker([cargo.startStop.lat, cargo.startStop.lon], { icon: cargoIcon })
-        .addTo(map)
-        .bindPopup(`Cargo to ${cargo.destinationStop.name} - Price: ${cargo.price} Kč`);
-
-    marker.on('click', function() {
-        alert(`Cargo from ${cargo.startStop.name} to ${cargo.destinationStop.name} selected.`);
-    });
+    if (trainAtLocation) {
+        const choice = confirm("Vyberte: OK pro vlak, Cancel pro náklad.");
+        if (choice) {
+            // Interakce s vlakem
+            alert(`Označen vlak: ${trainAtLocation.name}`);
+        } else {
+            // Interakce s nákladem
+            alert(`Náklad přijat: ${cargo.origin.name} -> ${cargo.destination.name}`);
+            // Můžete zde přidat logiku pro přidání nákladu do vlaku atd.
+        }
+    } else {
+        alert(`Náklad přijat: ${cargo.origin.name} -> ${cargo.destination.name}`);
+    }
 }
 
-// Spuštění generování nákladu jednou za minutu
-setInterval(generateCargo, 60000);
+// Funkce pro kontrolu, zda je vlak na stejné pozici jako náklad
+function checkTrainAtLocation(location) {
+    for (let i = 0; i < trainsOnMap.length; i++) {
+        const train = trainsOnMap[i];
+        const trainLatLng = L.latLng(train.marker.getLatLng());
 
-// Přidání počáteční odemčené stanice do seznamu odemčených stanic
-function unlockStop(stop) {
-    unlockedStops.push(stop);
-    console.log(`Stop ${stop.name} unlocked!`);
+        if (trainLatLng.equals(location)) {
+            return train;
+        }
+    }
+    return null;
 }
 
-// Na začátku hry bude vybrána hráčem zvolená startovní stanice
-unlockStop(selectedStation); // Nahraďte 'playerSelectedStation' hráčovou volbou
+// Generování nákladu každou minutu
+setInterval(generateCargo, 60000); // Náklad generován každých 60 sekund
 
 
     </script>
