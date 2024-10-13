@@ -673,43 +673,55 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 // Simulace pohybu vlaku
 function moveTrainToDestination(train, cargo) {
-  const start = selectedStation.location;
-  const destination = cargo.destination.location;
-  
-  const distance = calculateDistance(start[0], start[1], destination[0], destination[1]);
-  const travelTime = (distance / 400) * 3600; // Cesta v sekundách při rychlosti 400 km/h
+ const maxSpeed = 400; // Simulovaná maximální rychlost vlaku v km/h
+    const interval = 1000; // Interval aktualizace polohy vlaku v ms
 
-  let currentTime = 0;
-  const interval = setInterval(() => {
-    currentTime += 1; // Počítáme sekundy
-    const progress = currentTime / travelTime;
+    const startLocation = trainMarker.getLatLng();
+    const distance = getRealDistance([startLocation.lat, startLocation.lng], destinationLocation);
+    const travelTime = (distance / maxSpeed) * 60 * 60 * 1000; // Čas cesty v ms
 
-    if (progress >= 1) {
-      clearInterval(interval);
-      // Vlak dorazil do cíle
-      map.removeLayer(train.marker); // Odstranění vlaku z aktuální pozice
-      train.marker = L.marker(destination).addTo(map)
-        .bindPopup(`${train.specificTrain} dorazil do ${cargo.destination.name}`)
-        .openPopup();
-      
-      alert(`Vlak dorazil do ${cargo.destination.name}!`);
-      
-      // Přidání odměny hráči
-      const reward = Math.round(distance * 16); // Zaokrouhlení odměny
-      alert(`Odměna: ${reward} Kč za přepravu nákladu.`);
-      
-      // Odemčení cílové stanice
-      cargo.destination.unlocked = true;
-      
-      // Vlak je připravený přijmout další náklad
-      train.location = destination;
-    } else {
-      // Aktualizace pozice vlaku
-      const lat = start[0] + (destination[0] - start[0]) * progress;
-      const lon = start[1] + (destination[1] - start[1]) * progress;
-      train.marker.setLatLng([lat, lon]);
-    }
-  }, 1000); // Aktualizace každou sekundu
+    const startTime = new Date().getTime();
+
+    // Aktualizace polohy vlaku v pravidelných intervalech
+    const moveInterval = setInterval(() => {
+        const currentTime = new Date().getTime();
+        const elapsedTime = currentTime - startTime;
+
+        if (elapsedTime < travelTime) {
+            const ratio = elapsedTime / travelTime;
+            const newLat = startLocation.lat + (destinationLocation[0] - startLocation.lat) * ratio;
+            const newLng = startLocation.lng + (destinationLocation[1] - startLocation.lng) * ratio;
+
+            trainMarker.setLatLng([newLat, newLng]);
+        } else {
+            // Vlak dorazil na místo určení
+            clearInterval(moveInterval);
+            trainMarker.setLatLng(destinationLocation); // Zajistí, že vlak skončí přesně v cíli
+
+            // Připsání odměny hráči
+            addMoney(cargoPrice);
+
+            // Odemčení cílové stanice pro generování nákladů
+            unlockStation(destinationStation);
+
+            // Uvolnění vlaku pro další zakázku
+            trainMarker.train.currentCargo = null;
+
+            console.log(`Vlak dorazil do ${destinationStation.name} a odemknul stanici.`);
+        }
+    }, interval);
+}
+
+// Funkce pro připsání peněz
+function addMoney(amount) {
+    playerMoney += Math.round(amount); // Zaokrouhlíme odměnu na celé koruny
+    console.log(`Připsáno ${amount} Kč. Aktuální stav: ${playerMoney} Kč`);
+}
+
+// Funkce pro odemčení cílové stanice
+function unlockStation(station) {
+    station.unlocked = true; // Odemkneme stanici
+    console.log(`Stanice ${station.name} je nyní odemčena pro další náklady.`);
 }
 
 // Funkce pro přijetí nákladu
