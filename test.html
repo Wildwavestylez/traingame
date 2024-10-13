@@ -518,13 +518,9 @@ function checkTrainAtLocation(location) {
 // Generování nákladu každou minutu
 setInterval(generateCargo, 60000); // Náklad generován každých 60 sekund
 
-        document.getElementById('buyTrainButton').addEventListener('click', function() {
-  const selectedTrain = buyTrain(); // Předpokládáme, že tato funkce vybere koupený vlak
-  if (selectedTrain) {
-    purchaseTrain(selectedTrain); // Zavoláme funkci pro koupi vlaku
-  } else {
-    alert("Vyberte vlak.");
-  }
+       document.getElementById('buyTrainButton').addEventListener('click', function() {
+            // Logika pro koupení vlaku
+
 });
 
     </script>
