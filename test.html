@@ -387,22 +387,26 @@ window.onload = function() {
 
 let selectedStation = null;
 
+let unlockedStations = [];
+
 // Funkce pro výběr stanice
 function selectStation(station) {
-  selectedStation = station; // Uložíme vybranou stanici
-  console.log('Vybraná stanice:', station.name);
-  document.querySelectorAll('#stationList li').forEach(li => li.style.backgroundColor = '');
-  event.target.style.backgroundColor = '#f0f0f0'; // Zvýrazníme vybranou stanici
+    selectedStation = station; // Uložíme vybranou stanici
+    unlockedStations.push(station); // Přidáme ji do seznamu odemčených stanic
+    console.log('Vybraná stanice:', station.name);
+    document.querySelectorAll('#stationList li').forEach(li => li.style.backgroundColor = '');
+    event.target.style.backgroundColor = '#f0f0f0'; // Zvýrazníme vybranou stanici
 }
 
 // Potvrzení výběru startovní stanice
 document.getElementById('confirmStation').addEventListener('click', function() {
-  if (selectedStation) {
-    console.log('Potvrzená stanice:', selectedStation.name);
-    document.getElementById('stationModal').style.display = 'none'; // Zavře modální okno
-  } else {
-    alert('Vyberte stanici, prosím.');
-  }
+    if (selectedStation) {
+        console.log('Potvrzená stanice:', selectedStation.name);
+        document.getElementById('stationModal').style.display = 'none'; // Zavře modální okno
+        generateCargo(); // Generujeme první náklad
+    } else {
+        alert('Vyberte stanici, prosím.');
+    }
 });
 
 
@@ -448,27 +452,25 @@ let cargoList = []; // Seznam aktivních nákladů
 
 // Funkce pro generování nákladu
 function generateCargo() {
-    const unlockedStops = getUnlockedStops();
-    if (unlockedStops.length > 0) {
-        const randomStop = unlockedStops[Math.floor(Math.random() * unlockedStops.length)];
-        const randomTarget = getRandomStop();
+    if (unlockedStations.length > 0) {
+        const randomStop = unlockedStations[0]; // Vybíráme první odemčenou stanici
+        const randomTarget = getRandomStop(); // Získání náhodné cílové stanice
         const cargo = {
             origin: randomStop,
             destination: randomTarget,
             price: Math.floor(Math.random() * 1000) + 500, // Cena nákladu
         };
         
-        // Přidání nákladu do seznamu
-        cargoList.push(cargo);
-
         // Vytvoření markeru pro náklad na mapě
-        const cargoMarker = L.marker([randomStop.lat, randomStop.lon], { icon: cargoIcon })
+        const cargoMarker = L.marker([randomStop.location[0], randomStop.location[1]], { icon: cargoIcon })
             .addTo(map)
             .bindPopup(`Náklad: ${randomStop.name} -> ${randomTarget.name}<br>Cena: ${cargo.price} Kč`);
 
         cargoMarker.on('click', () => {
             handleCargoClick(cargo, cargoMarker);
         });
+        
+        alert(`Náklad generován: ${cargo.origin.name} -> ${cargo.destination.name} za ${cargo.price} Kč`);
     }
 }
 
