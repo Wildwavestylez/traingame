@@ -672,85 +672,60 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 }
 
 // Funkce pro přepravu nákladu
-function transportCargo(selectedCargo) {
-    const trainMarker = findTrainAtStation(selectedStation);
+function transportCargo(train, cargo) {
+    const targetStop = cargo.targetStation; // Cílová zastávka
+    const startPoint = train.location; // Aktuální pozice vlaku
+    const targetPoint = lines.flatMap(line => line.stops).find(stop => stop.name === targetStop.name); // Hledá cílovou zastávku v linkách
+    const distance = getDistance(startPoint, targetPoint.location); // Vypočítat vzdálenost
+    const travelTime = (distance / 500) * 60; // Čas potřebný k cestě v minutách (rychlost 500 km/h)
+    const totalSteps = Math.floor(travelTime * 60); // Celkový počet kroků (každou sekundu)
+    const stepSize = {
+        lat: (targetPoint.location[0] - startPoint[0]) / totalSteps,
+        lon: (targetPoint.location[1] - startPoint[1]) / totalSteps
+    };
+    
+    let currentStep = 0; // Aktuální krok
 
-    if (trainMarker) {
-        const destinationStation = selectedCargo.destination;
-        const distance = calculateDistance(trainMarker.getLatLng(), getStationLocation(destinationStation));
-        const travelTime = (distance / 500) * 60; // v minutách
+    // Funkce pro pohyb vlaku
+    const moveTrain = setInterval(() => {
+        if (currentStep < totalSteps) {
+            // Simulace pohybu vlaku
+            train.location[0] += stepSize.lat; // Aktualizace latitude
+            train.location[1] += stepSize.lon; // Aktualizace longitude
 
-        // Zobrazit zprávu o zahájení přepravy
-        alert(`Vlak se vydal k cílové stanici ${destinationStation} a dorazí za přibližně ${travelTime.toFixed(0)} minut.`);
-
-        // Pohyb vlaku k cílové stanici
-        moveTrainToDestination(trainMarker, destinationStation, travelTime);
-        
-        // Přičtení odměny hráči
-        const reward = Math.round(distance * 16); // Odměna za ujeté kilometry
-        addRewardToPlayer(reward); // Funkce pro přidání odměny
-    } else {
-        alert("Žádný vlak se nenachází ve stanici.");
-    }
-}
-
-// Funkce pro pohyb vlaku k cílové stanici
-function moveTrainToDestination(trainMarker, destinationStation, travelTime) {
-    const destinationLocation = getStationLocation(destinationStation);
-    const travelInterval = 1000; // interval v milisekundách
-    const totalSteps = travelTime * 60; // celkový počet kroků v sekundách
-    let currentStep = 0; // aktuální krok
-
-    const interval = setInterval(() => {
-        currentStep++;
-
-        const currentLocation = trainMarker.getLatLng();
-        
-        // Vypočítání nového pozice vlaku
-        const newLat = currentLocation.lat + (destinationLocation[0] - currentLocation.lat) / (totalSteps);
-        const newLng = currentLocation.lng + (destinationLocation[1] - currentLocation.lng) / (totalSteps);
-        
-        trainMarker.setLatLng([newLat, newLng]);
-
-        // Kontrola, zda vlak dorazil do cílové stanice
-        if (currentStep >= totalSteps) {
-            clearInterval(interval);
-            alert(`Vlak dorazil do cílové stanice ${destinationStation}.`);
-            trainMarker.bindPopup(`Vlak čeká na další náklad.`).openPopup();
-            unlockStation(destinationStation); // Odemknout cílovou stanici
+            // Aktualizace pozice vlaku na mapě
+            marker.setLatLng(train.location);
+            currentStep++;
+        } else {
+            clearInterval(moveTrain);
+            // Přičtení peněz hráči
+            const reward = Math.round(distance * 16); // Výpočet odměny za přepravu
+            alert(`Příjezd do stanice ${targetStop.name}. Získali jste ${reward} Kč!`);
+            // Odemknutí cílové stanice pro generování nových nákladů
+            unlockStation(targetStop);
         }
-    }, travelInterval); // Aktualizace pozice každou sekundu
+    }, 1000); // Interval pro pohyb vlaku (např. každou sekundu)
 }
 
-// Funkce pro nalezení vlaku ve stanici
-function findTrainAtStation(station) {
-    return Object.values(allTrains).find(train => train.station === station);
+// Funkce pro výpočet vzdálenosti mezi dvěma body
+function getDistance(start, end) {
+    const R = 6371; // Poloměr Země v km
+    const dLat = (end[0] - start[0]) * Math.PI / 180;
+    const dLon = (end[1] - start[1]) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(start[0] * Math.PI / 180) * Math.cos(end[0] * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c; // Vzdálenost v km
 }
 
-// Funkce pro získání umístění stanice
-function getStationLocation(stationName) {
-    for (let line of lines) {
-        const stop = line.stops.find(s => s.name === stationName);
-        if (stop) return stop.location;
-    }
-    return null;
+// Odemknutí cílové stanice
+function unlockStation(station) {
+    // Logika pro odemknutí stanice
+    // Tady můžete například změnit stav stanice, aby byla odemčená
+    station.unlocked = true; // Příklad
 }
 
-// Funkce pro přidání odměny hráči
-function addRewardToPlayer(amount) {
-    playerMoney += amount;
-    alert(`Přičteno ${amount} Kč. Aktuální zůstatek: ${playerMoney} Kč.`);
-}
-
-// Funkce pro odemknutí stanice
-function unlockStation(stationName) {
-    unlockedStations.push(stationName);
-    alert(`Stanice ${stationName} byla odemčena pro generaci nových nákladů.`);
-}
-       document.getElementById('buyButton').addEventListener('click', function() {
-            // Logika pro koupení vlaku
-
-});
 
     </script>
 </body>
