@@ -570,15 +570,27 @@ function showCargoAndTrainSelection(cargo, train) {
             <span class="close" onclick="this.parentElement.parentElement.remove();">&times;</span>
             <h2>Vyberte akci</h2>
             ${train ? `<p><strong>Vlak:</strong> ${train.name}</p>
-            <button onclick="selectTrain(train)">Vybrat vlak</button>` : ''}
+            <button id="selectTrainButton">Vybrat vlak</button>` : ''}
             <p><strong>Náklad:</strong> Cíl: ${cargo.target.name}, Odměna: ${cargo.price} Kč</p>
-            <button onclick="selectCargo(cargo)">Vybrat náklad</button>
+            <button id="selectCargoButton">Vybrat náklad</button>
         </div>
     `;
 
     document.body.appendChild(selectionModal);
-}
 
+    // Přidání event listenerů k tlačítkům
+    if (train) {
+        document.getElementById('selectTrainButton').addEventListener('click', function() {
+            selectTrain(train); // Předání vlaku do funkce selectTrain
+            selectionModal.remove(); // Zavření modálního okna
+        });
+    }
+    
+    document.getElementById('selectCargoButton').addEventListener('click', function() {
+        selectCargo(cargo); // Předání nákladu do funkce selectCargo
+        selectionModal.remove(); // Zavření modálního okna
+    });
+}
 function selectTrain(train) {
     alert(`Vlak ${train.name} byl vybrán.`);
     // Další logika pro výběr vlaku
