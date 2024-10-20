@@ -89,7 +89,7 @@ let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
 const cargoInterval = 120000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
-const offerInterval = 15000; // Interval nabídek od herního drážního úřadu v ms
+const offerInterval = 25000; // Interval nabídek od herního drážního úřadu v ms
 
 
 
@@ -853,7 +853,7 @@ const lines = [
         color: "#FFFFFF00",
         category: "A",
         trains: [
-            { name: "Čáslav – Třemošnice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/vu6O7Hw.png', maxSpeed: 500 },
+            { name: "Čáslav – Třemošnice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/qgahT4b.png', maxSpeed: 500 },
             
             
         ],
@@ -1003,10 +1003,12 @@ const lines = [
      {
         name: "Trať 226   Veselí nad Lužnicí – České Velenice",
         color: "#FFFFFF00",
-        category: "B",
+        category: "A",
         trains: [
             { name: "Veselí nad Lužnicí – České Velenice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
             { name: "Veselí nad Lužnicí – České Velenice", startingIndex: 13, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+             { name: "Veselí nad Lužnicí – České Velenice", startingIndex: 7, reverse: true, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Veselí nad Lužnicí – České Velenice", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
             
         ],
          stops: [
@@ -1030,10 +1032,12 @@ const lines = [
   {
         name: "Trať 227  Kostelec u Jihlavy – Slavonice",
         color: "#FFFFFF00",
-        category: "B",
+        category: "A",
         trains: [
             { name: "Kostelec u Jihlavy – Slavonice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
             { name: "Kostelec u Jihlavy – Slavonice", startingIndex: 20, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+             { name: "Kostelec u Jihlavy – Slavonice", startingIndex: 10, reverse: true, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
+            { name: "Kostelec u Jihlavy – Slavonice", startingIndex: 11, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
             
         ],
          stops: [
