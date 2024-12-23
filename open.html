@@ -5961,6 +5961,12 @@
 
      ];
 
+
+    let unlockedStations = []; // Seznam odemčených stanic (formát: { lineIndex, stationIndex })
+let unlockedLines = []; // Seznam odemčených linek (indexy)
+let stationUnlockCost = 1000; // Počáteční cena za odemčení stanice
+let lineUnlockCost = 7000; // Počáteční cena za odemčení linky
+
     // Money tracking
     var money = 0;
     function increaseMoney(amount) {
@@ -6094,17 +6100,58 @@
         unlockAdjacentStations(line, stationIndex); // Odemknutí sousedních stanic
     }
 }
+function unlockNewLine() {
+    // Hledání nové linky, která může být odemčena
+    lines.forEach((line, lineIndex) => {
+        if (!unlockedLines.includes(lineIndex) && !line.locked) {
+            const startingStation = line.stops[0];
+            if (!startingStation.locked && money >= lineUnlockCost) {
+                // Odemčení linky
+                line.locked = false;
+                unlockedLines.push(lineIndex);
 
-// Funkce pro odemknutí sousedních stanic v obou směrech
-function unlockAdjacentStations(line, stationIndex) {
-    if (stationIndex > 0 && !line.stops[stationIndex - 1].unlocked) { // Odemknutí stanice předchozí
-        line.stops[stationIndex - 1].unlocked = true;
-        console.log(`Stanice ${line.stops[stationIndex - 1].name} byla odemčena!`);
-    }
-    if (stationIndex < line.stops.length - 1 && !line.stops[stationIndex + 1].unlocked) { // Odemknutí stanice následující
-        line.stops[stationIndex + 1].unlocked = true;
-        console.log(`Stanice ${line.stops[stationIndex + 1].name} byla odemčena!`);
-    }
+                // Odečtení peněz
+                money -= lineUnlockCost;
+                lineUnlockCost = Math.round(lineUnlockCost * 1.1); // Zvýšení ceny o 10 %
+
+                // Aktualizace UI
+                increaseMoney(0); // Obnovení zobrazení peněz
+                alert(`Odemčena linka: ${line.name}. Cena za další linku: ${lineUnlockCost} Kč`);
+            }
+        }
+    });
+}
+    function checkUnlocks(lineIndex, stationIndex) {
+    // Odemknout sousední stanice
+    unlockAdjacentStations(lineIndex, stationIndex);
+
+    // Odemknout nové linky
+    unlockNewLine();
+}
+    
+function unlockAdjacentStations(lineIndex, stationIndex) {
+    const line = lines[lineIndex];
+    const station = line.stops[stationIndex];
+
+    // Odemčení sousední stanice na obou stranách
+    const adjacentIndices = [stationIndex - 1, stationIndex + 1];
+    adjacentIndices.forEach(adjIndex => {
+        if (adjIndex >= 0 && adjIndex < line.stops.length && line.stops[adjIndex].locked) {
+            if (money >= stationUnlockCost) {
+                // Odemčení stanice
+                line.stops[adjIndex].locked = false;
+                unlockedStations.push({ lineIndex, stationIndex: adjIndex });
+
+                // Odečtení peněz
+                money -= stationUnlockCost;
+                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Zvýšení ceny o 10 %
+
+                // Aktualizace UI
+                increaseMoney(0); // Obnovení zobrazení peněz
+                alert(`Odemčena stanice: ${line.stops[adjIndex].name}. Cena za další stanici: ${stationUnlockCost} Kč`);
+            }
+        }
+    });
 }
     
 function startTrain(line, trainIndex, station1Index, station2Index) {
@@ -6139,25 +6186,21 @@ function startTrain(line, trainIndex, station1Index, station2Index) {
 
         trainMarker.setLatLng([currentLat, currentLng]); // Nastavení nové polohy vlaku
 
-        if (progress < 1) {
-            requestAnimationFrame(animateTrain); // Pokračování animace
-        } else {
-            // Přičtení peněz hráči při dosažení stanice
-            const earnings = Math.round(distance * 50 / 1000); // Zaokrouhleno na celé koruny
-            increaseMoney(earnings);
+      if (progress >= 1) {
+        // Přičtení peněz
+        const earnings = Math.round(distance * 50 / 1000);
+        increaseMoney(earnings);
 
-            // Zde již nebudeme zobrazovat pop-up okno
-            // alert(`Vlak dorazil do stanice ${station2.name}! Výdělek: ${earnings} Kč`);
+        // Zkontrolovat odemčení
+        checkUnlocks(lineIndex, station1Index);
 
-            // Přepnutí směru jízdy
-            forward = !forward;
-            [station1, station2] = [station2, station1];
-
-            // Restart animace s pauzou na stanici
-            startTime = null;
-            setTimeout(() => {
-                requestAnimationFrame(animateTrain);
-            }, 10); // Pauza na stanici
+        // Pokračování na další stanici
+        forward = !forward;
+        [station1, station2] = [station2, station1];
+        startTime = null;
+        setTimeout(() => {
+            requestAnimationFrame(animateTrain);
+           }, 10);
         }
     }
 
