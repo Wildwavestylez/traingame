@@ -42,6 +42,14 @@
       display: none;
       z-index: 1000; /* Ensure the selection boxes are above the map */
     }
+
+    /* Search bar style */
+    #stationSearch {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
@@ -53,6 +61,7 @@
 
   <div id="stationSelection">
     <h3>Select a Station</h3>
+    <input type="text" id="stationSearch" placeholder="Search for a station..." onkeyup="filterStations()">
     <select id="stationSelect"></select>
     <button onclick="selectStation()">Select Station</button>
   </div>
@@ -123,6 +132,22 @@
       });
 
       document.getElementById('stationSelection').style.display = 'block'; // Show station selection
+    }
+
+    function filterStations() {
+      const searchTerm = document.getElementById('stationSearch').value.toLowerCase();
+      let stationSelect = document.getElementById('stationSelect');
+      let options = stationSelect.getElementsByTagName('option');
+
+      // Hide options that don't match the search term
+      Array.from(options).forEach(option => {
+        const stationName = option.textContent.toLowerCase();
+        if (stationName.includes(searchTerm)) {
+          option.style.display = 'block';
+        } else {
+          option.style.display = 'none';
+        }
+      });
     }
 
     function selectStation() {
