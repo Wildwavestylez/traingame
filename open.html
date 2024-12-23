@@ -6,10 +6,20 @@
   <title>Train Game</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    #map {
+    /* Kontajner pro mapu */
+    #mapContainer {
+      position: relative;
       width: 100%;
       height: 600px;
     }
+
+    /* Map itself */
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Info box for money tracking */
     #info {
       position: absolute;
       top: 10px;
@@ -19,6 +29,8 @@
       border-radius: 5px;
       font-size: 16px;
     }
+
+    /* Station and line selection containers */
     #stationSelection, #lineSelection {
       position: absolute;
       top: 10px;
@@ -28,17 +40,23 @@
       border-radius: 5px;
       font-size: 16px;
       display: none;
+      z-index: 1000; /* Ensure the selection boxes are above the map */
     }
   </style>
 </head>
 <body>
-  <div id="map"></div>
+  <div id="mapContainer">
+    <div id="map"></div> <!-- Mapa -->
+  </div>
+
   <div id="info">Money: $0</div>
+
   <div id="stationSelection">
     <h3>Select a Station</h3>
     <select id="stationSelect"></select>
     <button onclick="selectStation()">Select Station</button>
   </div>
+
   <div id="lineSelection">
     <h3>Select a Line</h3>
     <select id="lineSelect"></select>
@@ -149,7 +167,7 @@
       
       // Set initial train position
       const startingStation = line.stops[train.startingIndex];
-      const trainMarker = L.marker(startingStation.location, { icon: trainIcon }).addTo(map);
+      const trainMarker = L.marker(startingStation.location).addTo(map);
 
       increaseMoney(50); // Start with some money
       alert(`Game started! You are on train: ${train.name} starting at station: ${startingStation.name}`);
