@@ -3,582 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Train Game with Auto-Suggest</title>
+  <title>Train Game</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    #suggestions {
+    /* Kontajner pro mapu */
+    #mapContainer {
+      position: relative;
+      width: 100%;
+      height: 600px;
+    }
+
+    /* Map itself */
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Info box for money tracking */
+    #info {
       position: absolute;
-      background-color: white;
-      border: 1px solid #ccc;
-      max-height: 200px;
-      overflow-y: auto;
-      width: 300px;
-      z-index: 1000;
-      display: none; /* Initially hidden */
-    }
-    #suggestions div {
+      top: 10px;
+      left: 10px;
+      background-color: rgba(255, 255, 255, 0.7);
       padding: 10px;
-      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
     }
-    #suggestions div:hover {
-      background-color: #f1f1f1;
-    }
-    #stationSearch {
+
+    /* Station and line selection containers */
+    #stationSelection, #lineSelection {
+      position: absolute;
+      top: 10px;
+      left: 300px;
+      background-color: rgba(255, 255, 255, 0.7);
       padding: 10px;
-      width: 300px;
+      border-radius: 5px;
+      font-size: 16px;
+      display: none;
+      z-index: 1000; /* Ensure the selection boxes are above the map */
     }
   </style>
 </head>
 <body>
-  <h2>Select a Station</h2>
-  <input type="text" id="stationSearch" placeholder="Start typing a station name..." oninput="filterStations()">
-  <div id="suggestions"></div>
+  <div id="mapContainer">
+    <div id="map"></div> <!-- Mapa -->
+  </div>
 
+  <div id="info">Money: $0</div>
+
+  <div id="stationSelection">
+    <h3>Select a Station</h3>
+    <input type="text" id="stationSearch" placeholder="Start typing a station name..." oninput="filterStations()">
+    <div id="suggestions"></div>
+  </div>
+
+  <div id="lineSelection">
+    <h3>Select a Line</h3>
+    <select id="lineSelect"></select>
+    <button onclick="selectLine()">Select Line</button>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    // Seznam linek s jejich stanicemi
+    // Map initialization
+    var map = L.map('map').setView([48.8675378, 21.8248364], 13); // Example: Strážské coordinates
+
+    // Add tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Data for lines and stations
     const lines = [
       {
-        name: "Trať 313 Milotice nad Opavou – Vrbno pod Pradědem",
+        name: "Trať 192 STRÁŽSKÉ - TREBIŠOV",
+        color: "#FFFFFF00",
+        category: "A",
+        locked: true, // Line is locked initially
+        trains: [
+          { name: "STRÁŽSKÉ - TREBIŠOV", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/sgF74F8.png', maxSpeed: 600 },
+          { name: "STRÁŽSKÉ - TREBIŠOV", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/5V3WrS7.png', maxSpeed: 600 }
+        ],
         stops: [
-          { name: "Milotice nad Opavou", location: [50.0142556, 17.5576706] },
-          { name: "Nové Heřminovy", location: [50.0247269, 17.5268556] },  
-          { name: "Kunov", location: [50.0372772, 17.5159339] },
-          { name: "Skrbovice", location: [50.0520972, 17.4844189] },  
-          { name: "Široká Niva", location: [50.0666161, 17.4733792] },
-          { name: "Pocheň", location: [50.0751228, 17.4480647] },  
-          { name: "Karlovice", location: [50.1049919, 17.4392242] },
-          { name: "Karlovice zastávka", location: [50.1075553, 17.4276428] },   
-          { name: "Vrbno pod Pradědem zastávka", location: [50.1142922, 17.3979511] },
-          { name: "Vrbno pod Pradědem", location: [50.1179047, 17.3880025] }
+          { name: "Strážské", location: [48.8675378, 21.8248364], locked: true },
+          { name: "Nižný Hrabovec", location: [48.8570392, 21.7518606], locked: true },
+          { name: "Hencovce", location: [48.8570392, 21.7518606], locked: true },
+          { name: "Vranovské Dlhé", location: [48.8695603, 21.7053108], locked: true },
+          { name: "Vranov nad Topľou", location: [48.8900675, 21.6740197], locked: true },
+          { name: "Komárany", location: [48.9131272, 21.6385608], locked: true },
+          { name: "Soľ", location: [48.9319739, 21.6005106], locked: true },
+          { name: "Hlinné", location: [48.9529000, 21.5841294], locked: true },
+          { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306], locked: true },
+          { name: "Bystré", location: [49.0033111, 21.5423933], locked: true }
         ]
-      },
-
-       {
-        name: "Trať 310  Olomouc – Opava východ",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Olomouc – Opava východ", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/HnPatSV.png', maxSpeed: 600 },
-            { name: "Olomouc – Opava východ", startingIndex: 25, reverse: false, image: 'https://i.imgur.com/HnPatSV.png', maxSpeed: 600 },
-             { name: "Olomouc – Opava východ", startingIndex: 8, reverse: true, image: 'https://i.imgur.com/HnPatSV.png', maxSpeed: 600 },
-            { name: "Olomouc – Opava východ", startingIndex: 7, reverse: false, image: 'https://i.imgur.com/HnPatSV.png', maxSpeed: 600 },
-             { name: "Olomouc – Opava východ", startingIndex: 18, reverse: true, image: 'https://i.imgur.com/HnPatSV.png', maxSpeed: 600 },
-            { name: "Olomouc – Opava východ", startingIndex: 17, reverse: false, image: 'https://i.imgur.com/HnPatSV.png', maxSpeed: 600 },
-        ],
-         stops: [
-                { name: "Olomouc hlavní nádraží", location: [49.5925828, 17.2783775] },
-                { name: "Bystrovany", location: [49.5988350, 17.3224183] },  
-                { name: "Velká Bystřice", location: [49.5934639, 17.3451786] },
-                { name: "Velká Bystřice zastávka", location: [49.5978889, 17.3650722] },   
-                { name: "Hlubočky-Mariánské Údolí", location: [49.6130600, 17.3947144] },
-                { name: "Hlubočky zastávka", location: [49.6256103, 17.4032611] },
-                 { name: "Hlubočky", location: [49.6473197, 17.4082603] },
-                { name: "Hrubá Voda zastávka", location: [49.6684342, 17.4216556] },
-                { name: "Hrubá Voda", location: [49.6696433, 17.4385606] },
-                { name: "Hrubá Voda-Smilov", location: [49.6910439, 17.4433689] },  
-                 { name: "Domašov nad Bystřicí", location: [49.7403336, 17.4449253] },
-                { name: "Moravský Beroun", location: [49.7844772, 17.4322700] },  
-                { name: "Dětřichov nad Bystřicí", location: [49.8384094, 17.3948994] },
-                { name: "Lomnice u Rýmařova", location: [49.8731803, 17.4193192] },   
-                { name: "Valšov", location: [49.9336167, 17.4372139] },
-                { name: "Bruntál", location: [49.9938392, 17.4745483] },
-                 { name: "Milotice nad Opavou", location: [50.0142556, 17.5576706] },
-                { name: "Zátor", location: [50.0395469, 17.5963250] },
-                { name: "Brantice", location: [50.0520936, 17.6116961] },
-                { name: "Krnov", location: [50.0888900, 17.6833917] },
-                { name: "Krnov-Cvilín", location: [50.0938950, 17.7129592] },  
-                { name: "Úvalno", location: [50.0492972, 17.7549667] },
-                { name: "Skrochovice", location: [50.0183944, 17.7770442] },   
-                { name: "Holasovice", location: [50.0003928, 17.8037433] },
-                { name: "Vávrovice", location: [49.9750558, 17.8583144] },
-                 { name: "Opava západ", location: [49.9384422, 17.8886606] },
-                { name: "Opava východ", location: [49.9344978, 17.9083386] },
-                ]
-    },  
-
-      {
-        name: "Trať 313  Milotice nad Opavou – Vrbno pod Pradědem ",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Milotice nad Opavou – Vrbno pod Pradědem", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/sgF74F8.png', maxSpeed: 600 },
-            { name: "Milotice nad Opavou – Vrbno pod Pradědem", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/sgF74F8.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Milotice nad Opavou", location: [50.0142556, 17.5576706] },
-                { name: "Nové Heřminovy", location: [50.0247269, 17.5268556] },  
-                { name: "Kunov", location: [50.0372772, 17.5159339] },
-                { name: "Skrbovice", location: [50.0520972, 17.4844189] },  
-                 { name: "Široká Niva", location: [50.0666161, 17.4733792] },
-                { name: "Pocheň", location: [50.0751228, 17.4480647] },  
-                { name: "Karlovice", location: [50.1049919, 17.4392242] },
-                { name: "Karlovice zastávka", location: [50.1075553, 17.4276428] },   
-                { name: "Vrbno pod Pradědem zastávka", location: [50.1142922, 17.3979511] },
-                { name: "Vrbno pod Pradědem", location: [50.1179047, 17.3880025] }, 
-               
-                ]
-    },  
-
-    {
-        name: "Trať 314 Opava východ – Svobodné Heřmanice",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Opava východ – Svobodné Heřmanice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/qgahT4b.png', maxSpeed: 600 },
-            { name: "Opava východ – Svobodné Heřmanice", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/qgahT4b.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Opava východ", location: [49.9344978, 17.9083386] },
-                { name: "Kylešovice", location: [49.9250717, 17.9090386] },  
-                { name: "Otice", location: [49.9189625, 17.8702928] },
-                { name: "Slavkov u Opavy", location: [49.9167669, 17.8483544] },  
-                 { name: "Štáblovice", location: [49.9008353, 17.8231611] },
-                { name: "Dolní Životice", location: [49.8947342, 17.7729931] },  
-                { name: "Litultovice", location: [49.8874817, 17.7345811] },
-                { name: "Mladecko", location: [49.8948808, 17.7121475] },   
-                { name: "Jakartovice", location: [49.9173156, 17.6914067] },
-                { name: "Svobodné Heřmanice", location: [49.9439697, 17.6539328] }, 
-               
-                ]
-    },  
-
-    {
-        name: "Trať 317 Opava východ – Hlučín",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Opava východ – Hlučín", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/qgahT4b.png', maxSpeed: 600 },
-            { name: "Opava východ – Hlučín", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/qgahT4b.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Opava východ", location: [49.9344978, 17.9083386] },
-                { name: "Opava zastávka", location: [49.9291725, 17.9345378] },  
-                { name: "Malé Hoštice", location: [49.9321939, 17.9457778] },
-                { name: "Velké Hoštice", location: [49.9382439, 17.9690686] },  
-                 { name: "Kravaře ve Slezsku", location: [49.9351922, 18.0099583] },
-                { name: "Kravaře-Kouty", location: [49.9309464, 18.0392228] },  
-                { name: "Dolní Benešov-Zábřeh", location: [49.9243050, 18.0824947] },
-                { name: "Dolní Benešov", location: [49.9231414, 18.1192189] },   
-                { name: "Kozmice", location: [49.9104844, 18.1538581] },
-                { name: "Hlučín", location: [49.9010353, 18.1937675] }, 
-               
-                ]
-    },  
-
-     {
-        name: "Trať 317a Kravaře – Chuchelná",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Kravaře – Chuchelná", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/qgahT4b.png', maxSpeed: 600 },
-           
-            
-        ],
-         stops: [
-                 { name: "Kravaře ve Slezsku", location: [49.9351922, 18.0099583] },
-                { name: "Štěpánkovice", location: [49.9505844, 18.0345706] },  
-                { name: "Bolatice", location: [49.9632150, 18.0730761] },
-                { name: "Chuchelná", location: [49.9887694, 18.1131497] },   
-                
-               
-                ]
-    },  
-
-    {
-        name: "Trať 315 Opava východ – Hradec nad Moravicí",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Opava východ – Hradec nad Moravicí", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/TaoyxXt.png', maxSpeed: 600 },
-           
-            
-        ],
-         stops: [
-                { name: "Opava východ", location: [49.9344978, 17.9083386] },
-                { name: "Kylešovice", location: [49.9250717, 17.9090386] },  
-                { name: "Branka u Opavy", location: [49.8891792, 17.8779775] },
-                { name: "Hradec nad Moravicí", location: [49.8774719, 17.8759175] },  
-                 
-                ]
-    },  
-
-        {
-        name: "Trať 312 Bruntál – Malá Morávka",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Bruntál – Malá Morávka", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/WdWk7Cq.png', maxSpeed: 600 },
-            
-            
-        ],
-         stops: [
-                { name: "Bruntál", location: [49.9938392, 17.4745483] },
-                { name: "Staré Město", location: [50.0104139, 17.4290603] },  
-                { name: "Rudná pod Pradědem", location: [50.0359036, 17.4012344] },
-                { name: "Světlá Hora", location: [50.0431292, 17.3944861] },  
-                 { name: "Rudná pod Pradědem zastávka", location: [50.0232042, 17.3391361] },
-                { name: "Malá Morávka", location: [50.0100603, 17.3172642] },  
-               
-               
-                ]
-    },  
-
-     {
-        name: "Trať 310a Rýmařov – Bruntál",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Rýmařov – Bruntál", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/WdWk7Cq.png', maxSpeed: 600 },
-            { name: "Rýmařov – Bruntál", startingIndex: 6, reverse: false, image: 'https://i.imgur.com/WdWk7Cq.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Rýmařov", location: [49.9297333, 17.2844964] },
-                { name: "Jamartice", location: [49.9340783, 17.3179761] },  
-                { name: "Velká Štáhle", location: [49.9309425, 17.3521692] },
-                { name: "Břidličná zastávka", location: [49.9123039, 17.3699914] },  
-                 { name: "Břidličná", location: [49.9133264, 17.3826447] },
-                { name: "Břidličná lesy", location: [49.9179306, 17.4028339] },  
-                { name: "Valšov", location: [49.9336167, 17.4372139] },
-                { name: "Bruntál", location: [49.9938392, 17.4745483] },   
-               
-                ]
-    },  
-
-      {
-        name: "Trať 309 Olomouc – Senice na Hané – Drahanovice",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Olomouc – Senice na Hané – Drahanovice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-            { name: "Olomouc – Senice na Hané – Drahanovice", startingIndex: 10, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Olomouc hlavní nádraží", location: [49.5925828, 17.2783775] },
-                { name: "Olomouc-Smetanovy sady", location: [49.5855828, 17.2547475] },  
-                { name: "Olomouc-Nová Ulice", location: [49.5873450, 17.2442569] },
-                { name: "Olomouc město", location: [49.5941200, 17.2411919] },   
-                { name: "Olomouc-Hejčín", location: [49.6023103, 17.2366103] },
-                { name: "Olomouc-Řepčín", location: [49.6165200, 17.2240258] },
-                 { name: "Horka nad Moravou", location: [49.6376647, 17.2015133] },
-                { name: "Skrbeň", location: [49.6388053, 17.1746825] },
-                { name: "Příkazy", location: [49.6381303, 17.1451550] },
-                { name: "Senice na Hané", location: [49.6215172, 17.1000442] },  
-                { name: "Náměšť na Hané", location: [49.5979806, 17.0703678] },
-                { name: "Drahanovice", location: [49.5833511, 17.0792331] },  
-                ]
-    },  
-
-    {
-        name: "Trať 308 Litovel předměstí – Mladeč",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Litovel předměstí – Mladeč", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/neFFZgt.png', maxSpeed: 600 },
-            
-            
-        ],
-         stops: [
-                { name: "Litovel předměstí", location: [49.6940994, 17.0712681] },
-                { name: "Chudobín", location: [49.6945600, 17.0390103] },  
-                { name: "Mladeč jeskyně", location: [49.7029733, 17.0144606] },
-                { name: "Mladeč", location: [49.7039392, 17.0029206] },   
-               
-                ]
-    },  
-
-     {
-        name: "Trať 307 Prostějov – Senice na Hané – Červenka",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Prostějov – Senice na Hané – Červenka", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-            { name: "Prostějov – Senice na Hané – Červenka", startingIndex: 17, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-             { name: "Prostějov – Senice na Hané – Červenka", startingIndex: 9, reverse: true, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-            { name: "Prostějov – Senice na Hané – Červenka", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-        ],
-         stops: [
-                { name: "Prostějov hlavní nádraží", location: [49.4723550, 17.1295814] },
-                { name: "Prostějov místní nádraží", location: [49.4789619, 17.1116714] },  
-                { name: "Kostelec na Hané", location: [49.5090675, 17.0650139] },
-                { name: "Čelechovice na Hané", location: [49.5136261, 17.0970439] },   
-                { name: "Kaple", location: [49.5312386, 17.1046847] },
-                { name: "Třebčín", location: [49.5508461, 17.1182594] },
-                 { name: "Slatinice", location: [49.5671539, 17.1089686] },
-                { name: "Drahanovice", location: [49.5833511, 17.0792331] },
-                { name: "Náměšť na Hané", location: [49.5979806, 17.0703678] },
-                { name: "Senice na Hané", location: [49.6215172, 17.1000442] },  
-                 { name: "Senice na Hané zastávka", location: [49.6325225, 17.0865842] },
-                { name: "Odrlice", location: [49.6435317, 17.0721244] },  
-                { name: "Cholina", location: [49.6580353, 17.0610353] },
-                { name: "Myslechovice", location: [49.6768989, 17.0488547] },   
-                { name: "Litovel předměstí", location: [49.6940994, 17.0712681] },
-                { name: "Litovel město", location: [49.7019958, 17.0709764] },
-                 { name: "Litovel", location: [49.7128869, 17.0745486] },
-                { name: "Červenka zastávka", location: [49.7211722, 17.0764656] },
-                { name: "Červenka", location: [49.7239342, 17.0912342] },
-                ]
-    },  
-
-     {
-        name: "Trať 305 Kroměříž – Zborovice",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Kroměříž – Zborovice", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/WdWk7Cq.png', maxSpeed: 600 },
-           
-            
-        ],
-         stops: [
-                { name: "Kroměříž", location: [49.3023414, 17.4029542] },
-                { name: "Kroměříž-Oskol", location: [49.2920036, 17.4075489] },  
-                { name: "Kotojedy", location: [49.2837714, 17.4033356] },
-                { name: "Jarohněvice", location: [49.2630919, 17.3797608] },   
-                { name: "Šelešovice", location: [49.2499428, 17.3638039] },
-                { name: "Zdounky", location: [49.2288283, 17.3151628] },
-                 { name: "Zborovice zastávka", location: [49.2462653, 17.2897531] },
-                { name: "Zborovice", location: [49.2535631, 17.2832414] },
-                
-                ]
-    },  
-
-      {
-        name: "Trať 304 Kojetín – Tovačov",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Kojetín – Tovačov", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/YzkKbH4.png', maxSpeed: 600 },
-            
-            
-        ],
-         stops: [
-                { name: "Kojetín", location: [49.3454169, 17.3047944] },
-                { name: "Uhřičice", location: [49.3699094, 17.2908706] },  
-                { name: "Lobodice", location: [49.4005250, 17.2873772] },
-                { name: "Oplocany", location: [49.4180467, 17.2822083] },   
-                { name: "Tovačov", location: [49.4260947, 17.2821481] },
-               
-                ]
-    },  
-
-     {
-        name: "Trať 303 Kojetín – Valašské Meziříčí",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Kojetín – Valašské Meziříčí", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
-            { name: "Kojetín – Valašské Meziříčí", startingIndex: 16, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
-             { name: "Kojetín – Valašské Meziříčí", startingIndex: 8, reverse: true, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
-            { name: "Kojetín – Valašské Meziříčí", startingIndex: 7, reverse: false, image: 'https://i.imgur.com/jXoYbZs.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                 { name: "Kojetín", location: [49.3454169, 17.3047944] },
-                { name: "Bezměrov", location: [49.3317756, 17.3391342] },  
-                { name: "Postoupky", location: [49.3207778, 17.3613586] },
-                { name: "Kroměříž", location: [49.3023414, 17.4029542] },  
-                { name: "Hulín", location: [49.3164750, 17.4766464] },
-                { name: "Třebětice", location: [49.3174439, 17.5194531] },   
-                { name: "Holešov", location: [49.3270150, 17.5708981] },
-                { name: "Dobrotice", location: [49.3449019, 17.6089019] },
-                 { name: "Jankovice", location: [49.3560600, 17.6229381] },
-                { name: "Hlinsko pod Hostýnem", location: [49.3709031, 17.6318531] },
-                { name: "Bystřice pod Hostýnem", location: [49.3930436, 17.6655444] },
-                { name: "Loukov", location: [49.4103928, 17.7153569] },  
-                { name: "Osíčko", location: [49.4231531, 17.7426472] },
-                { name: "Podhradní Lhota", location: [49.4319228, 17.7975044] },  
-                { name: "Kunovice-Loučka", location: [49.4398497, 17.8184700] },
-                { name: "Police u Valašského Meziříčí", location: [49.4505692, 17.8681125] },  
-                { name: "Branky na Moravě", location: [49.4593886, 17.9056606] },
-                { name: "Valašské Meziříčí", location: [49.4744719, 17.9607258] },  
-                ]
-    },  
-
-       {
-        name: "Trať 295 Lipová Lázně – Javorník ve Slezsku ",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Lipová Lázně – Javorník ve Slezsku ", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-            { name: "Lipová Lázně – Javorník ve Slezsku ", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Lipová Lázně", location: [50.2284125, 17.1307756] },
-                { name: "Lipová Lázně jeskyně", location: [50.2445831, 17.1433353] },  
-                { name: "Vápenná", location: [50.2842217, 17.0945664] },
-                { name: "Žulová", location: [50.3078536, 17.1027603] },   
-                { name: "Tomíkovice", location: [50.3226508, 17.1076756] },
-                { name: "Kobylá nad Vidnavkou", location: [50.3382758, 17.1251983] },
-                 { name: "Velká Kraš", location: [50.3623506, 17.1269150] },
-                { name: "Horní Heřmanice", location: [50.3877756, 17.1074925] },
-                { name: "Bernartice u Javorníka", location: [50.3966142, 17.0814878] },
-                { name: "Javorník ve Slezsku", location: [50.3947983, 17.0156631] },  
-                ]
-    },  
-
-         {
-        name: "Trať 300  Vyškov na Moravě – Přerov ",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Vyškov na Moravě – Přerov", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/mr1YVZ3.png', maxSpeed: 600 },
-            { name: "Vyškov na Moravě – Přerov", startingIndex: 9, reverse: false, image: 'https://i.imgur.com/mr1YVZ3.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Vyškov na Moravě", location: [49.2785492, 16.9915828] },
-                { name: "Hoštice-Heroltice", location: [49.2916528, 17.0594025] },  
-                { name: "Ivanovice na Hané", location: [49.3063317, 17.0871792] },
-                { name: "Chvalkovice na Hané", location: [49.3213081, 17.1113472] },   
-                { name: "Nezamyslice", location: [49.3357047, 17.1614647] },
-                { name: "Němčice nad Hanou", location: [49.3449058, 17.2165089] },
-                 { name: "Měrovice nad Hanou", location: [49.3438186, 17.2472192] },
-                { name: "Kojetín", location: [49.3454169, 17.3047944] },
-                { name: "Chropyně", location: [49.3693694, 17.3610306] },
-                { name: "Věžky", location: [49.4082947, 17.4161644] },  
-                { name: "Přerov", location: [49.4469606, 17.4449006] },
-                ]
-    },  
-
-     {
-        name: "Trať 301 Nezamyslice – Olomouc",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Nezamyslice – Olomouc", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/VNRgRpL.png', maxSpeed: 600 },
-            { name: "Nezamyslice – Olomouc", startingIndex: 10, reverse: false, image: 'https://i.imgur.com/VNRgRpL.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Nezamyslice", location: [49.3357047, 17.1614647] },
-                { name: "Doloplazy", location: [49.3527564, 17.1616306] },
-                { name: "Pivín", location: [49.3875503, 17.1887456] },  
-                { name: "Čelčice", location: [49.4119378, 17.1913167] },
-                { name: "Bedihošť", location: [49.4417039, 17.1666394] },   
-                { name: "Prostějov hlavní nádraží", location: [49.4723550, 17.1295814] },
-                { name: "Vrahovice", location: [49.4828414, 17.1506747] },
-                 { name: "Kraličky", location: [49.4863892, 17.1809672] },
-                { name: "Vrbátky", location: [49.5017128, 17.1980400] },
-                { name: "Blatec", location: [49.5255317, 17.2462406] },
-                { name: "Nemilany", location: [49.5587653, 17.2442742] },  
-                { name: "Olomouc-Nové Sady", location: [49.5709725, 17.2607461] },
-                { name: "Olomouc hlavní nádraží", location: [49.5925828, 17.2783775] },
-                ]
-    },  
-
-
-     {
-        name: "Trať 294  Hanušovice – Staré Město pod Sněžníkem",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Hanušovice – Staré Město pod Sněžníkem", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/WdWk7Cq.png', maxSpeed: 600 },
-            { name: "Hanušovice – Staré Město pod Sněžníkem", startingIndex: 4, reverse: true, image: 'https://i.imgur.com/WdWk7Cq.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Hanušovice", location: [50.0718042, 16.9293289] },
-                { name: "Hanušovice zastávka", location: [50.0891000, 16.9199294] },  
-                { name: "Vysoké Žibřidovice", location: [50.1164092, 16.9375992] },
-                { name: "Chrastice", location: [50.1433219, 16.9494686] },   
-                { name: "Staré Město pod Sněžníkem", location: [50.1621628, 16.9420300] },
-                
-                ]
-    },  
-
-    {
-        name: "Trať 296  Velká Kraš – Vidnava",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Velká Kraš – Vidnava", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/WdWk7Cq.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                { name: "Velká Kraš", location: [50.3623506, 17.1269150] },
-                { name: "Malá Kraš", location: [50.3650458, 17.1548922] },  
-                { name: "Vidnava", location: [50.3725433, 17.1796158] },    
-                ]
-    },  
-            {
-        name: "Trať 297  Jeseník – Zlaté Hory",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Jeseník – Zlaté Hory", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-            { name: "Jeseník – Zlaté Hory", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/7BGDVTg.png', maxSpeed: 600 },
-           ],
-         stops: [
-                 { name: "Jeseník", location: [50.2277222, 17.1935158] },  
-                { name: "Česká Ves", location: [50.2535781, 17.2157019] },
-                { name: "Česká Ves bazén", location: [50.2598494, 17.2277717] },   
-                { name: "Písečná", location: [50.2788506, 17.2599525] },
-                { name: "Hradec-Nová Ves", location: [50.2865333, 17.2745800] },
-                 { name: "Mikulovice", location: [50.3024331, 17.3201428] },
-                { name: "Salisov", location: [50.2724211, 17.3433894] },
-                { name: "Ondřejovice zastávka", location: [50.2629242, 17.3539467] },  
-                { name: "Zlaté Hory", location: [50.2593614, 17.3832797] },    
-                ]
-    },  
-     {
-        name: "Trať 298  Třemešná ve Slezsku – Osoblaha",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Třemešná ve Slezsku – Osoblaha", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/HaDY5i1.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                 { name: "Třemešná ve Slezsku", location: [50.1998825, 17.5737133] },  
-                { name: "Liptaň", location: [50.2235450, 17.6086883] },
-                { name: "Dívčí Hrad", location: [50.2324828, 17.6446572] },   
-                { name: "Horní Povelice", location: [50.2257919, 17.6548461] },
-                { name: "Amalín", location: [50.2161025, 17.6635514] },
-                 { name: "Slezské Rudoltice", location: [50.2121506, 17.6835003] },
-                { name: "Koberno", location: [50.2279625, 17.6990567] },
-                { name: "Bohušov", location: [50.2402039, 17.7150364] },  
-                { name: "Osoblaha", location: [50.2682342, 17.7224236] },    
-                ]
-    },  
-    
-     {
-        name: "Trať 291 Zábřeh na Moravě – Šumperk – Kouty nad Desnou",
-        color: "#FFFFFF00",
-        category: "A",
-        trains: [
-            { name: "Zábřeh na Moravě – Šumperk – Kouty nad Desnou", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
-            { name: "Zábřeh na Moravě – Šumperk – Kouty nad Desnou", startingIndex: 16, reverse: false, image: 'https://i.imgur.com/P2qZ1di.png', maxSpeed: 600 },
-            
-        ],
-         stops: [
-                 { name: "Zábřeh na Moravě", location: [49.8721808, 16.8870983] },
-                { name: "Zábřeh na Moravě zastávka", location: [49.8845025, 16.8887558] },  
-                { name: "Postřelmov", location: [49.9101106, 16.9230442] },
-                { name: "Bludov", location: [49.9276506, 16.9385719] },  
-                { name: "Šumperk", location: [49.9618872, 16.9829997] },
-                { name: "Vikýřovice u penzionu", location: [49.9669150, 17.0037994] },   
-                { name: "Vikýřovice", location: [49.9768792, 17.0138989] },
-                { name: "Vikýřovice-Lesní", location: [49.9852067, 17.0196972] },
-                 { name: "Petrov nad Desnou", location: [50.0003319, 17.0302544] },
-                { name: "Rapotín zastávka", location: [50.0094300, 17.0312806] },
-                { name: "Rapotín", location: [50.0147894, 17.0329036] },
-                { name: "Velké Losiny zámek", location: [50.0248336, 17.0370350] },  
-                { name: "Velké Losiny", location: [50.0318108, 17.0425833] },
-                { name: "Velké Losiny zastávka", location: [50.0400161, 17.0557842] },  
-                { name: "Loučná nad Desnou-Filipová", location: [50.0548439, 17.0824031] },
-                { name: "Loučná nad Desnou", location: [50.0717658, 17.0865136] },  
-                { name: "Loučná nad Desnou-Rejhotice", location: [50.0884972, 17.0908469] },
-                { name: "Kouty nad Desnou", location: [50.0988503, 17.1042406] },  
-                ]
-    },  
-      // Další linky zde...
+      }
     ];
 
-    // Vytvoříme seznam všech stanic ve hře
+    // Money tracking
+    var money = 0;
+    function increaseMoney(amount) {
+      money += amount;
+      document.getElementById('info').textContent = 'Money: $' + money;
+    }
+
+    // Create a list of all station names for auto-suggest
     const allStations = [];
     lines.forEach(line => {
       line.stops.forEach(stop => {
@@ -619,14 +148,51 @@
       document.getElementById('stationSearch').value = station;
       document.getElementById('suggestions').style.display = 'none'; // Hide suggestions
       alert(`You selected: ${station}`);
+
+      // Now load available lines for the selected station
+      loadLines(station);
     }
 
-    // Zavření návrhů, když klikneme mimo input
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#stationSearch')) {
-        document.getElementById('suggestions').style.display = 'none';
-      }
-    });
+    function loadLines(stationName) {
+      let lineSelect = document.getElementById('lineSelect');
+      lineSelect.innerHTML = ''; // Clear previous selections
+
+      // Find the line(s) corresponding to the selected station
+      lines.forEach((line, lineIndex) => {
+        line.stops.forEach((stop, stopIndex) => {
+          if (stop.name === stationName) {
+            let option = document.createElement('option');
+            option.value = `${lineIndex}-${stopIndex}`;
+            option.textContent = line.name;
+            lineSelect.appendChild(option);
+          }
+        });
+      });
+
+      document.getElementById('lineSelection').style.display = 'block'; // Show line selection
+    }
+
+    function selectLine() {
+      const selectedValue = document.getElementById('lineSelect').value;
+      const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
+      const selectedLine = lines[lineIndex];
+      console.log(`Selected Line: ${selectedLine.name}`);
+
+      // Start the game or simulate the train
+      startGame(lineIndex, stopIndex);
+    }
+
+    function startGame(lineIndex, stopIndex) {
+      const line = lines[lineIndex];
+      const startingStation = line.stops[stopIndex];
+      const trainMarker = L.marker(startingStation.location).addTo(map);
+
+      increaseMoney(50); // Start with some money
+      alert(`Game started! You are at station: ${startingStation.name}`);
+    }
+
+    // Initialize the game by showing station selection
+    document.getElementById('stationSelection').style.display = 'block';
   </script>
 </body>
 </html>
