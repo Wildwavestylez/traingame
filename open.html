@@ -5961,7 +5961,7 @@
 
      ];
 
-      // Money tracking
+    // Money tracking
     var money = 0;
     function increaseMoney(amount) {
       money += amount;
@@ -6062,10 +6062,10 @@
 
       console.log(`Selected Line: ${selectedLine.name}`);
 
-      // Change the map view to the selected station's location
-      map.setView(selectedStation.location, 13); // 13 is the zoom level
+      // Change the map view to the selected station
+      map.setView(selectedStation.location, 13); // Zoom level 13
 
-      // Optionally, add a marker to the selected station
+      // Highlight selected station
       L.marker(selectedStation.location).addTo(map)
         .bindPopup(selectedStation.name)
         .openPopup();
