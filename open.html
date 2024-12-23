@@ -29,7 +29,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     // Map initialization
-    var map = L.map('map').setView([50.0755, 14.4378], 13); // Example: Prague coordinates
+    var map = L.map('map').setView([48.8675378, 21.8248364], 13); // Example: Strážské coordinates
 
     // Add tile layer (OpenStreetMap)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -44,29 +44,74 @@
       popupAnchor: [0, -16]
     });
 
-    // Add a train marker to the map
-    var trainMarker = L.marker([50.0755, 14.4378], { icon: trainIcon }).addTo(map);
+    // Data for lines and stations
+    const lines = [
+      {
+        name: "Trať 192 STRÁŽSKÉ - TREBIŠOV",
+        color: "#FFFFFF00",
+        category: "A",
+        locked: true, // Line is locked initially
+        trains: [
+          { name: "STRÁŽSKÉ - TREBIŠOV", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/sgF74F8.png', maxSpeed: 600 },
+          { name: "STRÁŽSKÉ - TREBIŠOV", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/5V3WrS7.png', maxSpeed: 600 }
+        ],
+        stops: [
+          { name: "Strážské", location: [48.8675378, 21.8248364], locked: true },
+          { name: "Nižný Hrabovec", location: [48.8570392, 21.7518606], locked: true },
+          { name: "Hencovce", location: [48.8570392, 21.7518606], locked: true },
+          { name: "Vranovské Dlhé", location: [48.8695603, 21.7053108], locked: true },
+          { name: "Vranov nad Topľou", location: [48.8900675, 21.6740197], locked: true },
+          { name: "Komárany", location: [48.9131272, 21.6385608], locked: true },
+          { name: "Soľ", location: [48.9319739, 21.6005106], locked: true },
+          { name: "Hlinné", location: [48.9529000, 21.5841294], locked: true },
+          { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306], locked: true },
+          { name: "Bystré", location: [49.0033111, 21.5423933], locked: true }
+        ]
+      }
+    ];
 
-    // Sample function to increase money
+    // Money tracking
     var money = 0;
     function increaseMoney(amount) {
       money += amount;
       document.getElementById('info').textContent = 'Money: $' + money;
     }
 
-    // Simulate moving train
+    // Simulate moving train and unlocking stations
     function moveTrain() {
-      var newLat = trainMarker.getLatLng().lat + 0.01;
-      var newLng = trainMarker.getLatLng().lng + 0.01;
+      var trainLine = lines[0]; // Example for line 192
+      if (trainLine.locked) {
+        alert("This line is locked! Unlock it first.");
+        return;
+      }
 
-      trainMarker.setLatLng([newLat, newLng]);
-      increaseMoney(10); // Increase money by $10 each time the train moves
+      // Move train logic (simplified)
+      var trainMarker = L.marker(trainLine.trains[0].image, {
+        position: trainLine.stops[0].location
+      }).addTo(map);
 
-      // Check for boundaries or game conditions (to be added later)
+      // Unlock stations and lines after meeting conditions (e.g., money)
+      if (money >= 100) {
+        unlockLine(0); // Unlock line 192
+        unlockStation(0, 0); // Unlock first station (Strážské)
+      }
+    }
+
+    // Unlock a specific station
+    function unlockStation(lineIndex, stationIndex) {
+      lines[lineIndex].stops[stationIndex].locked = false;
+      alert("Station " + lines[lineIndex].stops[stationIndex].name + " unlocked!");
+    }
+
+    // Unlock a specific line
+    function unlockLine(lineIndex) {
+      lines[lineIndex].locked = false;
+      alert("Line " + lines[lineIndex].name + " unlocked!");
     }
 
     // Simulate a moving train every 3 seconds
     setInterval(moveTrain, 3000);
+
   </script>
 </body>
 </html>
