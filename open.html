@@ -34,17 +34,38 @@
   <div id="suggestions"></div>
 
   <script>
-    // Příklad seznamu stanic pro demo účely
-    const stations = [
-      "Strážské", "Trebišov", "Nižný Hrabovec", "Hencovce", "Vranovské Dlhé",
-      "Vranov nad Topľou", "Komárany", "Soľ", "Hlinné", "Čierne nad Topľou",
-      "Bystré", "Bratislava", "Košice", "Nitra", "Poprad", "Žilina", "Trnava", "Prievidza"
+    // Seznam linek s jejich stanicemi
+    const lines = [
+      {
+        name: "Trať 313 Milotice nad Opavou – Vrbno pod Pradědem",
+        stops: [
+          { name: "Milotice nad Opavou", location: [50.0142556, 17.5576706] },
+          { name: "Nové Heřminovy", location: [50.0247269, 17.5268556] },  
+          { name: "Kunov", location: [50.0372772, 17.5159339] },
+          { name: "Skrbovice", location: [50.0520972, 17.4844189] },  
+          { name: "Široká Niva", location: [50.0666161, 17.4733792] },
+          { name: "Pocheň", location: [50.0751228, 17.4480647] },  
+          { name: "Karlovice", location: [50.1049919, 17.4392242] },
+          { name: "Karlovice zastávka", location: [50.1075553, 17.4276428] },   
+          { name: "Vrbno pod Pradědem zastávka", location: [50.1142922, 17.3979511] },
+          { name: "Vrbno pod Pradědem", location: [50.1179047, 17.3880025] }
+        ]
+      },
+      // Další linky zde...
     ];
 
-    // Filtrování stanic
+    // Vytvoříme seznam všech stanic ve hře
+    const allStations = [];
+    lines.forEach(line => {
+      line.stops.forEach(stop => {
+        allStations.push(stop.name);
+      });
+    });
+
+    // Filtrování stanic podle vstupu uživatele
     function filterStations() {
       const query = document.getElementById('stationSearch').value.toLowerCase();
-      const filteredStations = stations.filter(station => station.toLowerCase().includes(query));
+      const filteredStations = allStations.filter(station => station.toLowerCase().includes(query));
 
       // Zobrazí návrhy
       showSuggestions(filteredStations);
