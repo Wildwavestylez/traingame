@@ -6020,6 +6020,7 @@
       });
     }
 
+    
     // Vybere stanici
     function selectStation(station) {
       document.getElementById('stationSearch').value = station.name;
@@ -6053,7 +6054,34 @@
       document.getElementById('lineSelection').style.display = 'block'; // Show line selection
     }
 
-    // Vybere linku a změní pohled mapy
+        function unlockNextStation(selectedLine, currentStopIndex) {
+      const nextStopIndex = currentStopIndex + 1;
+
+      // Zkontroluj, zda existuje další stanice
+      if (nextStopIndex < selectedLine.stops.length) {
+        const nextStation = selectedLine.stops[nextStopIndex];
+
+        // Zkontroluj, zda je stanice již odemčena
+        if (!nextStation.locked) {
+          alert(`Stanice "${nextStation.name}" je již odemčena.`);
+        } else {
+          // Odemkni stanici
+          nextStation.locked = false;
+
+          // Zobraz pop-up okno na mapě
+          L.popup()
+            .setLatLng(nextStation.location)
+            .setContent(`Stanice "${nextStation.name}" byla odemčena!`)
+            .openOn(map);
+
+          alert(`Odemčena nová stanice: ${nextStation.name}`);
+        }
+      } else {
+        alert("Všechny stanice na této lince jsou již odemčeny.");
+      }
+    }
+    
+    // Vybere linku a změní pohled mapy + odemkne vedlejší stanici
     function selectLine() {
       const selectedValue = document.getElementById('lineSelect').value;
       const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
@@ -6062,13 +6090,11 @@
 
       console.log(`Selected Line: ${selectedLine.name}`);
 
-      // Change the map view to the selected station
-      map.setView(selectedStation.location, 13); // Zoom level 13
+      // Změň pohled mapy na vybranou stanici
+      map.setView(selectedStation.location, 13); // 13 je úroveň přiblížení
 
-      // Highlight selected station
-      L.marker(selectedStation.location).addTo(map)
-        .bindPopup(selectedStation.name)
-        .openPopup();
+      // Odemkni vedlejší stanici na této lince
+      unlockNextStation(selectedLine, stopIndex);
 
       // Hide line selection
       document.getElementById('lineSelection').style.display = 'none';
