@@ -100,14 +100,78 @@
       }
     ];
 
-// Funkce pro výběr stanic podle země, kraje a okresu
-function filterStations(country, region, district) {
-  return stations.filter(station => 
-    station.country === country && 
-    station.region === region && 
-    station.district === district
-  );
-}
+ // Function to load regions based on selected country
+  function loadRegions() {
+    const country = document.getElementById('countrySelect').value;
+    const regions = new Set(); // To avoid duplicate regions
+
+    stations.forEach(station => {
+      if (station.country === country) {
+        regions.add(station.region);
+      }
+    });
+
+    const regionSelect = document.getElementById('regionSelect');
+    regionSelect.innerHTML = "<option value=''>Select Region</option>";
+    regions.forEach(region => {
+      const option = document.createElement('option');
+      option.value = region;
+      option.textContent = region;
+      regionSelect.appendChild(option);
+    });
+  }
+
+  // Function to load districts based on selected region
+  function loadDistricts() {
+    const country = document.getElementById('countrySelect').value;
+    const region = document.getElementById('regionSelect').value;
+    const districts = new Set(); // To avoid duplicate districts
+
+    stations.forEach(station => {
+      if (station.country === country && station.region === region) {
+        districts.add(station.district);
+      }
+    });
+
+    const districtSelect = document.getElementById('districtSelect');
+    districtSelect.innerHTML = "<option value=''>Select District</option>";
+    districts.forEach(district => {
+      const option = document.createElement('option');
+      option.value = district;
+      option.textContent = district;
+      districtSelect.appendChild(option);
+    });
+  }
+
+  // Function to load stations based on selected district
+  function loadStations() {
+    const country = document.getElementById('countrySelect').value;
+    const region = document.getElementById('regionSelect').value;
+    const district = document.getElementById('districtSelect').value;
+
+    const stationsInDistrict = stations.filter(station => 
+      station.country === country && 
+      station.region === region && 
+      station.district === district
+    );
+
+    const stationSelect = document.getElementById('stationSelect');
+    stationSelect.innerHTML = "<option value=''>Select Station</option>";
+
+    if (stationsInDistrict.length > 0) {
+      stationsInDistrict.forEach(station => {
+        const option = document.createElement('option');
+        option.value = station.name;
+        option.textContent = `${station.name} (${station.otherLines.join(", ")})`;
+        stationSelect.appendChild(option);
+      });
+    } else {
+      const option = document.createElement('option');
+      option.value = '';
+      option.textContent = 'No stations available';
+      stationSelect.appendChild(option);
+    }
+  }
 
     // Money tracking
     var money = 0;
