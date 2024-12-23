@@ -5961,7 +5961,7 @@
 
      ];
 
-// Money tracking
+    // Money tracking
     var money = 0;
     function increaseMoney(amount) {
       money += amount;
@@ -6053,26 +6053,28 @@
       document.getElementById('lineSelection').style.display = 'block'; // Show line selection
     }
 
+    // Vybere linku a změní pohled mapy
     function selectLine() {
       const selectedValue = document.getElementById('lineSelect').value;
       const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
       const selectedLine = lines[lineIndex];
+      const selectedStation = selectedLine.stops[stopIndex];
+
       console.log(`Selected Line: ${selectedLine.name}`);
 
-      // Start the game or simulate the train
-      startGame(lineIndex, stopIndex);
+      // Change the map view to the selected station's location
+      map.setView(selectedStation.location, 13); // 13 is the zoom level
+
+      // Optionally, add a marker to the selected station
+      L.marker(selectedStation.location).addTo(map)
+        .bindPopup(selectedStation.name)
+        .openPopup();
+
+      // Hide line selection
+      document.getElementById('lineSelection').style.display = 'none';
     }
 
-    function startGame(lineIndex, stopIndex) {
-      const line = lines[lineIndex];
-      const startingStation = line.stops[stopIndex];
-      const trainMarker = L.marker(startingStation.location).addTo(map);
-
-      increaseMoney(50); // Start with some money
-      alert(`Game started! You are at station: ${startingStation.name}`);
-    }
-
-    // Initialize the game by showing station selection
+    // Initial map setup
     document.getElementById('stationSelection').style.display = 'block';
   </script>
 </body>
