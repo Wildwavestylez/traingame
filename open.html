@@ -19,11 +19,31 @@
       border-radius: 5px;
       font-size: 16px;
     }
+    #stationSelection, #lineSelection {
+      position: absolute;
+      top: 10px;
+      left: 300px;
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 16px;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div id="map"></div>
   <div id="info">Money: $0</div>
+  <div id="stationSelection">
+    <h3>Select a Station</h3>
+    <select id="stationSelect"></select>
+    <button onclick="selectStation()">Select Station</button>
+  </div>
+  <div id="lineSelection">
+    <h3>Select a Line</h3>
+    <select id="lineSelect"></select>
+    <button onclick="selectLine()">Select Line</button>
+  </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -35,14 +55,6 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-
-    // Train icon setup
-    var trainIcon = L.icon({
-      iconUrl: 'https://example.com/train-icon.png', // Replace with actual icon URL
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      popupAnchor: [0, -16]
-    });
 
     // Data for lines and stations
     const lines = [
@@ -77,40 +89,74 @@
       document.getElementById('info').textContent = 'Money: $' + money;
     }
 
-    // Simulate moving train and unlocking stations
-    function moveTrain() {
-      var trainLine = lines[0]; // Example for line 192
-      if (trainLine.locked) {
-        alert("This line is locked! Unlock it first.");
-        return;
-      }
+    // Station and line selection
+    function loadStations() {
+      let stationSelect = document.getElementById('stationSelect');
+      stationSelect.innerHTML = ''; // Clear previous selections
 
-      // Move train logic (simplified)
-      var trainMarker = L.marker(trainLine.trains[0].image, {
-        position: trainLine.stops[0].location
-      }).addTo(map);
+      lines.forEach((line, lineIndex) => {
+        line.stops.forEach((stop, stopIndex) => {
+          if (stop.locked) return; // Skip locked stations
+          let option = document.createElement('option');
+          option.value = `${lineIndex}-${stopIndex}`;
+          option.textContent = stop.name;
+          stationSelect.appendChild(option);
+        });
+      });
 
-      // Unlock stations and lines after meeting conditions (e.g., money)
-      if (money >= 100) {
-        unlockLine(0); // Unlock line 192
-        unlockStation(0, 0); // Unlock first station (Strážské)
-      }
+      document.getElementById('stationSelection').style.display = 'block'; // Show station selection
     }
 
-    // Unlock a specific station
-    function unlockStation(lineIndex, stationIndex) {
-      lines[lineIndex].stops[stationIndex].locked = false;
-      alert("Station " + lines[lineIndex].stops[stationIndex].name + " unlocked!");
+    function selectStation() {
+      const selectedValue = document.getElementById('stationSelect').value;
+      const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
+      const selectedStation = lines[lineIndex].stops[stopIndex];
+      console.log(`Selected Station: ${selectedStation.name}`);
+
+      // Now load available lines for the selected station
+      loadLines(lineIndex, stopIndex);
     }
 
-    // Unlock a specific line
-    function unlockLine(lineIndex) {
-      lines[lineIndex].locked = false;
-      alert("Line " + lines[lineIndex].name + " unlocked!");
+    function loadLines(lineIndex, stopIndex) {
+      let lineSelect = document.getElementById('lineSelect');
+      lineSelect.innerHTML = ''; // Clear previous selections
+
+      // Get the relevant line based on station choice
+      const line = lines[lineIndex];
+      line.trains.forEach((train, index) => {
+        let option = document.createElement('option');
+        option.value = `${lineIndex}-${index}`;
+        option.textContent = train.name;
+        lineSelect.appendChild(option);
+      });
+
+      document.getElementById('lineSelection').style.display = 'block'; // Show line selection
     }
 
-    // Simulate a moving train every 3 seconds
-    setInterval(moveTrain, 3000);
+    function selectLine() {
+      const selectedValue = document.getElementById('lineSelect').value;
+      const [lineIndex, trainIndex] = selectedValue.split('-').map(Number);
+      const selectedTrain = lines[lineIndex].trains[trainIndex];
+      console.log(`Selected Line: ${selectedTrain.name}`);
+
+      // Start the game or simulate the train
+      startGame(lineIndex, trainIndex);
+    }
+
+    function startGame(lineIndex, trainIndex) {
+      const line = lines[lineIndex];
+      const train = line.trains[trainIndex];
+      
+      // Set initial train position
+      const startingStation = line.stops[train.startingIndex];
+      const trainMarker = L.marker(startingStation.location, { icon: trainIcon }).addTo(map);
+
+      increaseMoney(50); // Start with some money
+      alert(`Game started! You are on train: ${train.name} starting at station: ${startingStation.name}`);
+    }
+
+    // Initialize the game by loading stations
+    loadStations();
 
   </script>
 </body>
