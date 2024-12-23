@@ -151,14 +151,28 @@
     }
 
     function selectStation() {
-      const selectedValue = document.getElementById('stationSelect').value;
-      const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
-      const selectedStation = lines[lineIndex].stops[stopIndex];
-      console.log(`Selected Station: ${selectedStation.name}`);
+  const selectedValue = document.getElementById('stationSelect').value;
+  
+  // Zkontrolujeme, zda byla vybrána platná hodnota
+  if (!selectedValue) {
+    alert('Please select a valid station.');
+    return;
+  }
 
-      // Now load available lines for the selected station
-      loadLines(lineIndex, stopIndex);
-    }
+  const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
+
+  // Ověření, že lineIndex a stopIndex jsou platné
+  if (lines[lineIndex] && lines[lineIndex].stops[stopIndex]) {
+    const selectedStation = lines[lineIndex].stops[stopIndex];
+    console.log(`Selected Station: ${selectedStation.name}`);
+
+    // Nyní načteme dostupné linky pro vybranou stanici
+    loadLines(lineIndex, stopIndex);
+  } else {
+    console.error('Invalid line or stop index');
+  }
+}
+
 
     function loadLines(lineIndex, stopIndex) {
       let lineSelect = document.getElementById('lineSelect');
