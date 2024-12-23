@@ -6086,7 +6086,67 @@
         }
     }
     
-    // Výběr linky a akce po jejím výběru
+    function startTrain(line, trainIndex, station1Index, station2Index) {
+        const train = line.trains[trainIndex];
+        const station1 = line.stops[station1Index];
+        const station2 = line.stops[station2Index];
+
+        let currentStation = station1;
+        let nextStation = station2;
+
+        // Nastavení vlaku na mapě
+        const trainIcon = L.icon({
+            iconUrl: train.image,
+            iconSize: [32, 32], // Velikost ikony
+            iconAnchor: [16, 16] // Střed ikony
+        });
+
+        const trainMarker = L.marker(currentStation.location, { icon: trainIcon }).addTo(map);
+
+        // Pohyb vlaku
+        const speed = 80 * 1000 / 3600; // Převod rychlosti z km/h na m/s
+        const travelTime = calculateDistance(currentStation.location, nextStation.location) / speed;
+
+        function moveTrain() {
+            trainMarker.setLatLng(nextStation.location);
+            [currentStation, nextStation] = [nextStation, currentStation]; // Přepnutí stanic
+
+            setTimeout(moveTrain, travelTime * 1000); // Pohyb opakujeme po uplynutí času
+        }
+
+        // Spuštění pendlování
+        moveTrain();
+    }
+
+    // Funkce pro výpočet vzdálenosti mezi dvěma body (v metrech)
+    function calculateDistance(coord1, coord2) {
+        const R = 6371e3; // Poloměr Země v metrech
+        const lat1 = coord1[0] * Math.PI / 180;
+        const lat2 = coord2[0] * Math.PI / 180;
+        const deltaLat = (coord2[0] - coord1[0]) * Math.PI / 180;
+        const deltaLng = (coord2[1] - coord1[1]) * Math.PI / 180;
+
+        const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+                  Math.cos(lat1) * Math.cos(lat2) *
+                  Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; // Vzdálenost v metrech
+    }
+
+    // Funkce volaná po odemčení stanice a výběru vlaku
+    function unlockAndStartTrain(selectedLine, currentStopIndex) {
+        unlockNextStation(selectedLine, currentStopIndex);
+
+        const nextStopIndex = currentStopIndex + 1;
+        if (nextStopIndex < selectedLine.stops.length) {
+            startTrain(selectedLine, 0, currentStopIndex, nextStopIndex); // Vždy vybíráme první vlak na lince (index 0)
+        } else {
+            console.log("Žádná další stanice není k dispozici pro pohyb vlaku.");
+        }
+    }
+
+    // Výběr linky a stanice
     function selectLine() {
         const selectedValue = document.getElementById('lineSelect').value;
         const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
@@ -6096,12 +6156,10 @@
         console.log(`Vybraná linka: ${selectedLine.name}`);
         console.log(`Výchozí stanice: ${selectedStation.name}`);
 
-        // Přesun mapy na vybranou stanici
         map.setView(selectedStation.location, 13); // Nastavíme úroveň přiblížení na 13
 
-        // Odemknutí další stanice
-        unlockNextStation(selectedLine, stopIndex);
-
+        // Odemknutí další stanice a spuštění vlaku
+        unlockAndStartTrain(selectedLine, stopIndex);
     
 
       // Hide line selection
