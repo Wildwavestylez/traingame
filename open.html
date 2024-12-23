@@ -6054,47 +6054,55 @@
       document.getElementById('lineSelection').style.display = 'block'; // Show line selection
     }
 
-        function unlockNextStation(selectedLine, currentStopIndex) {
-      const nextStopIndex = currentStopIndex + 1;
+        // Funkce pro odemknutí vedlejší stanice na vybrané lince
+    function unlockNextStation(selectedLine, currentStopIndex) {
+        const nextStopIndex = currentStopIndex + 1;
 
-      // Zkontroluj, zda existuje další stanice
-      if (nextStopIndex < selectedLine.stops.length) {
-        const nextStation = selectedLine.stops[nextStopIndex];
+        // Kontrola, zda existuje další stanice
+        if (nextStopIndex < selectedLine.stops.length) {
+            const nextStation = selectedLine.stops[nextStopIndex];
 
-        // Zkontroluj, zda je stanice již odemčena
-        if (!nextStation.locked) {
-          alert(`Stanice "${nextStation.name}" je již odemčena.`);
+            // Kontrola, zda je stanice již odemčená
+            if (!nextStation.locked) {
+                console.log(`Stanice "${nextStation.name}" je již odemčena.`);
+                alert(`Stanice "${nextStation.name}" je již odemčena.`);
+            } else {
+                // Odemknutí stanice
+                nextStation.locked = false;
+
+                // Zobrazení pop-up okna na mapě
+                L.popup()
+                    .setLatLng(nextStation.location)
+                    .setContent(`Stanice "${nextStation.name}" byla odemčena!`)
+                    .openOn(map);
+
+                console.log(`Stanice "${nextStation.name}" byla odemčena.`);
+                alert(`Odemčena nová stanice: ${nextStation.name}`);
+            }
         } else {
-          // Odemkni stanici
-          nextStation.locked = false;
-
-          // Zobraz pop-up okno na mapě
-          L.popup()
-            .setLatLng(nextStation.location)
-            .setContent(`Stanice "${nextStation.name}" byla odemčena!`)
-            .openOn(map);
-
-          alert(`Odemčena nová stanice: ${nextStation.name}`);
+            // Všechny stanice jsou již odemčené
+            console.log("Všechny stanice na této lince jsou již odemčeny.");
+            alert("Všechny stanice na této lince jsou již odemčeny.");
         }
-      } else {
-        alert("Všechny stanice na této lince jsou již odemčeny.");
-      }
     }
     
-    // Vybere linku a změní pohled mapy + odemkne vedlejší stanici
+    // Výběr linky a akce po jejím výběru
     function selectLine() {
-      const selectedValue = document.getElementById('lineSelect').value;
-      const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
-      const selectedLine = lines[lineIndex];
-      const selectedStation = selectedLine.stops[stopIndex];
+        const selectedValue = document.getElementById('lineSelect').value;
+        const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
+        const selectedLine = lines[lineIndex];
+        const selectedStation = selectedLine.stops[stopIndex];
 
-      console.log(`Selected Line: ${selectedLine.name}`);
+        console.log(`Vybraná linka: ${selectedLine.name}`);
+        console.log(`Výchozí stanice: ${selectedStation.name}`);
 
-      // Změň pohled mapy na vybranou stanici
-      map.setView(selectedStation.location, 13); // 13 je úroveň přiblížení
+        // Přesun mapy na vybranou stanici
+        map.setView(selectedStation.location, 13); // Nastavíme úroveň přiblížení na 13
 
-      // Odemkni vedlejší stanici na této lince
-      unlockNextStation(selectedLine, stopIndex);
+        // Odemknutí další stanice
+        unlockNextStation(selectedLine, stopIndex);
+
+    
 
       // Hide line selection
       document.getElementById('lineSelection').style.display = 'none';
