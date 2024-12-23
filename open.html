@@ -86,19 +86,28 @@
           { name: "STRÁŽSKÉ - TREBIŠOV", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/5V3WrS7.png', maxSpeed: 600 }
         ],
         stops: [
-          { name: "Strážské", location: [48.8675378, 21.8248364], locked: true },
-          { name: "Nižný Hrabovec", location: [48.8570392, 21.7518606], locked: true },
-          { name: "Hencovce", location: [48.8570392, 21.7518606], locked: true },
-          { name: "Vranovské Dlhé", location: [48.8695603, 21.7053108], locked: true },
-          { name: "Vranov nad Topľou", location: [48.8900675, 21.6740197], locked: true },
-          { name: "Komárany", location: [48.9131272, 21.6385608], locked: true },
-          { name: "Soľ", location: [48.9319739, 21.6005106], locked: true },
-          { name: "Hlinné", location: [48.9529000, 21.5841294], locked: true },
-          { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306], locked: true },
-          { name: "Bystré", location: [49.0033111, 21.5423933], locked: true }
+          { name: "Strážské", location: [48.8675378, 21.8248364], locked: true, country: "SK",region: "KE", district: "MI",  otherLines: ["Linka123", "Linka568"], },
+          { name: "Nižný Hrabovec", location: [48.8570392, 21.7518606], locked: true, country: "SK",region: "KE", district: "VT", },
+          { name: "Hencovce", location: [48.8570392, 21.7518606], locked: true, country: "SK",region: "KE", district: "VT", },
+          { name: "Vranovské Dlhé", location: [48.8695603, 21.7053108], locked: true, country: "SK",region: "KE", district: "VT", },
+          { name: "Vranov nad Topľou", location: [48.8900675, 21.6740197], locked: true, country: "SK",region: "KE", district: "VT", },
+          { name: "Komárany", location: [48.9131272, 21.6385608], locked: true, country: "SK",region: "KE", district: "VT", },
+          { name: "Soľ", location: [48.9319739, 21.6005106], locked: true, country: "SK",region: "KE", district: "VT", },
+          { name: "Hlinné", location: [48.9529000, 21.5841294], locked: true, country: "SK",region: "KE", district: "VT", },
+          { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306], locked: true, country: "SK",region: "KE", district: "VT", },
+          { name: "Bystré", location: [49.0033111, 21.5423933], locked: true, country: "SK",region: "KE", district: "VT", }
         ]
       }
     ];
+
+// Funkce pro výběr stanic podle země, kraje a okresu
+function filterStations(country, region, district) {
+  return stations.filter(station => 
+    station.country === country && 
+    station.region === region && 
+    station.district === district
+  );
+}
 
     // Money tracking
     var money = 0;
