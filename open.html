@@ -6085,6 +6085,27 @@
             alert("Všechny stanice na této lince jsou již odemčeny.");
         }
     }
+
+    function checkForNewStation(line, stationIndex) {
+    const station = line.stops[stationIndex];
+    if (money >= 1000 && !station.unlocked) { // Podmínka pro odemčení stanice (např. 1000 Kč)
+        station.unlocked = true;
+        console.log(`Stanice ${station.name} byla odemčena!`);
+        unlockAdjacentStations(line, stationIndex); // Odemknutí sousedních stanic
+    }
+}
+
+// Funkce pro odemknutí sousedních stanic v obou směrech
+function unlockAdjacentStations(line, stationIndex) {
+    if (stationIndex > 0 && !line.stops[stationIndex - 1].unlocked) { // Odemknutí stanice předchozí
+        line.stops[stationIndex - 1].unlocked = true;
+        console.log(`Stanice ${line.stops[stationIndex - 1].name} byla odemčena!`);
+    }
+    if (stationIndex < line.stops.length - 1 && !line.stops[stationIndex + 1].unlocked) { // Odemknutí stanice následující
+        line.stops[stationIndex + 1].unlocked = true;
+        console.log(`Stanice ${line.stops[stationIndex + 1].name} byla odemčena!`);
+    }
+}
     
 function startTrain(line, trainIndex, station1Index, station2Index) {
     const train = line.trains[trainIndex];
