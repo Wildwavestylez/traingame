@@ -13,13 +13,13 @@
       height: 600px;
     }
 
-    /* Mapa */
+    /* Map itself */
     #map {
       width: 100%;
       height: 100%;
     }
 
-    /* Info box pro sledování peněz */
+    /* Info box for money tracking */
     #info {
       position: absolute;
       top: 10px;
@@ -28,60 +28,51 @@
       padding: 10px;
       border-radius: 5px;
       font-size: 16px;
-      z-index: 2000; /* Nastavení vyššího z-index pro viditelnost */
     }
 
-    /* Box pro výběr stanice a linky */
+    /* Station and line selection containers */
     #stationSelection, #lineSelection {
       position: absolute;
       top: 10px;
       left: 300px;
       background-color: rgba(255, 255, 255, 0.7);
-      padding: 20px;
-      border-radius: 10px;
+      padding: 10px;
+      border-radius: 5px;
       font-size: 16px;
-      z-index: 1000;
-      display: none; /* Aby byly skryté na začátku */
-    }
-
-    select {
-      width: 200px;
-      margin-bottom: 10px;
-    }
-
-    button {
-      padding: 8px 16px;
-      cursor: pointer;
+      display: none;
+      z-index: 1000; /* Ensure the selection boxes are above the map */
     }
   </style>
 </head>
 <body>
+  <div id="mapContainer">
+    <div id="map"></div> <!-- Mapa -->
+  </div>
 
-<div id="mapContainer">
-  <div id="map"></div> <!-- Mapa -->
-</div>
+  <div id="info">Money: $0</div>
 
-<div id="info">Money: $0</div>
+  <div id="stationSelection">
+    <h3>Select a Station</h3>
+    <select id="stationSelect"></select>
+    <button onclick="selectStation()">Select Station</button>
+  </div>
 
-<div id="stationSelection">
-  <h3>Select a Station</h3>
-  <select id="stationSelect"></select>
-  <button onclick="selectStation()">Select Station</button>
-</div>
+  <div id="lineSelection">
+    <h3>Select a Line</h3>
+    <select id="lineSelect"></select>
+    <button onclick="selectLine()">Select Line</button>
+  </div>
 
-<div id="lineSelection">
-  <h3>Select a Line</h3>
-  <select id="lineSelect"></select>
-  <button onclick="selectLine()">Select Line</button>
-</div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // Map initialization
+    var map = L.map('map').setView([48.8675378, 21.8248364], 13); // Example: Strážské coordinates
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-  // Inicializace mapy
-  var map = L.map('map').setView([50, 10], 5); // Střední Evropa jako příklad
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+    // Add tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
     // Data for lines and stations
     const lines = [
@@ -95,78 +86,19 @@
           { name: "STRÁŽSKÉ - TREBIŠOV", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/5V3WrS7.png', maxSpeed: 600 }
         ],
         stops: [
-          { name: "Strážské", location: [48.8675378, 21.8248364], locked: true, country: "SK",region: "KE", district: "MI",  otherLines: ["Linka123", "Linka568"], },
-          { name: "Nižný Hrabovec", location: [48.8570392, 21.7518606], locked: true, country: "SK",region: "KE", district: "VT", },
-          { name: "Hencovce", location: [48.8570392, 21.7518606], locked: true, country: "SK",region: "KE", district: "VT", },
-          { name: "Vranovské Dlhé", location: [48.8695603, 21.7053108], locked: true, country: "SK",region: "KE", district: "VT", },
-          { name: "Vranov nad Topľou", location: [48.8900675, 21.6740197], locked: true, country: "SK",region: "KE", district: "VT", },
-          { name: "Komárany", location: [48.9131272, 21.6385608], locked: true, country: "SK",region: "KE", district: "VT", },
-          { name: "Soľ", location: [48.9319739, 21.6005106], locked: true, country: "SK",region: "KE", district: "VT", },
-          { name: "Hlinné", location: [48.9529000, 21.5841294], locked: true, country: "SK",region: "KE", district: "VT", },
-          { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306], locked: true, country: "SK",region: "KE", district: "VT", },
-          { name: "Bystré", location: [49.0033111, 21.5423933], locked: true, country: "SK",region: "KE", district: "VT", }
+          { name: "Strážské", location: [48.8675378, 21.8248364], locked: true },
+          { name: "Nižný Hrabovec", location: [48.8570392, 21.7518606], locked: true },
+          { name: "Hencovce", location: [48.8570392, 21.7518606], locked: true },
+          { name: "Vranovské Dlhé", location: [48.8695603, 21.7053108], locked: true },
+          { name: "Vranov nad Topľou", location: [48.8900675, 21.6740197], locked: true },
+          { name: "Komárany", location: [48.9131272, 21.6385608], locked: true },
+          { name: "Soľ", location: [48.9319739, 21.6005106], locked: true },
+          { name: "Hlinné", location: [48.9529000, 21.5841294], locked: true },
+          { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306], locked: true },
+          { name: "Bystré", location: [49.0033111, 21.5423933], locked: true }
         ]
       }
     ];
-
- // Funkce pro zobrazení panelu pro výběr stanice
-  function showStationSelection() {
-    document.getElementById('stationSelection').style.display = 'block';
-    document.getElementById('lineSelection').style.display = 'none'; // Skryjeme panel pro výběr linky
-    populateStationSelect(); // Naplníme výběr stanic
-  }
-
-  // Funkce pro naplnění výběru stanic
-  function populateStationSelect() {
-    const stationSelect = document.getElementById('stationSelect');
-    stationSelect.innerHTML = ""; // Vyprázdníme stávající možnosti
-    stations.forEach(station => {
-      const option = document.createElement('option');
-      option.value = station.name;
-      option.textContent = `${station.name} (${station.otherLines.join(", ")})`;
-      stationSelect.appendChild(option);
-    });
-  }
-
-  // Funkce pro zobrazení panelu pro výběr linky
-  function showLineSelection() {
-    document.getElementById('lineSelection').style.display = 'block';
-  }
-
-  // Funkce pro výběr stanice
-  function selectStation() {
-    const stationName = document.getElementById('stationSelect').value;
-    const selectedStation = stations.find(station => station.name === stationName);
-    if (selectedStation) {
-      alert(`You selected station: ${selectedStation.name}`);
-      showLineSelection(); // Zobrazíme výběr linky po výběru stanice
-    }
-  }
-
-  // Funkce pro výběr linky
-  function selectLine() {
-    const lineName = document.getElementById('lineSelect').value;
-    alert(`You selected line: ${lineName}`);
-  }
-
-
-    const stationSelect = document.getElementById('stationSelect');
-    stationSelect.innerHTML = "<option value=''>Select Station</option>";
-
-    if (stationsInDistrict.length > 0) {
-      stationsInDistrict.forEach(station => {
-        const option = document.createElement('option');
-        option.value = station.name;
-        option.textContent = `${station.name} (${station.otherLines.join(", ")})`;
-        stationSelect.appendChild(option);
-      });
-    } else {
-      const option = document.createElement('option');
-      option.value = '';
-      option.textContent = 'No stations available';
-      stationSelect.appendChild(option);
-    }
-  
 
     // Money tracking
     var money = 0;
@@ -243,8 +175,6 @@
 
     // Initialize the game by loading stations
     loadStations();
-    // Pro spuštění výběru stanice
-  showStationSelection();
 
   </script>
 </body>
