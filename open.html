@@ -6086,10 +6086,10 @@
         }
     }
     
- function startTrain(line, trainIndex, station1Index, station2Index) {
+function startTrain(line, trainIndex, station1Index, station2Index) {
     const train = line.trains[trainIndex];
-    const station1 = line.stops[station1Index];
-    const station2 = line.stops[station2Index];
+    let station1 = line.stops[station1Index];
+    let station2 = line.stops[station2Index];
 
     // Ikona vlaku
     const trainIcon = L.icon({
@@ -6105,6 +6105,7 @@
     const travelTime = distance / speed; // Čas cesty v sekundách
 
     let startTime = null;
+    let forward = true; // Směr jízdy (tam = true, zpět = false)
 
     function animateTrain(timestamp) {
         if (!startTime) startTime = timestamp;
@@ -6120,16 +6121,20 @@
         if (progress < 1) {
             requestAnimationFrame(animateTrain); // Pokračování animace
         } else {
-            // Přičtení peněz hráči
-            const earnings = Math.round(distance * 50 / 1000); // Zaokrouhleno na celé koruny
-            increaseMoney(earnings);
+            // Přičtení peněz hráči při dosažení stanice
+            if (forward) {
+                const earnings = Math.round(distance * 50 / 1000); // Zaokrouhleno na celé koruny
+                increaseMoney(earnings);
 
-            // Zobrazení zprávy o výdělku
-            alert(`Vlak dorazil do stanice ${station2.name}! Výdělek: ${earnings} Kč`);
+                // Zobrazení zprávy o výdělku
+                alert(`Vlak dorazil do stanice ${station2.name}! Výdělek: ${earnings} Kč`);
+            }
 
-            // Přepnutí stanic a opětovný start
-            [station1Index, station2Index] = [station2Index, station1Index];
+            // Přepnutí směru jízdy
+            forward = !forward;
             [station1, station2] = [station2, station1];
+
+            // Restart animace s pauzou na stanici
             startTime = null;
             setTimeout(() => {
                 requestAnimationFrame(animateTrain);
