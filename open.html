@@ -3,218 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Train Game</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <title>Train Game with Auto-Suggest</title>
   <style>
-    /* Kontajner pro mapu */
-    #mapContainer {
-      position: relative;
-      width: 100%;
-      height: 600px;
-    }
-
-    /* Map itself */
-    #map {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Info box for money tracking */
-    #info {
+    #suggestions {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      background-color: rgba(255, 255, 255, 0.7);
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 16px;
+      background-color: white;
+      border: 1px solid #ccc;
+      max-height: 200px;
+      overflow-y: auto;
+      width: 300px;
+      z-index: 1000;
+      display: none; /* Initially hidden */
     }
-
-    /* Station and line selection containers */
-    #stationSelection, #lineSelection {
-      position: absolute;
-      top: 10px;
-      left: 300px;
-      background-color: rgba(255, 255, 255, 0.7);
+    #suggestions div {
       padding: 10px;
-      border-radius: 5px;
-      font-size: 16px;
-      display: none;
-      z-index: 1000; /* Ensure the selection boxes are above the map */
+      cursor: pointer;
     }
-
-    /* Search bar style */
+    #suggestions div:hover {
+      background-color: #f1f1f1;
+    }
     #stationSearch {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      font-size: 16px;
+      padding: 10px;
+      width: 300px;
     }
   </style>
 </head>
 <body>
-  <div id="mapContainer">
-    <div id="map"></div> <!-- Mapa -->
-  </div>
+  <h2>Select a Station</h2>
+  <input type="text" id="stationSearch" placeholder="Start typing a station name..." oninput="filterStations()">
+  <div id="suggestions"></div>
 
-  <div id="info">Money: $0</div>
-
-  <div id="stationSelection">
-    <h3>Select a Station</h3>
-    <input type="text" id="stationSearch" placeholder="Search for a station..." onkeyup="filterStations()">
-    <select id="stationSelect"></select>
-    <button onclick="selectStation()">Select Station</button>
-  </div>
-
-  <div id="lineSelection">
-    <h3>Select a Line</h3>
-    <select id="lineSelect"></select>
-    <button onclick="selectLine()">Select Line</button>
-  </div>
-
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    // Map initialization
-    var map = L.map('map').setView([48.8675378, 21.8248364], 13); // Example: Strážské coordinates
-
-    // Add tile layer (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    // Data for lines and stations
-    const lines = [
-      {
-        name: "Trať 192 STRÁŽSKÉ - TREBIŠOV",
-        color: "#FFFFFF00",
-        category: "A",
-        locked: true, // Line is locked initially
-        trains: [
-          { name: "STRÁŽSKÉ - TREBIŠOV", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/sgF74F8.png', maxSpeed: 600 },
-          { name: "STRÁŽSKÉ - TREBIŠOV", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/5V3WrS7.png', maxSpeed: 600 }
-        ],
-        stops: [
-          { name: "Strážské", location: [48.8675378, 21.8248364], locked: true },
-          { name: "Nižný Hrabovec", location: [48.8570392, 21.7518606], locked: true },
-          { name: "Hencovce", location: [48.8570392, 21.7518606], locked: true },
-          { name: "Vranovské Dlhé", location: [48.8695603, 21.7053108], locked: true },
-          { name: "Vranov nad Topľou", location: [48.8900675, 21.6740197], locked: true },
-          { name: "Komárany", location: [48.9131272, 21.6385608], locked: true },
-          { name: "Soľ", location: [48.9319739, 21.6005106], locked: true },
-          { name: "Hlinné", location: [48.9529000, 21.5841294], locked: true },
-          { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306], locked: true },
-          { name: "Bystré", location: [49.0033111, 21.5423933], locked: true }
-        ]
-      }
+    // Příklad seznamu stanic pro demo účely
+    const stations = [
+      "Strážské", "Trebišov", "Nižný Hrabovec", "Hencovce", "Vranovské Dlhé",
+      "Vranov nad Topľou", "Komárany", "Soľ", "Hlinné", "Čierne nad Topľou",
+      "Bystré", "Bratislava", "Košice", "Nitra", "Poprad", "Žilina", "Trnava", "Prievidza"
     ];
 
-    // Money tracking
-    var money = 0;
-    function increaseMoney(amount) {
-      money += amount;
-      document.getElementById('info').textContent = 'Money: $' + money;
-    }
-
-    // Station and line selection
-    function loadStations() {
-      let stationSelect = document.getElementById('stationSelect');
-      stationSelect.innerHTML = ''; // Clear previous selections
-
-      lines.forEach((line, lineIndex) => {
-        line.stops.forEach((stop, stopIndex) => {
-          if (stop.locked) return; // Skip locked stations
-          let option = document.createElement('option');
-          option.value = `${lineIndex}-${stopIndex}`;
-          option.textContent = stop.name;
-          stationSelect.appendChild(option);
-        });
-      });
-
-      document.getElementById('stationSelection').style.display = 'block'; // Show station selection
-    }
-
+    // Filtrování stanic
     function filterStations() {
-      const searchTerm = document.getElementById('stationSearch').value.toLowerCase();
-      let stationSelect = document.getElementById('stationSelect');
-      let options = stationSelect.getElementsByTagName('option');
+      const query = document.getElementById('stationSearch').value.toLowerCase();
+      const filteredStations = stations.filter(station => station.toLowerCase().includes(query));
 
-      // Hide options that don't match the search term
-      Array.from(options).forEach(option => {
-        const stationName = option.textContent.toLowerCase();
-        if (stationName.includes(searchTerm)) {
-          option.style.display = 'block';
-        } else {
-          option.style.display = 'none';
-        }
+      // Zobrazí návrhy
+      showSuggestions(filteredStations);
+    }
+
+    // Zobrazení návrhů
+    function showSuggestions(stations) {
+      const suggestionsDiv = document.getElementById('suggestions');
+      suggestionsDiv.innerHTML = ''; // Clear previous suggestions
+
+      if (stations.length === 0) {
+        suggestionsDiv.style.display = 'none'; // Hide if no matches
+        return;
+      }
+
+      suggestionsDiv.style.display = 'block'; // Show if there are matches
+      stations.forEach(station => {
+        const div = document.createElement('div');
+        div.textContent = station;
+        div.onclick = () => selectStation(station); // When a station is clicked
+        suggestionsDiv.appendChild(div);
       });
     }
 
-    function selectStation() {
-  const selectedValue = document.getElementById('stationSelect').value;
-  
-  // Zkontrolujeme, zda byla vybrána platná hodnota
-  if (!selectedValue) {
-    alert('Please select a valid station.');
-    return;
-  }
-
-  const [lineIndex, stopIndex] = selectedValue.split('-').map(Number);
-
-  // Ověření, že lineIndex a stopIndex jsou platné
-  if (lines[lineIndex] && lines[lineIndex].stops[stopIndex]) {
-    const selectedStation = lines[lineIndex].stops[stopIndex];
-    console.log(`Selected Station: ${selectedStation.name}`);
-
-    // Nyní načteme dostupné linky pro vybranou stanici
-    loadLines(lineIndex, stopIndex);
-  } else {
-    console.error('Invalid line or stop index');
-  }
-}
-
-
-    function loadLines(lineIndex, stopIndex) {
-      let lineSelect = document.getElementById('lineSelect');
-      lineSelect.innerHTML = ''; // Clear previous selections
-
-      // Get the relevant line based on station choice
-      const line = lines[lineIndex];
-      line.trains.forEach((train, index) => {
-        let option = document.createElement('option');
-        option.value = `${lineIndex}-${index}`;
-        option.textContent = train.name;
-        lineSelect.appendChild(option);
-      });
-
-      document.getElementById('lineSelection').style.display = 'block'; // Show line selection
+    // Vybere stanici
+    function selectStation(station) {
+      document.getElementById('stationSearch').value = station;
+      document.getElementById('suggestions').style.display = 'none'; // Hide suggestions
+      alert(`You selected: ${station}`);
     }
 
-    function selectLine() {
-      const selectedValue = document.getElementById('lineSelect').value;
-      const [lineIndex, trainIndex] = selectedValue.split('-').map(Number);
-      const selectedTrain = lines[lineIndex].trains[trainIndex];
-      console.log(`Selected Line: ${selectedTrain.name}`);
-
-      // Start the game or simulate the train
-      startGame(lineIndex, trainIndex);
-    }
-
-    function startGame(lineIndex, trainIndex) {
-      const line = lines[lineIndex];
-      const train = line.trains[trainIndex];
-      
-      // Set initial train position
-      const startingStation = line.stops[train.startingIndex];
-      const trainMarker = L.marker(startingStation.location).addTo(map);
-
-      increaseMoney(50); // Start with some money
-      alert(`Game started! You are on train: ${train.name} starting at station: ${startingStation.name}`);
-    }
-
-    // Initialize the game by loading stations
-    loadStations();
-
+    // Zavření návrhů, když klikneme mimo input
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#stationSearch')) {
+        document.getElementById('suggestions').style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>
