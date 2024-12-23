@@ -101,7 +101,7 @@
       }
     ];
 
-    // Money tracking
+// Money tracking
     var money = 0;
     function increaseMoney(amount) {
       money += amount;
@@ -112,14 +112,30 @@
     const allStations = [];
     lines.forEach(line => {
       line.stops.forEach(stop => {
-        allStations.push(stop.name);
+        allStations.push({ name: stop.name, location: stop.location });
       });
     });
+
+    // Filter stations to remove duplicates based on name and coordinates
+    function getUniqueStations() {
+      const uniqueStations = [];
+      const seen = new Set();
+
+      allStations.forEach(station => {
+        const stationKey = `${station.name}-${station.location.join(',')}`;
+        if (!seen.has(stationKey)) {
+          seen.add(stationKey);
+          uniqueStations.push(station);
+        }
+      });
+
+      return uniqueStations;
+    }
 
     // Filtrování stanic podle vstupu uživatele
     function filterStations() {
       const query = document.getElementById('stationSearch').value.toLowerCase();
-      const filteredStations = allStations.filter(station => station.toLowerCase().includes(query));
+      const filteredStations = getUniqueStations().filter(station => station.name.toLowerCase().includes(query));
 
       // Zobrazí návrhy
       showSuggestions(filteredStations);
@@ -138,7 +154,7 @@
       suggestionsDiv.style.display = 'block'; // Show if there are matches
       stations.forEach(station => {
         const div = document.createElement('div');
-        div.textContent = station;
+        div.textContent = station.name;
         div.onclick = () => selectStation(station); // When a station is clicked
         suggestionsDiv.appendChild(div);
       });
@@ -146,9 +162,9 @@
 
     // Vybere stanici
     function selectStation(station) {
-      document.getElementById('stationSearch').value = station;
+      document.getElementById('stationSearch').value = station.name;
       document.getElementById('suggestions').style.display = 'none'; // Hide suggestions
-      alert(`You selected: ${station}`);
+      alert(`You selected: ${station.name}`);
 
       // Hide the station selection box
       document.getElementById('stationSelection').style.display = 'none';
@@ -157,14 +173,15 @@
       loadLines(station);
     }
 
-    function loadLines(stationName) {
+    // Load all lines available from the selected station
+    function loadLines(selectedStation) {
       let lineSelect = document.getElementById('lineSelect');
       lineSelect.innerHTML = ''; // Clear previous selections
 
       // Find the line(s) corresponding to the selected station
       lines.forEach((line, lineIndex) => {
         line.stops.forEach((stop, stopIndex) => {
-          if (stop.name === stationName) {
+          if (stop.name === selectedStation.name && stop.location[0] === selectedStation.location[0] && stop.location[1] === selectedStation.location[1]) {
             let option = document.createElement('option');
             option.value = `${lineIndex}-${stopIndex}`;
             option.textContent = line.name;
