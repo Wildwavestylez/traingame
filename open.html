@@ -8171,6 +8171,53 @@ function getNextLinePrice() {
     return Math.round(lineBasePrice * Math.pow(1.1, unlockedLines.length));
 }
 
+    // Funkce pro odemknutí vedlejší stanice na vybrané lince
+function unlockNextStation(selectedLine, currentStopIndex) {
+    const nextStopIndex = currentStopIndex + 1;
+
+    // Kontrola, zda existuje další stanice
+    if (nextStopIndex < selectedLine.stops.length) {
+        const nextStation = selectedLine.stops[nextStopIndex];
+
+        // Kontrola, zda je stanice již odemčená
+        if (!nextStation.locked) {
+            console.log(`Stanice "${nextStation.name}" je již odemčena.`);
+            alert(`Stanice "${nextStation.name}" je již odemčena.`);
+        } else if (money >= stationUnlockCost) {
+            // Odemknutí stanice a odečtení nákladů
+            nextStation.locked = false;
+            money -= stationUnlockCost;
+
+            // Zvýšení ceny pro další stanici
+            stationUnlockCost = Math.round(stationUnlockCost * 1.1);
+
+            // Aktualizace zobrazení peněz
+            updateMoneyDisplay();
+
+            // Zobrazení pop-up okna na mapě
+            L.popup()
+                .setLatLng(nextStation.location)
+                .setContent(`Stanice "${nextStation.name}" byla odemčena!`)
+                .openOn(map);
+
+            console.log(`Stanice "${nextStation.name}" byla odemčena.`);
+            alert(`Odemčena nová stanice: ${nextStation.name}`);
+        } else {
+            // Nedostatek peněz
+            alert(`Nedostatek peněz! Odemčení stanice "${nextStation.name}" stojí ${stationUnlockCost} Kč.`);
+        }
+    } else {
+        // Všechny stanice na této lince jsou již odemčeny
+        console.log("Všechny stanice na této lince jsou již odemčeny.");
+        alert("Všechny stanice na této lince jsou již odemčeny.");
+    }
+}
+
+// Funkce pro aktualizaci zobrazení peněz
+function updateMoneyDisplay() {
+    document.getElementById('info').textContent = 'Money: Kč ' + money;
+}
+
 // Funkce pro odemknutí sousední stanice
 function unlockAdjacentStation(lineIndex, stationIndex) {
     const line = lines[lineIndex];
