@@ -8173,7 +8173,6 @@ function increaseMoney(amount) {
     document.getElementById('info').textContent = 'Money: $' + money;
 }
 
-// Logika odemykání další stanice na základní lince
 // Funkce pro odemykání sousední stanice
 function unlockNextStation(line) {
     const stops = line.stops;
@@ -8206,7 +8205,8 @@ function unlockNextStation(line) {
 
     console.log("Nebyly nalezeny další stanice k odemčení na této lince.");
 }
-    // Funkce pro nalezení okolních linky, které vedou ze stanic, které má hráč odemčené
+
+  // Funkce pro nalezení okolních linek
 function unlockAdjacentLines() {
     lines.forEach(line => {
         // Procházení stanic na lince
@@ -8217,26 +8217,28 @@ function unlockAdjacentLines() {
 
                 if (neighbors.length > 0) {
                     console.log(`Nabídka k odemčení stanic na lince ${line.name} z okolních stanic.`);
-                    // Tady můžeme nabídnout hráči odemknutí celé linky nebo jednotlivých stanic
-                    // pro tuto chvíli ukážeme log
+                    // Nabídneme hráči odemknutí stanice nebo celé linky
                 }
             }
         });
     });
 }
 
-    // Příklad aktivace odemykání stanic
+// Funkce pro změnu peněz hráče
 function onPlayerMoneyChange() {
-    // Představme si, že hráč získal peníze a teď se má zkontrolovat, jestli může odemknout stanice
+    // Zkontrolujeme, zda hráč má dost peněz pro odemknutí stanic
     if (playerMoney >= unlockCost) {
         lines.forEach(line => {
             unlockNextStation(line); // Pokusíme se odemknout další stanici na základní lince
         });
     }
-    
-    // Když všechny stanice na základní lince jsou odemčené, nabídneme hráči nové linky
+
+    // Když jsou všechny stanice na základní lince odemčené, nabídneme hráči nové linky
     unlockAdjacentLines();
 }
+
+// Příklad změny peněz (např. po kliknutí na vlak nebo události ve hře)
+onPlayerMoneyChange();
 
 // Hledání sousedních linek k aktuální
 function findNeighboringLines(currentLine) {
