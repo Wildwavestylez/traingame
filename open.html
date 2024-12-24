@@ -8421,10 +8421,10 @@ function calculateDistance(coord1, coord2) {
     return R * c; // Vzdálenost v metrech
 }
 
-// Funkce pro aktualizaci peněz hráče
+// Funkce pro přičítání peněz
 function increaseMoney(amount) {
     money += amount;
-    document.getElementById('info').textContent = 'Money: Kč ' + money;
+    document.getElementById('info').textContent = 'Money: $' + money;
 }
 // Funkce volaná po odemčení stanice a výběru vlaku
 function unlockAndStartTrain(selectedLine, currentStopIndex) {
