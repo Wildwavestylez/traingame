@@ -8069,21 +8069,7 @@ lines.forEach(line => {
       });
     });
 
-    // Filter stations to remove duplicates based on // Filter stations to remove duplicates based on name and coordinates
-function getUniqueStations() {
-  const uniqueStations = [];
-  const seen = new Set();
 
-  allStations.forEach(station => {
-    const stationKey = `${station.name}-${station.location.join(',')}`;
-    if (!seen.has(stationKey)) {
-      seen.add(stationKey);
-      uniqueStations.push(station);
-    }
-  });
-
-  return uniqueStations;
-}
   
     function getUniqueStations() {
       const uniqueStations = [];
