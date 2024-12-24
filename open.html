@@ -8125,7 +8125,7 @@ let lineUnlockCost = 7000; // Cena první linky
     function selectStation(station) {
       document.getElementById('stationSearch').value = station.name;
       document.getElementById('suggestions').style.display = 'none'; // Hide suggestions
-      alert(You selected: ${station.name});
+    alert(`You selected: ${station.name}`);
 
       // Hide the station selection box
       document.getElementById('stationSelection').style.display = 'none';
