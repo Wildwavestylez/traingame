@@ -8413,8 +8413,8 @@ function unlockAndStartTrain(selectedLine, currentStopIndex) {
         const selectedLine = lines[lineIndex];
         const selectedStation = selectedLine.stops[stopIndex];
 
-        console.log(Vybraná linka: ${selectedLine.name});
-        console.log(Výchozí stanice: ${selectedStation.name});
+        console.log(`Vybraná linka: ${selectedLine.name}`);
+        console.log(`Výchozí stanice: ${selectedStation.name}`);
 
         map.setView(selectedStation.location, 13); // Nastavíme úroveň přiblížení na 13
 
