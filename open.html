@@ -6154,109 +6154,84 @@ function unlockAdjacentStations(lineIndex, stationIndex) {
     });
 }
     
-function startTrain(lineIndex) {
-    // Ověření správného indexu linky
-    if (typeof lineIndex !== "number" || lineIndex < 0 || lineIndex >= lines.length) {
-        console.error(`Linka s indexem ${lineIndex} neexistuje nebo není platná.`);
-        return;
-    }
+function startTrain(line, trainIndex, station1Index, station2Index) {
+    const train = line.trains[trainIndex];
+    let station1 = line.stops[station1Index];
+    let station2 = line.stops[station2Index];
 
-    const line = lines[lineIndex];
+    // Ikona vlaku
+    const trainIcon = L.icon({
+        iconUrl: train.image,
+        iconSize: [120, 120],
+        iconAnchor: [60, 60]
+    });
 
-    // Kontrola existence linek a stanic
-    if (!line || !line.stops || line.stops.length < 2) {
-        console.error(`Linka s indexem ${lineIndex} nemá dostatek stanic.`);
-        return;
-    }
+    const trainMarker = L.marker(station1.location, { icon: trainIcon }).addTo(map);
 
-    // Vyhledání odemčených stanic
-    const unlockedStops = line.stops.filter(stop => !stop.locked);
-    if (unlockedStops.length < 2) {
-        console.warn(`Linka ${line.name} nemá dostatek odemčených stanic.`);
-        return;
-    }
+    const speed = 180 * 1000 / 3600; // Rychlost v m/s
+    const distance = calculateDistance(station1.location, station2.location); // Vzdálenost v metrech
+    const travelTime = distance / speed; // Čas cesty v sekundách
 
-    // Inicializace dat vlaku
-    const trainData = {
-        icon: null,
-        startTime: null,
-        currentIndex: 0,
-        nextIndex: 1,
-        forward: true, // Směr pohybu
-        maxSpeed: line.trains[0]?.maxSpeed || 80, // Rychlost vlaku
-        image: line.trains[0]?.image || "" // Ikona vlaku (první vlak na lince)
-    };
+    let startTime = null;
+    let forward = true; // Směr jízdy (tam = true, zpět = false)
 
-    // Animace vlaku
-    const trainAnimation = timestamp => {
-        if (!trainData.startTime) trainData.startTime = timestamp;
-        const elapsed = timestamp - trainData.startTime;
+    function animateTrain(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = (timestamp - startTime) / 1000; // Uplynulý čas v sekundách
 
-        const currentStop = unlockedStops[trainData.currentIndex];
-        const nextStop = unlockedStops[trainData.nextIndex];
+        const progress = Math.min(elapsed / travelTime, 1); // Procento dokončení (0 až 1)
 
-        const distance = Math.sqrt(
-            Math.pow(nextStop.x - currentStop.x, 2) +
-            Math.pow(nextStop.y - currentStop.y, 2)
-        );
+        const currentLat = station1.location[0] + (station2.location[0] - station1.location[0]) * progress;
+        const currentLng = station1.location[1] + (station2.location[1] - station1.location[1]) * progress;
 
-        const travelTime = (distance / trainData.maxSpeed) * 3600 * 1000; // Čas v ms
-        const progress = Math.min(elapsed / travelTime, 1);
-
-        // Aktualizace pozice vlaku
-        const x = currentStop.x + (nextStop.x - currentStop.x) * progress;
-        const y = currentStop.y + (nextStop.y - currentStop.y) * progress;
-        trainData.icon.style.left = `${x}px`;
-        trainData.icon.style.top = `${y}px`;
+        trainMarker.setLatLng([currentLat, currentLng]); // Nastavení nové polohy vlaku
 
         if (progress < 1) {
-            requestAnimationFrame(trainAnimation);
+            requestAnimationFrame(animateTrain); // Pokračování animace
         } else {
-            // Přičtení peněz
-            const earnings = Math.round((distance / 1000) * 50);
+            // Přičtení peněz hráči při dosažení stanice
+            const earnings = Math.round(distance * 50 / 1000); // Zaokrouhleno na celé koruny
             increaseMoney(earnings);
 
-            // Posun na další stanici
-            if (trainData.forward) {
-                trainData.currentIndex++;
-                trainData.nextIndex++;
-            } else {
-                trainData.currentIndex--;
-                trainData.nextIndex--;
-            }
+            // Zde již nebudeme zobrazovat pop-up okno
+            // alert(`Vlak dorazil do stanice ${station2.name}! Výdělek: ${earnings} Kč`);
 
-            // Změna směru
-            if (trainData.nextIndex >= unlockedStops.length) {
-                trainData.forward = false;
-                trainData.currentIndex = unlockedStops.length - 1;
-                trainData.nextIndex = unlockedStops.length - 2;
-            } else if (trainData.nextIndex < 0) {
-                trainData.forward = true;
-                trainData.currentIndex = 0;
-                trainData.nextIndex = 1;
-            }
+            // Přepnutí směru jízdy
+            forward = !forward;
+            [station1, station2] = [station2, station1];
 
-            // Restart animace
-            trainData.startTime = null; // Reset časovače
-            setTimeout(() => requestAnimationFrame(trainAnimation), 1000);
+            // Restart animace s pauzou na stanici
+            startTime = null;
+            setTimeout(() => {
+                requestAnimationFrame(animateTrain);
+            }, 1000); // Pauza na stanici
         }
-    };
+    }
 
-    // Přidání ikony vlaku do DOM
-    trainData.icon = document.createElement("img");
-    trainData.icon.src = trainData.image;
-    trainData.icon.style.position = "absolute";
-    trainData.icon.style.width = "30px";
-    trainData.icon.style.height = "30px";
-    trainData.icon.style.left = `${unlockedStops[0].x}px`;
-    trainData.icon.style.top = `${unlockedStops[0].y}px`;
-    document.body.appendChild(trainData.icon);
-
-    // Spuštění animace vlaku
-    requestAnimationFrame(trainAnimation);
+    requestAnimationFrame(animateTrain); // Spuštění animace
 }
 
-    startTrain(0);
+// Funkce pro výpočet vzdálenosti mezi dvěma body (v metrech)
+function calculateDistance(coord1, coord2) {
+    const R = 6371e3; // Poloměr Země v metrech
+    const lat1 = coord1[0] * Math.PI / 180;
+    const lat2 = coord2[0] * Math.PI / 180;
+    const deltaLat = (coord2[0] - coord1[0]) * Math.PI / 180;
+    const deltaLng = (coord2[1] - coord1[1]) * Math.PI / 180;
+
+    const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+              Math.cos(lat1) * Math.cos(lat2) *
+              Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // Vzdálenost v metrech
+}
+
+// Funkce pro aktualizaci peněz hráče
+function increaseMoney(amount) {
+    money += amount;
+    document.getElementById('info').textContent = 'Money: Kč ' + money;
+}
     function animateTrain(timestamp) {
         if (!startTime) startTime = timestamp;
         const elapsed = (timestamp - startTime) / 1000; // Uplynulý čas v sekundách
