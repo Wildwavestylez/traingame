@@ -8048,7 +8048,19 @@
 
 
     
- // Money tracking
+// Před přístupem k datům přidáme "locked: true" do všech stanic
+lines.forEach(line => {
+    line.stops.forEach(stop => {
+        if (!stop.hasOwnProperty('locked')) {  // Zajistíme, že pokud 'locked' ještě není, přidáme ho
+            stop.locked = true;
+        }
+    });
+});
+
+let stationUnlockCost = 1000; // Cena první stanice
+let lineUnlockCost = 7000; // Cena první linky
+
+    // Money tracking
     var money = 0;
     function increaseMoney(amount) {
       money += amount;
@@ -8069,7 +8081,7 @@
       const seen = new Set();
 
       allStations.forEach(station => {
-        const stationKey = ${station.name}-${station.location.join(',')};
+        const stationKey = `${station.name}-${station.location.join(',')}`;
         if (!seen.has(stationKey)) {
           seen.add(stationKey);
           uniqueStations.push(station);
