@@ -8204,6 +8204,13 @@ function unlockNewLine() {
         alert(`Odemčena nová linka: ${newLine.name}`);
     }
 }
+    function checkAndUnlockAdjacentStations(line, currentStopIndex) {
+    if (money >= stationUnlockCost) {
+        unlockNextStation(line, currentStopIndex);
+    } else {
+        console.log(`Nedostatek peněz na odemknutí stanice. Potřebujete ${stationUnlockCost} Kč.`);
+    }
+}
     function checkUnlocks(lineIndex, stationIndex) {
     // Odemknout sousední stanice
     unlockAdjacentStations(lineIndex, stationIndex);
