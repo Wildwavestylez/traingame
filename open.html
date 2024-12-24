@@ -8212,34 +8212,54 @@ function unlockNextStation(selectedLine, currentStopIndex) {
         alert("Všechny stanice na této lince jsou již odemčeny.");
     }
 }
+// Funkce pro odemknutí linky
+function unlockLineIfPossible(station) {
+    const availableLines = lines.filter(line => 
+        line.stops.some(stop => stop.name === station.name && stop.location.join(',') === station.location.join(','))
+    );
 
+    availableLines.forEach(line => {
+        if (!unlockedLines.includes(line) && money >= lineUnlockCost) {
+            unlockedLines.push(line);
+            money -= lineUnlockCost;
+            lineUnlockCost = Math.round(lineUnlockCost * 1.1); // Zvýšení ceny
+            updateMoneyDisplay();
 
-// Funkce pro aktualizaci zobrazení peněz
-function updateMoneyDisplay() {
-    document.getElementById('info').textContent = 'Money: Kč ' + money;
-}
-
-// Funkce pro odemknutí sousední stanice
-function unlockAdjacentStation(lineIndex, stationIndex) {
-    const line = lines[lineIndex];
-    const station = line.stops[stationIndex];
-    
-    // Pokud už je stanice odemčená, nic neděláme
-    if (unlockedStations.includes(station)) return;
-
-    // Odemknout stanici
-    unlockedStations.push(station);
-    console.log(`Station unlocked: ${station.name}`);
-
-    // Zkontrolovat, jestli jsou splněny podmínky pro odemknutí sousedních stanic
-    const adjacentStations = getAdjacentStations(lineIndex, stationIndex);
-    adjacentStations.forEach((adjStation) => {
-        // Odemknout sousední stanici, pokud není již odemčena
-        if (!unlockedStations.includes(adjStation)) {
-            unlockedStations.push(adjStation);
-            console.log(`Adjacent station unlocked: ${adjStation.name}`);
+            console.log(`Linka "${line.name}" byla odemčena.`);
         }
     });
+}
+
+// Aktualizace zobrazení peněz
+function updateMoneyDisplay() {
+    const moneyDisplay = document.getElementById('moneyDisplay');
+    moneyDisplay.textContent = `Peníze: ${money} Kč`;
+}
+
+// Funkce pro odemknutí sousedních stanic
+function unlockAdjacentStations(selectedLine, currentStopIndex) {
+    const line = lines[selectedLine];
+    const stop = line.stops[currentStopIndex];
+
+    if (money >= stationUnlockCost) {
+        const unlockableStops = [currentStopIndex - 1, currentStopIndex + 1];
+
+        unlockableStops.forEach(index => {
+            if (index >= 0 && index < line.stops.length) {
+                const adjacentStop = line.stops[index];
+                if (!adjacentStop.locked) return;
+
+                adjacentStop.locked = false;
+                money -= stationUnlockCost;
+                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Zvýšení ceny
+                updateMoneyDisplay();
+
+                console.log(`Stanice "${adjacentStop.name}" byla odemčena.`);
+            }
+        });
+    } else {
+        alert("Nedostatek peněz pro odemčení sousedních stanic.");
+    }
 }
 
 // Funkce pro získání sousedních stanic (obě směry)
@@ -8336,30 +8356,7 @@ function unlockNewLine() {
     unlockNewLine();
 }
     
-function unlockAdjacentStations(lineIndex, stationIndex) {
-    const line = lines[lineIndex];
-    const station = line.stops[stationIndex];
 
-    // Odemčení sousední stanice na obou stranách
-    const adjacentIndices = [stationIndex - 1, stationIndex + 1];
-    adjacentIndices.forEach(adjIndex => {
-        if (adjIndex >= 0 && adjIndex < line.stops.length && line.stops[adjIndex].locked) {
-            if (money >= stationUnlockCost) {
-                // Odemčení stanice
-                line.stops[adjIndex].locked = false;
-                unlockedStations.push({ lineIndex, stationIndex: adjIndex });
-
-                // Odečtení peněz
-                money -= stationUnlockCost;
-                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Zvýšení ceny o 10 %
-
-                // Aktualizace UI
-                increaseMoney(0); // Obnovení zobrazení peněz
-                alert(`Odemčena stanice: ${line.stops[adjIndex].name}. Cena za další stanici: ${stationUnlockCost} Kč`);
-            }
-        }
-    });
-}
     
 function startTrain(line, trainIndex, station1Index, station2Index) {
     const train = line.trains[trainIndex];
