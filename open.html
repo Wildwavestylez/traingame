@@ -8045,7 +8045,14 @@
     },  
 
      ];
-
+// Před přístupem k datům přidáme "locked: true" do všech stanic
+lines.forEach(line => {
+    line.stops.forEach(stop => {
+        if (!stop.hasOwnProperty('locked')) {  // Zajistíme, že pokud 'locked' ještě není, přidáme ho
+            stop.locked = true;
+        }
+    });
+});
 
 let stationUnlockCost = 1000; // Cena první stanice
 let lineUnlockCost = 7000; // Cena první linky
