@@ -8171,11 +8171,11 @@ function getNextLinePrice() {
     return Math.round(lineBasePrice * Math.pow(1.1, unlockedLines.length));
 }
 
-    // Funkce pro odemknutí vedlejší stanice na vybrané lince
+  // Funkce pro odemknutí vedlejší stanice na vybrané lince
 function unlockNextStation(selectedLine, currentStopIndex) {
     const nextStopIndex = currentStopIndex + 1;
 
-    // Kontrola, zda existuje další stanice
+    // Kontrola, zda existuje další stanice na vybrané lince
     if (nextStopIndex < selectedLine.stops.length) {
         const nextStation = selectedLine.stops[nextStopIndex];
 
@@ -8212,6 +8212,7 @@ function unlockNextStation(selectedLine, currentStopIndex) {
         alert("Všechny stanice na této lince jsou již odemčeny.");
     }
 }
+
 
 // Funkce pro aktualizaci zobrazení peněz
 function updateMoneyDisplay() {
