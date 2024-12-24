@@ -8182,11 +8182,11 @@ function unlockNextStation(selectedLine, currentStopIndex) {
                  .setContent(`Stanice "${nextStation.name}" byla odemčena!`)
                 .openOn(map);
 
-            console.log(Stanice "${nextStation.name}" byla odemčena.);
-            alert(Odemčena nová stanice: ${nextStation.name});
+            console.log(`Stanice "${nextStation.name}" byla odemčena.`);
+            alert(`Odemčena nová stanice: ${nextStation.name}`);
         } else {
             // Nedostatek peněz
-            alert(Nedostatek peněz! Odemčení stanice "${nextStation.name}" stojí ${stationUnlockCost} Kč.);
+            alert(`Nedostatek peněz! Odemčení stanice "${nextStation.name}" stojí ${stationUnlockCost} Kč.`);
         }
     } else {
         // Všechny stanice jsou již odemčené
