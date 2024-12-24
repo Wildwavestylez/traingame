@@ -6155,11 +6155,17 @@ function unlockAdjacentStations(lineIndex, stationIndex) {
 }
     
 function startTrain(lineIndex) {
+    // Ověření správného indexu linky
+    if (typeof lineIndex !== "number" || lineIndex < 0 || lineIndex >= lines.length) {
+        console.error(`Linka s indexem ${lineIndex} neexistuje nebo není platná.`);
+        return;
+    }
+
     const line = lines[lineIndex];
 
-    // Kontrola existence linky a stanic
+    // Kontrola existence linek a stanic
     if (!line || !line.stops || line.stops.length < 2) {
-        console.error(`Linka s indexem ${lineIndex} neexistuje nebo nemá dostatek stanic.`);
+        console.error(`Linka s indexem ${lineIndex} nemá dostatek stanic.`);
         return;
     }
 
@@ -6170,33 +6176,36 @@ function startTrain(lineIndex) {
         return;
     }
 
-    // Inicializace vlaku
+    // Inicializace dat vlaku
     const trainData = {
         icon: null,
         startTime: null,
         currentIndex: 0,
         nextIndex: 1,
         forward: true, // Směr pohybu
-        maxSpeed: line.maxSpeed || 80, // Rychlost vlaku
-        image: line.trains[0].image // Ikona vlaku (první vlak na lince)
+        maxSpeed: line.trains[0]?.maxSpeed || 80, // Rychlost vlaku
+        image: line.trains[0]?.image || "" // Ikona vlaku (první vlak na lince)
     };
 
+    // Animace vlaku
     const trainAnimation = timestamp => {
         if (!trainData.startTime) trainData.startTime = timestamp;
         const elapsed = timestamp - trainData.startTime;
+
+        const currentStop = unlockedStops[trainData.currentIndex];
+        const nextStop = unlockedStops[trainData.nextIndex];
+
         const distance = Math.sqrt(
-            Math.pow(unlockedStops[trainData.nextIndex].x - unlockedStops[trainData.currentIndex].x, 2) +
-            Math.pow(unlockedStops[trainData.nextIndex].y - unlockedStops[trainData.currentIndex].y, 2)
+            Math.pow(nextStop.x - currentStop.x, 2) +
+            Math.pow(nextStop.y - currentStop.y, 2)
         );
 
-        const travelTime = (distance / trainData.maxSpeed) * 3600 * 1000; // Čas v milisekundách
+        const travelTime = (distance / trainData.maxSpeed) * 3600 * 1000; // Čas v ms
         const progress = Math.min(elapsed / travelTime, 1);
 
         // Aktualizace pozice vlaku
-        const x = unlockedStops[trainData.currentIndex].x +
-                  (unlockedStops[trainData.nextIndex].x - unlockedStops[trainData.currentIndex].x) * progress;
-        const y = unlockedStops[trainData.currentIndex].y +
-                  (unlockedStops[trainData.nextIndex].y - unlockedStops[trainData.currentIndex].y) * progress;
+        const x = currentStop.x + (nextStop.x - currentStop.x) * progress;
+        const y = currentStop.y + (nextStop.y - currentStop.y) * progress;
         trainData.icon.style.left = `${x}px`;
         trainData.icon.style.top = `${y}px`;
 
@@ -6216,7 +6225,7 @@ function startTrain(lineIndex) {
                 trainData.nextIndex--;
             }
 
-            // Změna směru pohybu
+            // Změna směru
             if (trainData.nextIndex >= unlockedStops.length) {
                 trainData.forward = false;
                 trainData.currentIndex = unlockedStops.length - 1;
@@ -6227,7 +6236,7 @@ function startTrain(lineIndex) {
                 trainData.nextIndex = 1;
             }
 
-            // Další jízda
+            // Restart animace
             trainData.startTime = null; // Reset časovače
             setTimeout(() => requestAnimationFrame(trainAnimation), 1000);
         }
@@ -6274,6 +6283,7 @@ function startTrain(lineIndex) {
         setTimeout(() => {
             requestAnimationFrame(animateTrain);
            }, 1000);
+        startTrain(0); // Automatické spuštění vlaku na první lince
         }
     }
 
