@@ -8203,7 +8203,8 @@ function unlockNextStation(line) {
         }
     }
 
-    console.log("Všechny stanice na této lince jsou již odemčeny.");
+    // Pokud není žádná stanice odemčena, nebo už nejsou k dispozici žádné zamčené stanice k odemčení
+    console.log("Žádná stanice k odemčení na této lince.");
 }
 
 // Hledání sousedních linek k aktuální
@@ -8239,7 +8240,7 @@ function unlockStationOnNeighborLine(neighborLine) {
 function tryUnlock(line) {
     unlockNextStation(line);
 
-    // Pokud jsou všechny stanice na základní lince odemčeny
+    // Pokud nejsou žádné stanice k odemčení, pokračuje se na sousední linky
     if (line.stops.every(stop => unlockedStations.has(stop.name))) {
         const neighboringLines = findNeighboringLines(line);
 
