@@ -6246,6 +6246,8 @@ function startTrain(lineIndex) {
     // Spuštění animace vlaku
     requestAnimationFrame(trainAnimation);
 }
+
+    startTrain(0);
     function animateTrain(timestamp) {
         if (!startTime) startTime = timestamp;
         const elapsed = (timestamp - startTime) / 1000; // Uplynulý čas v sekundách
