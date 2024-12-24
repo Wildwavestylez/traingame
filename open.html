@@ -8144,7 +8144,7 @@ let lineUnlockCost = 7000; // Cena první linky
         line.stops.forEach((stop, stopIndex) => {
           if (stop.name === selectedStation.name && stop.location[0] === selectedStation.location[0] && stop.location[1] === selectedStation.location[1]) {
             let option = document.createElement('option');
-            option.value = ${lineIndex}-${stopIndex};
+            option.value = `${lineIndex}-${stopIndex}`;
             option.textContent = line.name;
             lineSelect.appendChild(option);
           }
