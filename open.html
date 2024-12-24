@@ -8045,21 +8045,12 @@
     },  
 
      ];
-let stationUnlockCost = 1000; // Cena první stanice
-let lineUnlockCost = 7000; // Cena první linky
-
-    // Money tracking
+ // Money tracking
     var money = 0;
     function increaseMoney(amount) {
       money += amount;
       document.getElementById('info').textContent = 'Money: $' + money;
     }
-// Inicializace všech stanic jako uzamčených
-lines.forEach(line => {
-    line.stops.forEach(stop => {
-        stop.locked = true; // Všechny stanice začínají jako uzamčené
-    });
-});
 
     // Create a list of all station names for auto-suggest
     const allStations = [];
@@ -8068,7 +8059,9 @@ lines.forEach(line => {
         allStations.push({ name: stop.name, location: stop.location });
       });
     });
-   function getUniqueStations() {
+
+    // Filter stations to remove duplicates based on name and coordinates
+    function getUniqueStations() {
       const uniqueStations = [];
       const seen = new Set();
 
@@ -8082,7 +8075,6 @@ lines.forEach(line => {
 
       return uniqueStations;
     }
-
 
     // Filtrování stanic podle vstupu uživatele
     function filterStations() {
@@ -8147,23 +8139,23 @@ lines.forEach(line => {
     }
 
         // Funkce pro odemknutí vedlejší stanice na vybrané lince
-function unlockNextStation(line, currentStopIndex, isFree = false) {
+function unlockNextStation(selectedLine, currentStopIndex) {
     const nextStopIndex = currentStopIndex + 1;
 
     // Kontrola, zda existuje další stanice
-    if (nextStopIndex < line.stops.length) {
-        const nextStation = line.stops[nextStopIndex];
+    if (nextStopIndex < selectedLine.stops.length) {
+        const nextStation = selectedLine.stops[nextStopIndex];
 
         // Kontrola, zda je stanice již odemčená
         if (!nextStation.locked) {
             console.log(Stanice "${nextStation.name}" je již odemčena.);
-        } else if (isFree || money >= stationUnlockCost) {
-            // Odemknutí stanice (zdarma nebo za cenu)
+        } else if (money >= stationUnlockCost) {
+            // Odemknutí stanice a odečtení nákladů
             nextStation.locked = false;
-            if (!isFree) {
-                money -= stationUnlockCost;
-                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Zvýšení ceny
-            }
+            money -= stationUnlockCost;
+
+            // Zvýšení ceny pro další stanici
+            stationUnlockCost = Math.round(stationUnlockCost * 1.1);
 
             // Aktualizace zobrazení peněz
             updateMoneyDisplay();
@@ -8186,14 +8178,15 @@ function unlockNextStation(line, currentStopIndex, isFree = false) {
         alert("Všechny stanice na této lince jsou již odemčeny.");
     }
 }
-    function checkAndUnlockNextStation(line, currentStopIndex) {
-    if (money >= stationUnlockCost) {
-        unlockNextStation(line, currentStopIndex);
-    } else {
-        console.log(Nedostatek peněz na odemknutí další stanice. Potřebujete ${stationUnlockCost} Kč.);
+
+    function checkForNewStation(line, stationIndex) {
+    const station = line.stops[stationIndex];
+    if (money >= 1000 && !station.unlocked) { // Podmínka pro odemčení stanice (např. 1000 Kč)
+        station.unlocked = true;
+        console.log(Stanice ${station.name} byla odemčena!);
+        unlockAdjacentStations(line, stationIndex); // Odemknutí sousedních stanic
     }
 }
-  
 function unlockNewLine() {
     // Získání dostupných linek
     const availableLines = lines.filter(line => line.locked && line.stops.some(stop => !stop.locked));
