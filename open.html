@@ -8068,10 +8068,7 @@ lines.forEach(line => {
         allStations.push({ name: stop.name, location: stop.location });
       });
     });
-
-
-  
-    function getUniqueStations() {
+   function getUniqueStations() {
       const uniqueStations = [];
       const seen = new Set();
 
@@ -8085,6 +8082,7 @@ lines.forEach(line => {
 
       return uniqueStations;
     }
+
 
     // Filtrování stanic podle vstupu uživatele
     function filterStations() {
