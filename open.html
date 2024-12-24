@@ -8243,7 +8243,7 @@ function unlockAdjacentStations(lineIndex, stationIndex) {
 
                 // Aktualizace UI
                 increaseMoney(0); // Obnovení zobrazení peněz
-                alert(Odemčena stanice: ${line.stops[adjIndex].name}. Cena za další stanici: ${stationUnlockCost} Kč);
+                alert(`Odemčena stanice: ${line.stops[adjIndex].name}. Cena za další stanici: ${stationUnlockCost} Kč`);
             }
         }
     });
