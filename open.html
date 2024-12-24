@@ -8170,7 +8170,7 @@ function getNextStationPrice() {
 
 function getNextLinePrice() {
     return Math.round(lineBasePrice * Math.pow(1.1, unlockedLines.length));
-}
+}  
 
   // Funkce pro odemknutí vedlejší stanice na vybrané lince
 function unlockNextStation(selectedLine, currentStopIndex) {
@@ -8211,7 +8211,10 @@ function unlockNextStation(selectedLine, currentStopIndex) {
         console.log("Všechny stanice na této lince jsou již odemčeny.");
         alert("Všechny stanice na této lince jsou již odemčeny.");
     }
-}
+  }
+
+    checkUnlockingConditions(selectedLineIndex, currentStopIndex);
+  
 // Funkce pro odemknutí linky
 function unlockLineIfPossible(station) {
     const availableLines = lines.filter(line => 
@@ -8229,6 +8232,8 @@ function unlockLineIfPossible(station) {
         }
     });
 }
+
+  
 
 // Aktualizace zobrazení peněz
 function updateMoneyDisplay() {
