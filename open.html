@@ -8164,64 +8164,45 @@ function initializeStations() {
 // Volání při načítání hry
 initializeStations();
 
+
 // Funkce pro odemknutí sousední stanice na vybrané lince
 function unlockNextStation(line, currentStopIndex) {
-    const nextStopIndices = [currentStopIndex - 1, currentStopIndex + 1]; // Sousední stanice v obou směrech
+    // Sousední stanice v obou směrech
+    const nextStopIndices = [currentStopIndex - 1, currentStopIndex + 1]; 
 
     nextStopIndices.forEach(stopIndex => {
         if (stopIndex >= 0 && stopIndex < line.stops.length) {
             const nextStation = line.stops[stopIndex];
             
+            // Odemknutí stanice, pokud je zamčená a máme dostatek peněz
             if (nextStation.locked && money >= stationUnlockCost) {
                 nextStation.locked = false; // Odemčení stanice
                 money -= stationUnlockCost; // Odečtení peněz
+                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Zvýšení ceny stanice o 10%
 
-                // Zvýšení ceny na další stanici o 10 %
-                stationUnlockCost = Math.round(stationUnlockCost * 1.1); 
-
-                // Aktualizace UI a zobrazení peněz
-                increaseMoney(0);
-
-                // Zobrazení informace o odemčení stanice
+                // Zobrazení odemčení a aktualizace UI
                 alert(`Odemčena nová stanice: ${nextStation.name}`);
                 console.log(`Stanice "${nextStation.name}" byla odemčena.`);
+                increaseMoney(0);  // Zobrazíme aktuální peníze
             }
         }
     });
 }
 
-// Funkce pro výběr linky a odemčení sousedních stanic
-function unlockStationsAfterSelection(selectedLine, startingStationIndex) {
-    // Odemknutí stanice vedle výchozí stanice
-    unlockNextStation(selectedLine, startingStationIndex);
-}
-
-// Příklad: Po dosažení určité částky
-function checkUnlockConditions(selectedLine, currentStopIndex) {
+// Funkce pro kontrolu a odemčení stanice při dosažení určité částky
+function checkAndUnlockStation(selectedLine, currentStopIndex) {
     if (money >= stationUnlockCost) {
         unlockNextStation(selectedLine, currentStopIndex);
     } else {
-        console.log(`Nedostatek peněz na odemknutí další stanice. Potřebujete ${stationUnlockCost} Kč.`);
-    }
-}
-function checkAndUnlockStation() {
-    if (money >= stationUnlockCost) {
-        // Odemkni další stanici
-        unlockNextStation();
-
-        // Po odemčení zvýšíme částku potřebnou pro odemčení další stanice
-        money -= stationUnlockCost;
-        stationUnlockCost = Math.round(stationUnlockCost * 1.1);  // Zvyšování ceny o 10%
-
-        // Aktualizace UI nebo logiky
-        console.log(`Peníze: ${money}, Cena pro odemčení další stanice: ${stationUnlockCost}`);
-    } else {
-        console.log("Nemáte dostatek peněz pro odemčení další stanice.");
+        console.log(`Nedostatek peněz na odemčení další stanice. Potřebujete ${stationUnlockCost} Kč.`);
     }
 }
 
-// Příklad, jak volat funkci pro odemčení při dosažení určité částky
-checkAndUnlockStation();  // Toto by se mělo volat, když hráč získá dostatek peněz
+// Příklad: Když hráč vydělá dostatek peněz
+function playerEarnsMoney(amount, selectedLine, currentStopIndex) {
+    increaseMoney(amount); // Přičteme peníze hráči
+    checkAndUnlockStation(selectedLine, currentStopIndex); // Zkontrolujeme, zda lze odemknout stanici
+}
   
 function unlockNewLine() {
     // Získání dostupných linek
