@@ -8174,37 +8174,68 @@ function increaseMoney(amount) {
 }
 
 // Logika odemykání další stanice na základní lince
+// Funkce pro odemykání sousední stanice
 function unlockNextStation(line) {
     const stops = line.stops;
 
     // Procházení všech stanic na lince
     for (let i = 0; i < stops.length; i++) {
         const stop = stops[i];
-        if (unlockedStations.has(stop.name)) {
-            // Kontrola sousedních stanic (zleva a zprava)
-            const neighbors = [i - 1, i + 1].filter(
-                index => index >= 0 && index < stops.length && !unlockedStations.has(stops[index].name)
-            );
 
+        // Pokud je stanice již odemčena, zkontrolujeme sousední stanice
+        if (unlockedStations.has(stop.name)) {
+            const neighbors = [i - 1, i + 1].filter(index => index >= 0 && index < stops.length && !unlockedStations.has(stops[index].name));
+
+            // Pokud jsou sousední stanice a hráč má dost peněz, odemkneme jednu
             if (neighbors.length > 0 && playerMoney >= unlockCost) {
-                const nextIndex = neighbors[0]; // První zamčená sousední stanice
+                const nextIndex = neighbors[0];
                 const nextStation = stops[nextIndex];
 
                 // Odemknutí stanice
                 unlockedStations.add(nextStation.name);
                 playerMoney -= unlockCost;
 
-                // Zvýšení ceny za odemčení
+                // Zvýšení ceny pro další odemknutí
                 unlockCost = Math.floor(unlockCost * 1.1);
 
-                console.log(`Stanice ${nextStation.name} byla odemčena. Zbývající peníze: ${playerMoney}.`);
-                return; // Ukončí po odemčení jedné stanice
+                console.log(`Stanice ${nextStation.name} byla odemčena.`);
+                return; // Ukončíme funkci po odemčení jedné stanice
             }
         }
     }
 
-    // Pokud není žádná stanice odemčena, nebo už nejsou k dispozici žádné zamčené stanice k odemčení
-    console.log("Žádná stanice k odemčení na této lince.");
+    console.log("Nebyly nalezeny další stanice k odemčení na této lince.");
+}
+    // Funkce pro nalezení okolních linky, které vedou ze stanic, které má hráč odemčené
+function unlockAdjacentLines() {
+    lines.forEach(line => {
+        // Procházení stanic na lince
+        line.stops.forEach(stop => {
+            if (unlockedStations.has(stop.name)) {
+                // Zkontrolujeme okolní stanice pro tuto linku
+                const neighbors = line.stops.filter(s => !unlockedStations.has(s.name));
+
+                if (neighbors.length > 0) {
+                    console.log(`Nabídka k odemčení stanic na lince ${line.name} z okolních stanic.`);
+                    // Tady můžeme nabídnout hráči odemknutí celé linky nebo jednotlivých stanic
+                    // pro tuto chvíli ukážeme log
+                }
+            }
+        });
+    });
+}
+
+    // Příklad aktivace odemykání stanic
+function onPlayerMoneyChange() {
+    // Představme si, že hráč získal peníze a teď se má zkontrolovat, jestli může odemknout stanice
+    if (playerMoney >= unlockCost) {
+        lines.forEach(line => {
+            unlockNextStation(line); // Pokusíme se odemknout další stanici na základní lince
+        });
+    }
+    
+    // Když všechny stanice na základní lince jsou odemčené, nabídneme hráči nové linky
+    unlockAdjacentLines();
 }
 
 // Hledání sousedních linek k aktuální
