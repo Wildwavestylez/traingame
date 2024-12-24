@@ -8213,7 +8213,7 @@ function unlockNewLine() {
         money -= lineUnlockCost;
         lineUnlockCost = Math.round(lineUnlockCost * 1.1); // Zvýšení ceny
         updateMoneyDisplay();
-        alert(Odemčena nová linka: ${newLine.name});
+        alert(`Odemčena nová linka: ${newLine.name}`);
     }
 }
     function checkUnlocks(lineIndex, stationIndex) {
