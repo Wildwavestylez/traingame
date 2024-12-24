@@ -8164,7 +8164,7 @@ function unlockNextStation(selectedLine, currentStopIndex) {
 
         // Kontrola, zda je stanice již odemčená
         if (!nextStation.locked) {
-            console.log(Stanice "${nextStation.name}" je již odemčena.);
+            console.log(`Stanice "${nextStation.name}" je již odemčena.`);
         } else if (money >= stationUnlockCost) {
             // Odemknutí stanice a odečtení nákladů
             nextStation.locked = false;
