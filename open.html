@@ -8199,7 +8199,7 @@ function unlockNextStation(selectedLine, currentStopIndex) {
     const station = line.stops[stationIndex];
     if (money >= 1000 && !station.unlocked) { // Podmínka pro odemčení stanice (např. 1000 Kč)
         station.unlocked = true;
-        console.log(Stanice ${station.name} byla odemčena!);
+        console.log(`Stanice ${station.name} byla odemčena!`);
         unlockAdjacentStations(line, stationIndex); // Odemknutí sousedních stanic
     }
 }
