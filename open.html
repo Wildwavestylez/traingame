@@ -8285,7 +8285,7 @@ function unlockAdjacentStations(lineIndex, currentStopIndex) {
         }
     });
 }
-    function createTrain(line, stops) {
+   function createTrain(line, stops) {
     const train = {
         name: line.trains[0].name, // nebo jiný způsob výběru názvu
         route: stops.map(stop => stop.location),
@@ -8356,12 +8356,16 @@ function unlockNewLine(station) {
     });
 }
 
-    function checkUnlocks(lineIndex, stationIndex) {
-    // Odemknout sousední stanice
-    unlockAdjacentStations(lineIndex, stationIndex);
-
-    // Odemknout nové linky
-    unlockNewLine();
+function autoUnlockStations() {
+    lines.forEach((line, lineIndex) => {
+        line.stops.forEach((station, stationIndex) => {
+            if (station.locked && money >= getNextStationPrice()) {
+                unlockAdjacentStations(lineIndex, stationIndex);
+            }
+        });
+    });
+    // Nastavte interval pro opakování funkce
+    setTimeout(autoUnlockStations, 10000); // Opakování každých 10 sekund
 }
     
 
