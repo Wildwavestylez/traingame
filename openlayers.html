@@ -15,35 +15,47 @@
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([51.505, -0.09], 13);
+      // Initialize the map
+var map = L.map('map').setView([51.505, -0.09], 13);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(map);
+// Add OpenStreetMap tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+}).addTo(map);
 
-        var marker = L.marker([51.5, -0.09]).addTo(map);
-        marker.bindPopup('<b>Hello!</b><br>This is your training game.').openPopup();
+// Create a railway line
+var railwayLine = L.polyline([[51.505, -0.09], [51.51, -0.1]], {color: 'blue'}).addTo(map);
 
-        var circle = L.circle([51.508, -0.11], {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.5,
-            radius: 500
-        }).addTo(map);
-        circle.bindPopup('I am a circle.');
+// Add markers for stations
+var station1 = L.marker([51.505, -0.09]).addTo(map).bindPopup('Station 1');
+var station2 = L.marker([51.51, -0.1]).addTo(map).bindPopup('Station 2');
 
-        var polygon = L.polygon([
-            [51.509, -0.08],
-            [51.503, -0.06],
-            [51.51, -0.047]
-        ]).addTo(map);
-        polygon.bindPopup('I am a polygon.');
+// Function to add a new station
+function addStation(lat, lng, name) {
+    L.marker([lat, lng]).addTo(map).bindPopup(name);
+}
 
-        function onMapClick(e) {
-            alert("You clicked the map at " + e.latlng);
+// Example of adding a new station
+addStation(51.515, -0.12, 'Station 3');
+
+// Function to simulate train movement
+function moveTrain() {
+    var trainMarker = L.marker([51.505, -0.09]).addTo(map);
+    var latLngs = [[51.505, -0.09], [51.51, -0.1], [51.515, -0.12]];
+    var index = 0;
+
+    setInterval(function() {
+        if (index < latLngs.length) {
+            trainMarker.setLatLng(latLngs[index]);
+            index++;
+        } else {
+            clearInterval(this);
         }
+    }, 1000);
+}
 
-        map.on('click', onMapClick);
+// Start train movement
+moveTrain();
     </script>
 </body>
 </html>
