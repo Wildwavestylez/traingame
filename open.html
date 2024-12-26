@@ -8172,47 +8172,46 @@ function getNextLinePrice() {
     return Math.round(lineBasePrice * Math.pow(1.1, unlockedLines.length));
 }  
 
-  // Funkce pro odemknutí vedlejší stanice na vybrané lince
+// Function to unlock the next station on a selected line
 function unlockNextStation(selectedLine, currentStopIndex) {
     const nextStopIndex = currentStopIndex + 1;
 
-    // Kontrola, zda existuje další stanice na aktuální lince
+    // Check if the next station exists on the current line
     if (nextStopIndex < selectedLine.stops.length) {
         const nextStation = selectedLine.stops[nextStopIndex];
 
-        // Kontrola, zda je stanice již odemčená
+        // Check if the station is already unlocked
         if (!nextStation.locked) {
-            console.log(`Stanice "${nextStation.name}" je již odemčena.`);
+            console.log(`Station "${nextStation.name}" is already unlocked.`);
         } else if (money >= stationUnlockCost) {
-            // Odemknutí stanice a odečtení nákladů
+            // Unlock the station and deduct the cost
             nextStation.locked = false;
             money -= stationUnlockCost;
 
-            // Zvýšení ceny pro další stanici
+            // Update the station unlock cost for the next station
             stationUnlockCost = Math.round(stationUnlockCost * 1.1);
 
-            // Aktualizace zobrazení peněz
+            // Update money display
             updateMoneyDisplay();
 
-            // Zobrazení pop-up okna na mapě
+            // Show a popup on the map
             L.popup()
                 .setLatLng(nextStation.location)
-                .setContent(`Stanice "${nextStation.name}" byla odemčena!`)
+                .setContent(`Station "${nextStation.name}" has been unlocked!`)
                 .openOn(map);
 
-            console.log(`Stanice "${nextStation.name}" byla odemčena.`);
+            console.log(`Station "${nextStation.name}" has been unlocked.`);
 
-            // Kontrola, zda odemčená stanice umožňuje odemknutí nové linky
+            // Check if unlocking this station unlocks a new line
             unlockNewLine(nextStation);
         } else {
-            alert(`Nedostatek peněz! Odemčení stanice "${nextStation.name}" stojí ${stationUnlockCost} Kč.`);
+            alert(`Not enough money! Unlocking station "${nextStation.name}" costs ${stationUnlockCost} money.`);
         }
     } else {
-        console.log("Všechny stanice na této lince jsou již odemčeny.");
-        alert("Všechny stanice na této lince jsou již odemčeny.");
+        console.log("All stations on this line are already unlocked.");
+        alert("All stations on this line are already unlocked.");
     }
-  }
-
+}
    
   
 // Funkce pro odemknutí linky
@@ -8241,30 +8240,33 @@ function updateMoneyDisplay() {
     moneyDisplay.textContent = `Peníze: ${money} Kč`;
 }
 
-// Funkce pro odemknutí sousedních stanic
+// Function to unlock adjacent stations (both forward and backward on the line)
 function unlockAdjacentStations(selectedLine, currentStopIndex) {
-    const line = lines[selectedLine];
-    const stop = line.stops[currentStopIndex];
+    const unlockableStops = [currentStopIndex - 1, currentStopIndex + 1];
+    unlockableStops.forEach(index => {
+        if (index >= 0 && index < selectedLine.stops.length) {
+            const adjacentStop = selectedLine.stops[index];
+            if (!adjacentStop.locked) return; // If already unlocked, skip
 
-    if (money >= stationUnlockCost) {
-        const unlockableStops = [currentStopIndex - 1, currentStopIndex + 1];
-
-        unlockableStops.forEach(index => {
-            if (index >= 0 && index < line.stops.length) {
-                const adjacentStop = line.stops[index];
-                if (!adjacentStop.locked) return;
-
+            if (money >= stationUnlockCost) {
+                // Unlock the station
                 adjacentStop.locked = false;
                 money -= stationUnlockCost;
-                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Zvýšení ceny
+                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Increase price for next station
                 updateMoneyDisplay();
 
-                console.log(`Stanice "${adjacentStop.name}" byla odemčena.`);
+                // Show popup on the map
+                L.popup()
+                    .setLatLng(adjacentStop.location)
+                    .setContent(`Station "${adjacentStop.name}" has been unlocked!`)
+                    .openOn(map);
+
+                console.log(`Station "${adjacentStop.name}" has been unlocked.`);
+            } else {
+                alert("Not enough money to unlock adjacent stations.");
             }
-        });
-    } else {
-        alert("Nedostatek peněz pro odemčení sousedních stanic.");
-    }
+        }
+    });
 }
 
 // Funkce pro získání sousedních stanic (obě směry)
@@ -8340,18 +8342,24 @@ setInterval(checkUnlockingConditions, 5000); // Každých 5 sekund kontrola odem
         unlockAdjacentStations(line, stationIndex); // Odemknutí sousedních stanic
     }
 }
-function unlockNewLine() {
-    // Získání dostupných linek
-    const availableLines = lines.filter(line => line.locked && line.stops.some(stop => !stop.locked));
-    
-    if (availableLines.length > 0 && money >= lineUnlockCost) {
-        const newLine = availableLines[0]; // První odemknutelná linka
-        newLine.locked = false;
-        money -= lineUnlockCost;
-        lineUnlockCost = Math.round(lineUnlockCost * 1.1); // Zvýšení ceny
-        updateMoneyDisplay();
-        alert(`Odemčena nová linka: ${newLine.name}`);
-    }
+// Function to unlock new lines based on money and unlocked stations
+function unlockNewLine(station) {
+    const availableLines = lines.filter(line =>
+        line.stops.some(stop => stop.name === station.name && !stop.locked)
+    );
+
+    availableLines.forEach(line => {
+        if (!unlockedLines.includes(line) && money >= lineUnlockCost) {
+            unlockedLines.push(line);
+            money -= lineUnlockCost;
+            lineUnlockCost = Math.round(lineUnlockCost * 1.1); // Increase line cost
+            updateMoneyDisplay();
+
+            console.log(`Line "${line.name}" has been unlocked.`);
+            alert(`New line unlocked: ${line.name}`);
+        }
+    });
+}
 }
     function checkUnlocks(lineIndex, stationIndex) {
     // Odemknout sousední stanice
@@ -8504,12 +8512,10 @@ function calculateDistance(coord1, coord2) {
     return R * c; // Vzdálenost v metrech
 }
 
-// Funkce pro aktualizaci peněz hráče
-function increaseMoney(amount) {
-    money += amount;
-    document.getElementById('info').textContent = 'Money: Kč ' + money;
+// Function to update money display
+function updateMoneyDisplay() {
+    document.getElementById('info').textContent = 'Money: $' + money;
 }
-// Funkce volaná po odemčení stanice a výběru vlaku
 function unlockAndStartTrain(selectedLine, currentStopIndex) {
     unlockNextStation(selectedLine, currentStopIndex);
 
