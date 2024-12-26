@@ -8368,6 +8368,59 @@ function autoUnlockStations() {
     setTimeout(autoUnlockStations, 10000); // Opakování každých 10 sekund
 }
     
+function updateTrainOnMap(line, trainIndex, station1Index, station2Index) {
+    const train = line.trains[trainIndex];
+    let station1 = line.stops[station1Index];
+    let station2 = line.stops[station2Index];
+
+    // Ikona vlaku
+    const trainIcon = L.icon({
+        iconUrl: train.image,
+        iconSize: [120, 120],
+        iconAnchor: [60, 60]
+    });
+
+    const trainMarker = L.marker(station1.location, { icon: trainIcon }).addTo(map);
+
+    const speed = 180 * 1000 / 3600; // Rychlost v m/s
+    const distance = calculateDistance(station1.location, station2.location); // Vzdálenost v metrech
+    const travelTime = distance / speed; // Čas cesty v sekundách
+
+    let startTime = null;
+    let forward = true; // Směr jízdy (tam = true, zpět = false)
+
+    function animateTrain(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = (timestamp - startTime) / 1000; // Uplynulý čas v sekundách
+
+        const progress = Math.min(elapsed / travelTime, 1); // Procento dokončení (0 až 1)
+
+        const currentLat = station1.location[0] + (station2.location[0] - station1.location[0]) * progress;
+        const currentLng = station1.location[1] + (station2.location[1] - station1.location[1]) * progress;
+
+        trainMarker.setLatLng([currentLat, currentLng]); // Nastavení nové polohy vlaku
+
+        if (progress < 1) {
+            requestAnimationFrame(animateTrain); // Pokračování animace
+        } else {
+            // Přičtení peněz hráči při dosažení stanice
+            const earnings = Math.round(distance * 750 / 1000); // Zaokrouhleno na celé koruny
+            increaseMoney(earnings);
+
+            // Přepnutí směru jízdy
+            forward = !forward;
+            [station1, station2] = [station2, station1];
+
+            // Restart animace s pauzou na stanici
+            startTime = null;
+            setTimeout(() => {
+                requestAnimationFrame(animateTrain);
+            }, 1000); // Pauza na stanici
+        }
+    }
+
+    requestAnimationFrame(animateTrain); // Spuštění animace
+}
 
     
 function startTrain(line, trainIndex, station1Index, station2Index) {
