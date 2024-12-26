@@ -15,47 +15,44 @@
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-      // Initialize the map
-var map = L.map('map').setView([51.505, -0.09], 13);
+// Inicializace mapy
+var map = L.map('map').setView([50.0755, 14.4375], 10); // Praha, ČR
 
-// Add OpenStreetMap tile layer
+// Přidání dlaždicové vrstvy
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
+    attribution: '© OpenStreetMap'
 }).addTo(map);
 
-// Create a railway line
-var railwayLine = L.polyline([[51.505, -0.09], [51.51, -0.1]], {color: 'blue'}).addTo(map);
-
-// Add markers for stations
-var station1 = L.marker([51.505, -0.09]).addTo(map).bindPopup('Station 1');
-var station2 = L.marker([51.51, -0.1]).addTo(map).bindPopup('Station 2');
-
-// Function to add a new station
-function addStation(lat, lng, name) {
-    L.marker([lat, lng]).addTo(map).bindPopup(name);
+// Funkce pro přidání železniční trasy
+function addRailwayLine(start, end) {
+    var line = L.polyline([start, end], {color: 'blue'}).addTo(map);
+    return line;
 }
 
-// Example of adding a new station
-addStation(51.515, -0.12, 'Station 3');
-
-// Function to simulate train movement
-function moveTrain() {
-    var trainMarker = L.marker([51.505, -0.09]).addTo(map);
-    var latLngs = [[51.505, -0.09], [51.51, -0.1], [51.515, -0.12]];
-    var index = 0;
-
-    setInterval(function() {
-        if (index < latLngs.length) {
-            trainMarker.setLatLng(latLngs[index]);
-            index++;
-        } else {
-            clearInterval(this);
-        }
-    }, 1000);
+// Funkce pro přidání vlaku
+function addTrain(position) {
+    var trainIcon = L.icon({
+        iconUrl: 'train.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+    });
+    var trainMarker = L.marker(position, {icon: trainIcon}).addTo(map);
+    return trainMarker;
 }
 
-// Start train movement
-moveTrain();
+// Příklad použití
+var line1 = addRailwayLine([50.0755, 14.4375], [50.0875, 14.4425]);
+var train1 = addTrain([50.0755, 14.4375]);
+
+// Animace vlaku
+function moveTrain(trainMarker, newPosition) {
+    trainMarker.setLatLng(newPosition);
+}
+
+// Příklad pohybu vlaku
+setTimeout(() => moveTrain(train1, [50.0875, 14.4425]), 2000);
     </script>
 </body>
 </html>
