@@ -8051,8 +8051,8 @@
 // Před přístupem k datům přidáme "locked: true" do všech stanic
 lines.forEach(line => {
     line.stops.forEach(stop => {
-        if (!stop.hasOwnProperty('locked')) {  // Zajistíme, že pokud 'locked' ještě není, přidáme ho
-            stop.locked = true;
+        if (typeof stop.locked === 'undefined') {
+            stop.locked = true; // nebo false, podle výchozího stavu
         }
     });
 });
@@ -8243,41 +8243,40 @@ function updateMoneyDisplay() {
 
 
 function unlockAdjacentStations(lineIndex, currentStopIndex) {
-    // Ověřte platnost lineIndex
-    if (lineIndex < 0 || lineIndex >= lines.length) {
-        console.error("Neplatný index linky:", lineIndex);
-        return;
-    }
-
     const selectedLine = lines[lineIndex];
-
-    // Ověřte, zda selectedLine má vlastnost stops, která je pole
-    if (!selectedLine || !Array.isArray(selectedLine.stops)) {
-        console.error("Neplatná linka nebo zastávky:", selectedLine);
-        return;
-    }
-
     const unlockableStops = [currentStopIndex - 1, currentStopIndex + 1];
     unlockableStops.forEach(index => {
-        // Ověřte platnost indexu zastávky
         if (index >= 0 && index < selectedLine.stops.length) {
             const adjacentStop = selectedLine.stops[index];
             if (!adjacentStop.locked) return; // Pokud je již odemčena, přeskočte
 
-            if (money >= stationUnlockCost) {
+            const stationPrice = getNextStationPrice();
+            if (money >= stationPrice) {
                 // Odemkněte stanici
                 adjacentStop.locked = false;
-                money -= stationUnlockCost;
-                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Zvýšení ceny pro další stanici
+                money -= stationPrice;
                 updateMoneyDisplay();
 
-                // Zobrazte popup na mapě
-                if (typeof L !== "undefined" && map) {
-                    L.popup()
-                        .setLatLng(adjacentStop.location)
-                        .setContent(`Stanice "${adjacentStop.name}" byla odemčena!`)
-                        .openOn(map);
+                // Přidejte stanici do seznamu odemčených stanic
+                unlockedStations.push(adjacentStop);
+
+                // Zkontrolujte, zda máme alespoň dvě odemčené stanice na této lince
+                const unlockedStopsOnLine = selectedLine.stops.filter(stop => !stop.locked);
+                if (unlockedStopsOnLine.length >= 2) {
+                    // Pokud vlak ještě neexistuje, vytvořte nový
+                    if (!selectedLine.trains || selectedLine.trains.length === 0) {
+                        selectedLine.trains = [createTrain(selectedLine, unlockedStopsOnLine)];
+                    } else {
+                        // Aktualizujte trasu existujícího vlaku
+                        updateTrainRoute(selectedLine.trains[0], unlockedStopsOnLine);
+                    }
                 }
+
+                // Zobrazte popup na mapě
+                L.popup()
+                    .setLatLng(adjacentStop.location)
+                    .setContent(`Stanice "${adjacentStop.name}" byla odemčena!`)
+                    .openOn(map);
 
                 console.log(`Stanice "${adjacentStop.name}" byla odemčena.`);
             } else {
@@ -8286,7 +8285,24 @@ function unlockAdjacentStations(lineIndex, currentStopIndex) {
         }
     });
 }
+    function createTrain(line, stops) {
+    const train = {
+        name: line.trains[0].name, // nebo jiný způsob výběru názvu
+        route: stops.map(stop => stop.location),
+        icon: line.trains[0].image, // ikona vlaku
+        maxSpeed: line.trains[0].maxSpeed,
+        // Další vlastnosti vlaku
+    };
+    // Logika pro přidání vlaku do hry, např. zobrazení na mapě
+    addTrainToMap(train);
+    return train;
+}
 
+function updateTrainRoute(train, stops) {
+    train.route = stops.map(stop => stop.location);
+    // Logika pro aktualizaci trasy vlaku ve hře
+    updateTrainOnMap(train);
+}
 function checkUnlockingConditions() {
     // Odemknutí stanic
     lines.forEach((line, lineIndex) => {
