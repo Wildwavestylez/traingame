@@ -8306,14 +8306,13 @@ function unlockNewLine(station) {
     });
 }
 
-// Funkce pro kontrolu a odemknutí stanic a linek na základě peněz
 function checkUnlockingConditions() {
     // Odemknutí stanic
     lines.forEach((line, lineIndex) => {
         line.stops.forEach((station, stationIndex) => {
-            // Pokud máme dost peněz, odemkneme stanici
-            if (money >= getNextStationPrice() && !unlockedStations.includes(station)) {
-                unlockAdjacentStation(lineIndex, stationIndex);
+            // Pokud máme dost peněz a stanice je uzamčena, odemkneme sousední stanice
+            if (money >= getNextStationPrice() && station.locked) {
+                unlockAdjacentStations(lineIndex, stationIndex);
                 increaseMoney(-getNextStationPrice()); // Odečteme cenu stanice
             }
         });
@@ -8324,7 +8323,6 @@ function checkUnlockingConditions() {
         unlockNewLine();
     }
 }
-
 // Funkce pro přičítání peněz hráči
 function increaseMoney(amount) {
     money += amount;
