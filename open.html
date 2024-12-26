@@ -8240,40 +8240,7 @@ function updateMoneyDisplay() {
     moneyDisplay.textContent = `Peníze: ${money} Kč`;
 }
 
-// Function to unlock adjacent stations (both forward and backward on the line)
-function unlockAdjacentStations(selectedLine, currentStopIndex) {
-    const unlockableStops = [currentStopIndex - 1, currentStopIndex + 1];
 
-    unlockableStops.forEach(index => {
-        if (index >= 0 && index < selectedLine.stops.length) {
-            const adjacentStop = selectedLine.stops[index];
-
-            if (!adjacentStop.locked) return; // Skip if already unlocked
-
-            if (money >= stationUnlockCost) {
-                // Unlock the station
-                adjacentStop.locked = false;
-                money -= stationUnlockCost;
-                stationUnlockCost = Math.round(stationUnlockCost * 1.1); // Increment cost
-
-                updateMoneyDisplay();
-
-                // Optional: Show popup if map available
-                if (typeof L !== "undefined" && map) {
-                    L.popup()
-                        .setLatLng(adjacentStop.location)
-                        .setContent(`Station "${adjacentStop.name}" has been unlocked!`)
-                        .openOn(map);
-                }
-
-                console.log(`Station "${adjacentStop.name}" has been unlocked.`);
-            } else {
-                console.warn("Not enough money to unlock adjacent stations.");
-                alert("Not enough money to unlock adjacent stations.");
-            }
-        }
-    });
-}
 
 function unlockAdjacentStations(lineIndex, currentStopIndex) {
     // Ověřte platnost lineIndex
