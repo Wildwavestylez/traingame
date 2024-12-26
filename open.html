@@ -8355,7 +8355,98 @@ function unlockNewLine(station) {
         }
     });
 }
+function addTrainToRoute(line, trainIndex, startStationIndex, endStationIndex) {
+    const train = line.trains[trainIndex];
+    const startStation = line.stops[startStationIndex];
+    const endStation = line.stops[endStationIndex];
 
+    // Ikona vlaku
+    const trainIcon = L.icon({
+        iconUrl: train.image,
+        iconSize: [120, 120],
+        iconAnchor: [60, 60]
+    });
+
+    const trainMarker = L.marker(startStation.location, { icon: trainIcon }).addTo(map);
+
+    const speed = 180 * 1000 / 3600; // Rychlost v m/s
+    const distance = calculateDistance(startStation.location, endStation.location); // Vzdálenost v metrech
+    const travelTime = distance / speed; // Čas cesty v sekundách
+
+    let startTime = null;
+    let forward = true; // Směr jízdy (tam = true, zpět = false)
+
+    function animateTrain(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = (timestamp - startTime) / 1000; // Uplynulý čas v sekundách
+
+        const progress = Math.min(elapsed / travelTime, 1); // Procento dokončení (0 až 1)
+
+        const currentLat = startStation.location[0] + (endStation.location[0] - startStation.location[0]) * progress;
+        const currentLng = startStation.location[1] + (endStation.location[1] - startStation.location[1]) * progress;
+
+        trainMarker.setLatLng([currentLat, currentLng]); // Nastavení nové polohy vlaku
+
+        if (progress < 1) {
+            requestAnimationFrame(animateTrain); // Pokračování animace
+        } else {
+            // Přičtení peněz hráči při dosažení stanice
+            const earnings = Math.round(distance * 750 / 1000); // Zaokrouhleno na celé koruny
+            increaseMoney(earnings);
+
+            // Přepnutí směru jízdy
+            forward = !forward;
+            [startStation, endStation] = [endStation, startStation];
+
+            // Restart animace s pauzou na stanici
+            startTime = null;
+            setTimeout(() => {
+                requestAnimationFrame(animateTrain);
+            }, 1000); // Pauza na stanici
+        }
+    }
+
+    requestAnimationFrame(animateTrain); // Spuštění animace
+}
+    let stationUnlockCost = 1000; // Cena za první zastávku
+
+function unlockStationAutomatically(line) {
+    if (playerMoney >= stationUnlockCost) {
+        // Předpokládáme, že máme funkci pro získání dat o nové stanici
+        const newStationData = getNewStationData();
+        unlockNewStation(line, newStationData);
+
+        // Snížení peněz hráče
+        playerMoney -= stationUnlockCost;
+
+        // Aktualizace ceny pro další zastávku
+        stationUnlockCost *= 1.1; // Zvýšení o 10 %
+    } else {
+        console.log('Nemáte dostatek peněz na odemknutí nové stanice.');
+    }
+}
+
+    function unlockNewStation(line, stationData) {
+    // Přidání nové stanice do pole stops
+    line.stops.push(stationData);
+
+    // Aktualizace vlaků, aby zahrnovaly novou stanici
+    line.trains.forEach((train, index) => {
+        // Předpokládáme, že vlaky mají definovány počáteční a koncové stanice podle indexů
+        if (train.startingIndex >= stationData.index) {
+            train.startingIndex++;
+        }
+        if (train.endingIndex >= stationData.index) {
+            train.endingIndex++;
+        }
+    });
+
+    // Přidání vlaku, který projede mezi novou stanicí a předchozí
+    const previousStationIndex = stationData.index - 1;
+    if (previousStationIndex >= 0) {
+        addTrainToRoute(line, line.trains.length - 1, previousStationIndex, stationData.index);
+    }
+}
 function autoUnlockStations() {
     lines.forEach((line, lineIndex) => {
         line.stops.forEach((station, stationIndex) => {
