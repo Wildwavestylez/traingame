@@ -123,8 +123,32 @@ const lines = [
                 ]
     },  
 
+    {
+        name: "SK Bratislava – Trnava",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Kúty – Trnava", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/Q0sYzA5.png', maxSpeed: 600 },
+            { name: "Kúty – Trnava", startingIndex: 9, reverse: false, image: 'https://i.imgur.com/Q0sYzA5.png', maxSpeed: 600 },
+            { name: "Kúty – Trnava", startingIndex: 5, reverse: true, image: 'https://i.imgur.com/Q0sYzA5.png', maxSpeed: 600 },
+            { name: "Kúty – Trnava", startingIndex: 4, reverse: false, image: 'https://i.imgur.com/Q0sYzA5.png', maxSpeed: 600 },
+        ],
+         stops: [
+                 { name: "Bratislava hlavná stanica", location: [48.1591225, 17.1065044] },
+                { name: "Bratislava-Vinohrady", location: [48.1869239, 17.1334897] },
+                { name: "Bratislava-Rača", location: [48.2089500, 17.1604406] },  
+                { name: "Svätý Jur", location: [48.2473908, 17.2173500] },
+                { name: "Pezinok zastávka", location: [48.2673989, 17.2465400] },   
+                { name: "Pezinok", location: [48.2826997, 17.2701703] },
+                { name: "Šenkvice", location: [48.3019103, 17.3461894] },
+                 { name: "Báhoň", location: [48.3051797, 17.4496003] },
+                { name: "Cífer", location: [48.3227883, 17.4865703] },
+                { name: "Trnava", location: [48.3697281, 17.5849858] },
+                
+                 ]    }, 
+
      {
-        name: "SK 116 Bratislava – Marchegg – Gänserndorf / Wien",
+        name: "SK 116 Kúty – Trnava",
         color: "#FFFFFF00",
         category: "A",
         trains: [
@@ -8707,11 +8731,11 @@ function closeTrainModal() {
  openTrainModal();
 
 const trainTypes = [
-    { name: '141 057-0', price: 100000, speed: 400, image: 'https://i.imgur.com/BvE0s27.png', location: [6.1246406, 81.1212572] },
-    { name: 'T458', price: 120000, speed: 400, image: 'https://i.imgur.com/6YGiGqU.png', location: [6.1246406, 81.1212572] },
-    { name: '230 101-8', price: 140000, speed: 400, image: 'https://i.imgur.com/tKauwwD.png', location: [6.1246406, 81.1212572] },
-    { name: '141 009-1', price: 160000, speed: 400, image: 'https://i.imgur.com/oxSKTY2.png', location: [6.1246406, 81.1212572] },
-    { name: '123 018-4', price: 180000, speed: 400, image: 'https://i.imgur.com/rI1sNQY.png', location: [6.1246406, 81.1212572] },
+    { name: '141 057-0', price: 10000, speed: 400, image: 'https://i.imgur.com/BvE0s27.png', location: [6.1246406, 81.1212572] },
+    { name: 'T458', price: 20000, speed: 400, image: 'https://i.imgur.com/6YGiGqU.png', location: [6.1246406, 81.1212572] },
+    { name: '230 101-8', price: 50000, speed: 400, image: 'https://i.imgur.com/tKauwwD.png', location: [6.1246406, 81.1212572] },
+    { name: '141 009-1', price: 100000, speed: 400, image: 'https://i.imgur.com/oxSKTY2.png', location: [6.1246406, 81.1212572] },
+    { name: '123 018-4', price: 150000, speed: 400, image: 'https://i.imgur.com/rI1sNQY.png', location: [6.1246406, 81.1212572] },
      { name: 'HŽ 1142 011', price: 200000, speed: 400, image: 'https://i.imgur.com/2ygnENr.png', location: [6.1246406, 81.1212572] },
     { name: '121 028-5', price: 220000, speed: 400, image: 'https://i.imgur.com/dboqMNN.png', location: [6.1246406, 81.1212572] },
      { name: 'HŽ 1144 001', price: 240000, speed: 400, image: 'https://i.imgur.com/zh2EApL.png', location: [6.1246406, 81.1212572] },
