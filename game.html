@@ -84,12 +84,12 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-let playerFinance = 500000;
+let playerFinance = 50000;
 let availableLines = []; // Seznam dostupných linek
 let ownedTrains = []; // Pole pro uchování informací o zakoupených vlacích
-const cargoInterval = 120000; // Interval generování nákladu na zastávkách v ms
+const cargoInterval = 12000; // Interval generování nákladu na zastávkách v ms
 const updateInterval = 1000; // Interval aktualizace polohy vlaku v ms
-const offerInterval = 25000; // Interval nabídek od herního drážního úřadu v ms
+const offerInterval = 28000; // Interval nabídek od herního drážního úřadu v ms
 
 
 
@@ -120,6 +120,28 @@ const lines = [
                 { name: "Hlinné", location: [48.9529000, 21.5841294] },
                 { name: "Čierne nad Topľou", location: [48.9897806, 21.5694306] },
                 { name: "Bystré", location: [49.0033111, 21.5423933] },  
+                ]
+    },  
+
+     {
+        name: "SK 112 Zohor – Plavecké Podhradie",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Zohor – Plavecké Podhradie", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/nAWghTJ.png', maxSpeed: 600 },
+           
+            
+        ],
+         stops: [
+                { name: "Zohor", location: [48.3257789, 16.9907608] },
+                { name: "Lozorno", location: [48.3372128, 17.0422378] },  
+                { name: "Jablonové", location: [48.3534769, 17.0891981] },
+                { name: "Pernek pri Zohore", location: [48.3797147, 17.1224906] },   
+                { name: "Kuchyňa", location: [48.4113914, 17.1370544] },
+                { name: "Rohožník", location: [48.4711550, 17.2263494] },
+                 { name: "Sološnica", location: [48.9319739, 21.6005106] },
+                { name: "Plavecké Podhradie", location: [48.4829361, 17.2508361] },
+               
                 ]
     },  
 
@@ -8718,7 +8740,7 @@ function buyTrain(trainIndex, button) {
 
 // Funkce pro výpočet ceny za odvoz nákladu
 function calculateCargoPrice(distance) {
-    const pricePerKm = 12; // Cena za 1 km
+    const pricePerKm = 58; // Cena za 1 km
     return distance * pricePerKm;
 }
 
@@ -8733,7 +8755,7 @@ function generateCargo() {
                 [destinationStop.lat, destinationStop.lon]
             );
 
-            if (Math.random() < 0.00055) {  // Pravděpodobnost generování nákladu na zastávce (20%)
+            if (Math.random() < 0.0025) {  // Pravděpodobnost generování nákladu na zastávce (20%)
                 const cargoPrice = calculateCargoPrice(realDistance);
 
                 let cargoIcon = L.icon({
