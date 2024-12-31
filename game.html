@@ -62,7 +62,7 @@
 <div id="playerPanel">
     <!-- Zde můžete umístit obsah hráčova panelu, např. portfolio, kupony vlaků, atd. -->
     <h2>Player Panel</h2>
-    <p id="finance">Finance: 500000 Kč</p>
+    <p id="finance">Finance: 50000 Kč</p>
     <p>VERZE: 175</p>
     
     <!-- Doplnit další informace podle potřeby -->
@@ -124,11 +124,45 @@ const lines = [
     },  
 
      {
+        name: "SK 116 Bratislava – Marchegg – Gänserndorf / Wien",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Kúty – Trnava", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/TqGSdOZ.png', maxSpeed: 600 },
+            { name: "Kúty – Trnava", startingIndex: 15, reverse: false, image: 'https://i.imgur.com/TqGSdOZ.png', maxSpeed: 600 },
+            { name: "Kúty – Trnava", startingIndex: 8, reverse: true, image: 'https://i.imgur.com/TqGSdOZ.png', maxSpeed: 600 },
+            { name: "Kúty – Trnava", startingIndex: 7, reverse: false, image: 'https://i.imgur.com/TqGSdOZ.png', maxSpeed: 600 },
+        ],
+         stops: [
+                { name: "Kúty", location: [48.6618844, 17.0475158] },
+                { name: "Kuklov", location: [48.6493683, 17.0696200] },  
+                { name: "Šaštín-Stráže", location: [48.6342011, 17.1423703] },
+                { name: "Borský Mikuláš", location: [48.6422997, 17.1916408] },   
+                { name: "Šajdíkové Humence", location: [48.6598703, 17.2625408] },
+                { name: "Senica", location: [48.6660806, 17.3346006] },
+                 { name: "Hlboké", location: [48.6364864, 17.3726764] },
+                { name: "Jablonica", location: [48.6064986, 17.4099006] },
+                { name: "Cerová-Lieskové", location: [48.5966111, 17.4034900] },
+                { name: "Smolenice", location: [48.5204697, 17.4556408] },  
+                { name: "Bíňovce", location: [48.5013314, 17.4726906] },
+                { name: "Boleráz", location: [48.4700814, 17.4981308] },
+                 { name: "Klčovany", location: [48.4520492, 17.5117894] },
+                { name: "Šelpice", location: [48.4278908, 17.5370997] },  
+                { name: "Nemčanka", location: [48.3941006, 17.5644958] },
+                { name: "Trnava predm.", location: [48.3895303, 17.5668506] },   
+                { name: "Trnava", location: [48.3697281, 17.5849858] },
+                 
+                
+                
+                ]
+
+     {
         name: "SK 112 Zohor – Plavecké Podhradie",
         color: "#FFFFFF00",
         category: "A",
         trains: [
             { name: "Zohor – Plavecké Podhradie", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/nAWghTJ.png', maxSpeed: 600 },
+            { name: "Zohor – Plavecké Podhradie", startingIndex: 6, reverse: false, image: 'https://i.imgur.com/nAWghTJ.png', maxSpeed: 600 },
            
             
         ],
@@ -143,6 +177,61 @@ const lines = [
                 { name: "Plavecké Podhradie", location: [48.4829361, 17.2508361] },
                
                 ]
+    },  
+
+       {
+        name: "SK 114  Kúty – Skalica na Slovensku – Sudoměřice nad Moravou",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Kúty – Skalica na Slovensku – Sudoměřice nad Moravou", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/piKBLt1.png', maxSpeed: 600 },
+            { name: "Kúty – Skalica na Slovensku – Sudoměřice nad Moravou", startingIndex: 6, reverse: false, image: 'https://i.imgur.com/WZty3xa.png', maxSpeed: 600 },
+           
+            
+        ],
+         stops: [
+                { name: "Kúty", location: [48.6618844, 17.0475158] },
+                { name: "Gbely zastávka", location: [48.7103881, 17.0824794] },  
+                { name: "Gbely", location: [48.7234842, 17.0911044] },
+                { name: "Kopčany", location: [48.7716867, 17.1212503] },   
+                { name: "Holíč nad Moravou", location: [48.8146208, 17.1499214] },
+                { name: "Kátov", location: [48.8283194, 17.1776694] },
+                 { name: "Skalica na Slovensku", location: [48.8498383, 17.2185592] },
+                { name: "Sudoměřice nad Moravou", location: [48.8717994, 17.2432383] },
+               
+                ]
+    },  
+
+       {
+        name: "SK 115 Holíč nad Moravou – Hodonín",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Holíč nad Moravou – Hodonín", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/SSg8BRL.png', maxSpeed: 600 },
+             ],
+         stops: [
+                { name: "Holíč nad Moravou", location: [48.8146208, 17.1499214] },
+                { name: "Hodonín zastávka", location: [48.8442703, 17.1208825] },  
+                { name: "Hodonín", location: [48.8564111, 17.1220361] },
+               ]
+    },  
+
+    {
+        name: "SK 113 Zohor – Záhorská Ves",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Zohor – Záhorská Ves", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/SSg8BRL.png', maxSpeed: 600 },
+            
+           
+            
+        ],
+         stops: [
+                { name: "Zohor", location: [48.3257789, 16.9907608] },
+                { name: "Vysoká pri Morave", location: [48.3337031, 16.9139108] },  
+                { name: "Vysoká pri Morave zastávka", location: [48.3577333, 16.8851328] },
+                { name: "Záhorská Ves", location: [48.3774647, 16.8446625] },   
+               ]
     },  
 
      {
