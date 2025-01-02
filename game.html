@@ -123,6 +123,30 @@ const lines = [
                 ]
     },  
 
+     {
+        name: "SK 126 Žilina – Rajec",
+        color: "#FFFFFF00",
+        category: "A",
+        trains: [
+            { name: "Žilina – Rajec", startingIndex: 0, reverse: false, image: 'https://i.imgur.com/Y2JDs9h.png', maxSpeed: 600 },
+            { name: "Žilina – Rajec", startingIndex: 8, reverse: false, image: 'https://i.imgur.com/Y2JDs9h.png', maxSpeed: 600 },
+            
+        ],
+         stops: [
+                { name: "Žilina", location: [49.2270775, 18.7464008] },
+                { name: "Žilina-Záriečie", location: [49.2186425, 18.7310739] },  
+                { name: "Bytčica", location: [49.1882094, 18.7308903] },
+                { name: "Lietavská Lúčka", location: [49.1757011, 18.7187003] },   
+                { name: "Porúbka", location: [49.1498603, 18.7281894] },
+                { name: "Poluvsie", location: [49.1331100, 18.7036094] },
+                 { name: "Rajecké Teplice", location: [49.1293539, 18.6785844] },
+                { name: "Konská pri Rajci", location: [49.1240989, 18.6698764] },
+                { name: "Zbyňov", location: [49.1174089, 18.6558494] },
+                { name: "Kľače", location: [49.1067200, 18.6445008] },  
+                 { name: "Rajec", location: [49.0901908, 18.6437606] },  
+                ]
+    },  
+
  {
         name: "SK 123 Trenčianska Teplá – Horné Srnie – Vlárský průsmyk ",
         color: "#FFFFFF00",
@@ -9013,7 +9037,7 @@ function buyTrain(trainIndex, button) {
 
 // Funkce pro výpočet ceny za odvoz nákladu
 function calculateCargoPrice(distance) {
-    const pricePerKm = 83; // Cena za 1 km
+    const pricePerKm = 134; // Cena za 1 km
     return distance * pricePerKm;
 }
 
