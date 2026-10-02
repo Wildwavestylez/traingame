@@ -1,0 +1,55 @@
+name: Verify legacy importer
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify-import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run importer
+        run: node tools/import-legacy-data.js
+
+      - name: Verify outputs
+        run: |
+          test -s data/stations.json
+          test -s data/routes.json
+          test -s data/track-sections.json
+          test -s data/train-types.json
+          test -s data/legacy-services.json
+          test -s data/migration-report.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('data/migration-report.json','utf8'));
+          const trains = JSON.parse(fs.readFileSync('data/train-types.json','utf8'));
+          const t679 = trains.find(t => t.name === 'T679');
+          if (!t679 || t679.speedKmh !== 100) {
+            throw new Error('T679 correction check failed');
+          }
+          if (!report.routes || !report.stations) {
+            throw new Error('Migration report structure check failed');
+          }
+          console.log(JSON.stringify({
+            stations: report.stations,
+            routes: report.routes,
+            services: report.services,
+            t679: t679
+          }, null, 2));
+          NODE
+
+      - name: Upload generated data
+        uses: actions/upload-artifact@v4
+        with:
+          name: legacy-import-output
+          path: data/
+          retention-days: 7
