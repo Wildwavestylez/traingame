@@ -68,15 +68,27 @@ Nejčastěji opakované názvy:
 | Děčín hlavní nádraží | 9 |
 | Choceň | 9 |
 
-### Důležitý závěr
+### Důležitý závěr: sdílené stanice jsou správně
 
-Při migraci **nesmíme vytvořit jednu stanici pro každý výskyt v `stops[]`**.
+Opakování stanice v několika tratích **není chyba ani duplicitní fyzická stanice**. Je to informace o železniční topologii.
 
-Musíme z toho udělat samostatnou entitu:
+Například jedna fyzická stanice může být současně součástí více tratí. V historických datech tedy může být například Strakonice uvedeno na trati 190, na trati 198 i na trati směrem na Blatnou/Březnici.
+
+Při migraci proto **nesmíme vytvořit jednu stanici pro každý výskyt v `stops[]`**.
+
+Musíme vytvořit jednu fyzickou entitu:
 
 `Station`
 
-a jednotlivé tratě na ni pouze odkazovat.
+a k ní zachovat seznam všech tratí, na kterých se nachází.
+
+Tím vzniká důležité oddělení:
+
+`Station ≠ Route ≠ Service`
+
+- **Station** = fyzické místo.
+- **Route** = skutečná železniční trať / infrastruktura a její pořadí stanic.
+- **Service** = konkrétní provoz, který může projet více tratěmi.
 
 To přesně odpovídá novému `ENGINE_SPEC.md`.
 
@@ -150,7 +162,7 @@ Při migraci ji označit jako `legacy anomaly` a vyřešit až při definici nov
 
 Ostatní rychlosti v `trainTypes[]` jsou v legacy datech 400, takže ani ty zatím nebudeme automaticky považovat za skutečnou km/h hodnotu.
 
-## 6. Vlaky přiřazené k tratím
+## 6. Vlaky / služby přiřazené k tratím
 
 Tratě obsahují celkem:
 
@@ -177,27 +189,21 @@ Kontroly:
 
 `lines[].trains[]` není totéž co `trainTypes[]`.
 
-Je to spíše historický záznam konkrétního provozu / oběhu na trati:
+Historická data zde míchají informace o provozu na konkrétní trati: výchozí index zastávky, směr, obrázek a rychlost.
 
-- výchozí index zastávky,
-- směr,
-- obrázek,
-- rychlost.
+Některé názvy z `lines[].trains[]` navíc nejsou názvy vozidel z `trainTypes[]`. To není automaticky chyba — mohou představovat **službu, relaci nebo historické označení provozu**.
 
-Nový engine proto tyto informace rozdělí mezi:
+Například dálková služba **Hamburg → Berlin → Praha → Budapest** může být jedna `Service`, která v ČR využívá několik různých `Route` a jejich úseky. Není tedy správné nutit každou službu do jediné tratě.
 
-- `VehicleType`
-- `VehicleInstance`
-- `VehicleDuty`
-- `MovementSegment`
+Při migraci zachováme tyto záznamy odděleně jako legacy service data a teprve nový engine je namapuje na `VehicleType`, `VehicleInstance`, `VehicleDuty`, `Service` a `MovementSegment`.
 
 ## 7. Co audit potvrdil
 
 Legacy data mají dostatečně silný základ pro migraci:
 
 - 240 tratí
-- 3,226 unikátních souřadnic
-- 3,237 názvových identit
+- 3,226 unikátních souřadnicových skupin
+- 3,237 různých názvových hodnot (nejde o počet fyzických stanic)
 - 73 vlakových typů
 - 772 historických provozních záznamů
 - kompletní souřadnice zastávek
@@ -214,6 +220,8 @@ Největší problém není ztráta dat, ale **normalizace**.
 5. Nepovažujeme `lines[].trains[]` automaticky za samostatné typy vlaků.
 6. Nezahazujeme historická data jen proto, že jsou nekonzistentní.
 7. Nepřepisujeme rychlosti/ceny naslepo.
+8. Nepovažujeme sdílení jedné stanice více tratěmi za chybu.
+9. Nenutíme dálkovou službu do jediné tratě — služba může procházet více Route.
 
 ## 9. Doporučený další krok
 
