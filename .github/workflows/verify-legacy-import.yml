@@ -31,9 +31,9 @@ jobs:
           node - <<'NODE'
           const fs = require('fs');
           const report = JSON.parse(fs.readFileSync('data/migration-report.json','utf8'));
-          const trains = JSON.parse(fs.readFileSync('data/train-types.json','utf8'));
-          const t679 = trains.find(t => t.name === 'T679');
-          if (!t679 || t679.speedKmh !== 100) {
+          const trainsFile = JSON.parse(fs.readFileSync('data/train-types.json','utf8'));
+          const t679 = trainsFile.trainTypes.find(t => t.name === 'T679');
+          if (!t679 || t679.maxSpeedKmh !== 100) {
             throw new Error('T679 correction check failed');
           }
           if (!report.routes || !report.stations) {
@@ -42,8 +42,10 @@ jobs:
           console.log(JSON.stringify({
             stations: report.stations,
             routes: report.routes,
-            services: report.services,
-            t679: t679
+            trackSections: report.trackSections,
+            legacyServices: report.legacyServices,
+            trainTypes: report.trainTypes,
+            t679
           }, null, 2));
           NODE
 
