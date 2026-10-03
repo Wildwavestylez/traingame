@@ -3,6 +3,8 @@ import fs from "node:fs/promises";
 
 const OVERPASS_ENDPOINTS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
 const BATCH_SIZE = 10;
+const TARGET_ROUTES = (process.env.ROUTE_IDS || "").split(",").map(v=>v.trim()).filter(Boolean);
+const KNOWN_RAILWAY_RELATIONS = { "190": 48867, "198": 48873 };
 const GAME_PATH = new URL("../game.html", import.meta.url);
 const OUT_DIR = new URL("../data/geometry/", import.meta.url);
 
@@ -71,14 +73,16 @@ function parseRoutes(html){
 const html=await fs.readFile(GAME_PATH,"utf8");
 const all=parseRoutes(html);
 const seen=new Set(),batch=[];
-for(const r of all){if(seen.has(r.routeId)||r.routeId==="198")continue;seen.add(r.routeId);batch.push(r);if(batch.length===BATCH_SIZE)break;}
+for(const r of all){if(seen.has(r.routeId)||r.routeId==="198")continue;if(TARGET_ROUTES.length&&!TARGET_ROUTES.includes(r.routeId))continue;seen.add(r.routeId);batch.push(r);if(batch.length===BATCH_SIZE)break;}
 if(!batch.length)throw new Error("No routes selected for geometry batch.");
 console.log("Selected batch:",batch.map(r=>r.routeId).join(", "));
 
+const knownRefs=batch.filter(r=>KNOWN_RAILWAY_RELATIONS[r.routeId]).map(r=>r.routeId);
 const refs=batch.map(r=>r.routeId);
 const refPattern=refs.join("|");
 const relData=await overpass(`[out:json][timeout:60];relation["route"="train"]["ref"~"^(${refPattern})$"];out tags;`);
 const relations=new Map();
+for(const routeId of knownRefs)relations.set(routeId,{id:KNOWN_RAILWAY_RELATIONS[routeId],tags:{route:"railway"}});
 for(const el of relData.elements||[]){
   const ref=(el.tags?.ref||"").trim();
   if(refs.includes(ref)&&!relations.has(ref))relations.set(ref,{id:el.id,tags:el.tags||{}});
