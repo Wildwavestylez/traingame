@@ -17,7 +17,7 @@ L.tileLayer("https://tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 function stationIcon(){return L.divIcon({className:"station-marker",html:"<span></span>",iconSize:[8,8],iconAnchor:[4,4]})}
-const trainIcon=L.divIcon({className:"train-marker",html:"🚆",iconSize:[22,22],iconAnchor:[11,11]});
+const trainIcon=L.divIcon({className:"train-marker",html:"<span>🚆</span>",iconSize:[34,34],iconAnchor:[17,17]});
 function render(){
   const s=engine.snapshot();
   status.textContent=s.state.toUpperCase();
