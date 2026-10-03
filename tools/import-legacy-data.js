@@ -252,6 +252,19 @@ function main() {
       const to = stations.find(s => s.id === route.stopStationIds[i]);
       if (!from || !to) continue;
 
+      if (from.id === to.id) {
+        report.anomalies.push({
+          type: "duplicate_consecutive_stop",
+          routeId,
+          routeIndex,
+          stopIndex: i,
+          stationId: from.id,
+          stationName: from.name,
+          note: "Preserved in stopStationIds, but no zero-length track section was created."
+        });
+        continue;
+      }
+
       trackSections.push({
         id: `${routeId}__${i}`,
         routeId,
@@ -262,7 +275,9 @@ function main() {
         travelTimeMinutes: null,
         metadata: {
           distanceStatus: "not_calculated",
-          source: "legacy_stop_order"
+          source: "legacy_stop_order",
+          fromStopIndex: i - 1,
+          toStopIndex: i
         }
       });
     }
