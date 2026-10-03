@@ -1,0 +1,171 @@
+{
+  "route": {
+    "id": "route_rat_trakonice_olary",
+    "name": "Trať 198 Strakonice - Volary",
+    "color": "#FFFFFF00",
+    "category": "A",
+    "stops": [
+      {
+        "id": "station_trakonice_49_2551575_13.9163047",
+        "name": "Strakonice",
+        "latitude": 49.2551575,
+        "longitude": 13.9163047,
+        "sequence": 0
+      },
+      {
+        "id": "station_ados_ovice_49_2322158_13.9018120",
+        "name": "Radošovice",
+        "latitude": 49.2322158,
+        "longitude": 13.901812,
+        "sequence": 1
+      },
+      {
+        "id": "station_r_edni_borovice_49_2183647_13.8940200",
+        "name": "Přední Zborovice",
+        "latitude": 49.2183647,
+        "longitude": 13.89402,
+        "sequence": 2
+      },
+      {
+        "id": "station_trnkovice_nad_olyn_ko_49_2100447_13.8872928",
+        "name": "Strunkovice nad Volyňkou",
+        "latitude": 49.2100447,
+        "longitude": 13.8872928,
+        "sequence": 3
+      },
+      {
+        "id": "station_os_tice_49_1873397_13.8930731",
+        "name": "Hoštice",
+        "latitude": 49.1873397,
+        "longitude": 13.8930731,
+        "sequence": 4
+      },
+      {
+        "id": "station_olyne_49_1701164_13.8928975",
+        "name": "Volyně",
+        "latitude": 49.1701164,
+        "longitude": 13.8928975,
+        "sequence": 5
+      },
+      {
+        "id": "station_is_ovice_49_1502839_13.9059867",
+        "name": "Nišovice",
+        "latitude": 49.1502839,
+        "longitude": 13.9059867,
+        "sequence": 6
+      },
+      {
+        "id": "station_alenice_49_1237908_13.8832197",
+        "name": "Malenice",
+        "latitude": 49.1237908,
+        "longitude": 13.8832197,
+        "sequence": 7
+      },
+      {
+        "id": "station_c_ovice_49_1090089_13.8666047",
+        "name": "Lčovice",
+        "latitude": 49.1090089,
+        "longitude": 13.8666047,
+        "sequence": 8
+      },
+      {
+        "id": "station_kyne_49_1111489_13.8291083",
+        "name": "Čkyně",
+        "latitude": 49.1111489,
+        "longitude": 13.8291083,
+        "sequence": 9
+      },
+      {
+        "id": "station_ohmilice_v_echa_ch_zasta_vka_49_0975800_13.8137817",
+        "name": "Bohumilice v Čechách, zastávka",
+        "latitude": 49.09758,
+        "longitude": 13.8137817,
+        "sequence": 10
+      },
+      {
+        "id": "station_ohmilice_v_echa_ch_49_0927086_13.8010150",
+        "name": "Bohumilice v Čechách",
+        "latitude": 49.0927086,
+        "longitude": 13.801015,
+        "sequence": 11
+      },
+      {
+        "id": "station_imperk_49_0555267_13.7907544",
+        "name": "Vimperk",
+        "latitude": 49.0555267,
+        "longitude": 13.7907544,
+        "sequence": 12
+      },
+      {
+        "id": "station_imperk_zasta_vka_49_0487633_13.7639522",
+        "name": "Vimperk, zastávka",
+        "latitude": 49.0487633,
+        "longitude": 13.7639522,
+        "sequence": 13
+      },
+      {
+        "id": "station_ipka_49_0202103_13.7354764",
+        "name": "Lipka",
+        "latitude": 49.0202103,
+        "longitude": 13.7354764,
+        "sequence": 14
+      },
+      {
+        "id": "station_bova_t_48_9830017_13.7747478",
+        "name": "Kubova Huť",
+        "latitude": 48.9830017,
+        "longitude": 13.7747478,
+        "sequence": 15
+      },
+      {
+        "id": "station_orni_ltavice_48_9625625_13.7746514",
+        "name": "Horní Vltavice",
+        "latitude": 48.9625625,
+        "longitude": 13.7746514,
+        "sequence": 16
+      },
+      {
+        "id": "station_a_ton_48_9509200_13.8030072",
+        "name": "Zátoň",
+        "latitude": 48.95092,
+        "longitude": 13.8030072,
+        "sequence": 17
+      },
+      {
+        "id": "station_a_ton_obi_n_48_9515725_13.8224831",
+        "name": "Zátoň - Boubín",
+        "latitude": 48.9515725,
+        "longitude": 13.8224831,
+        "sequence": 18
+      },
+      {
+        "id": "station_enora_48_9283675_13.7969542",
+        "name": "Lenora",
+        "latitude": 48.9283675,
+        "longitude": 13.7969542,
+        "sequence": 19
+      },
+      {
+        "id": "station_enora_zasta_vka_48_9233969_13.8026581",
+        "name": "Lenora zastávka",
+        "latitude": 48.9233969,
+        "longitude": 13.8026581,
+        "sequence": 20
+      },
+      {
+        "id": "station_omarsky_ost_48_9080047_13.8287611",
+        "name": "Soumarský Most",
+        "latitude": 48.9080047,
+        "longitude": 13.8287611,
+        "sequence": 21
+      },
+      {
+        "id": "station_olary_48_9070969_13.8833131",
+        "name": "Volary",
+        "latitude": 48.9070969,
+        "longitude": 13.8833131,
+        "sequence": 22
+      }
+    ]
+  }
+}
