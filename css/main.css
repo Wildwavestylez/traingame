@@ -6,5 +6,5 @@ h1{margin:0 0 5px;font-size:22px}#engine-status{font-weight:700}
 .controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}button{border:0;border-radius:7px;padding:9px 12px;cursor:pointer}input{width:100%}
 ol{padding-left:28px}li{padding:7px 4px;border-bottom:1px solid #26313c}
 .station-marker{background:transparent;border:0}.station-marker span{display:block;width:7px;height:7px;border-radius:50%;background:#fff;border:1px solid #25313b;box-shadow:0 0 0 1px rgba(255,255,255,.35)}
-.train-marker{background:transparent;border:0;font-size:18px;line-height:22px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
+.train-marker{background:rgba(220,40,40,.92);border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 3px rgba(220,40,40,.28),0 2px 6px rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center}.train-marker span{font-size:20px;line-height:1;display:block}
 @media(max-width:800px){main{grid-template-columns:1fr;height:auto}#map{height:55vh}aside{border-left:0;border-top:1px solid #2c3742}}
