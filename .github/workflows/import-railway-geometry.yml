@@ -1,0 +1,34 @@
+name: Import railway geometry
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tools/fetch-route-geometry.js"
+      - "data/demo-route-198.json"
+      - ".github/workflows/import-railway-geometry.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Fetch and build route geometry
+        run: node tools/fetch-route-geometry.js
+      - name: Commit generated geometry
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/geometry/route-198.json
+          if git diff --cached --quiet; then
+            echo "No geometry changes."
+          else
+            git commit -m "chore: cache railway geometry for route 198"
+            git push
+          fi
