@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs/promises";
 
-const OVERPASS = "https://overpass-api.de/api/interpreter";
+const OVERPASS_ENDPOINTS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
 const RELATION_ID = 48873;
 const inputPath = new URL("../data/demo-route-198.json", import.meta.url);
 const outputPath = new URL("../data/geometry/route-198.json", import.meta.url);
