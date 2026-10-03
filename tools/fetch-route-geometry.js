@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 
 const OVERPASS_ENDPOINTS = ["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"];
 const BATCH_SIZE = 10;
-const TARGET_ROUTES = (process.env.ROUTE_IDS || "").split(",").map(v=>v.trim()).filter(Boolean);
+const TARGET_ROUTES = (process.env.ROUTE_IDS || "190").split(",").map(v=>v.trim()).filter(Boolean);
 const KNOWN_RAILWAY_RELATIONS = { "190": 48867, "198": 48873 };
 const GAME_PATH = new URL("../game.html", import.meta.url);
 const OUT_DIR = new URL("../data/geometry/", import.meta.url);
