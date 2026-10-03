@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 20
       - name: Fetch and build route geometry
-        run: ROUTE_IDS=190 node tools/fetch-route-geometry.js
+        run: node tools/fetch-route-geometry.js
       - name: Commit generated geometry
         run: |
           git config user.name "github-actions[bot]"
