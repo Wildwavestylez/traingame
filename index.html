@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Train Game — Engine</title>
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+  <header>
+    <h1>🚂 Train Game — nový engine</h1>
+    <div>Engine: <span id="engine-status">LOADING</span></div>
+    <div id="clock">Simulace: 0s</div>
+    <div id="stats">Načítám síť…</div>
+  </header>
+
+  <main>
+    <div id="map"></div>
+    <aside>
+      <h2 id="route-name">Načítám trasu…</h2>
+      <div class="controls">
+        <button id="start">▶ Spustit</button>
+        <button id="pause">⏸ Pauza</button>
+      </div>
+      <label>
+        Rychlost simulace
+        <input id="speed" type="range" min="0" max="600" value="60" step="10">
+      </label>
+      <h3>Stanice</h3>
+      <ol id="station-list"></ol>
+    </aside>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
