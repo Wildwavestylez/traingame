@@ -183,7 +183,9 @@ function main() {
       color: line.color ?? null,
       category,
       stationIds: [],
+      stopStationIds: [],
       metadata: {
+        legacyStopCount: Array.isArray(line.stops) ? line.stops.length : 0,
         legacyTrainCount: Array.isArray(line.trains) ? line.trains.length : 0
       }
     };
@@ -238,15 +240,16 @@ function main() {
 
       if (!station.routeIds.includes(routeId)) station.routeIds.push(routeId);
       if (!route.stationIds.includes(station.id)) route.stationIds.push(station.id);
+      route.stopStationIds.push(station.id);
 
       const nameList = stationNameOccurrences.get(name) || new Set();
       nameList.add(key);
       stationNameOccurrences.set(name, nameList);
     });
 
-    for (let i = 1; i < route.stationIds.length; i++) {
-      const from = stations.find(s => s.id === route.stationIds[i - 1]);
-      const to = stations.find(s => s.id === route.stationIds[i]);
+    for (let i = 1; i < route.stopStationIds.length; i++) {
+      const from = stations.find(s => s.id === route.stopStationIds[i - 1]);
+      const to = stations.find(s => s.id === route.stopStationIds[i]);
       if (!from || !to) continue;
 
       trackSections.push({
