@@ -57,7 +57,7 @@ function parseRoutes(html){
     const stopsStart=html.indexOf("stops:",m.index);
     if(stopsStart<0)continue;
     const rest=html.slice(stopsStart);
-    const blockMatch=rest.match(/stops:\s*\[\s*([\\s\\S]*?)\\n\\s*\\]\\s*,/);
+    const blockMatch=rest.match(/stops:\s*\[\s*([\s\S]*?)\n\s*\]\s*,/);
     if(!blockMatch)continue;
     const block=blockMatch[1];
     const stops=[];
