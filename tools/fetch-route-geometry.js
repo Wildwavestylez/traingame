@@ -56,10 +56,10 @@ function parseRoutes(html){
     const routeId=idMatch[1];
     const stopsStart=html.indexOf("stops:",m.index);
     if(stopsStart<0)continue;
-    const arrayStart=html.indexOf("[",stopsStart);
-    const arrayEnd=html.indexOf("]",arrayStart);
-    if(arrayStart<0||arrayEnd<0)continue;
-    const block=html.slice(arrayStart,arrayEnd);
+    const rest=html.slice(stopsStart);
+    const blockMatch=rest.match(/stops:\s*\[\s*([\\s\\S]*?)\\n\\s*\\]\\s*,/);
+    if(!blockMatch)continue;
+    const block=blockMatch[1];
     const stops=[];
     const stopRe=/\{\s*name:\s*["']([^"']+)["']\s*,\s*location:\s*\[\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\]/g;
     let s;
