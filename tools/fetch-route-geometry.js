@@ -37,9 +37,17 @@ function shortest(graph,start,end){
 const source=JSON.parse(await fs.readFile(inputPath,"utf8")),stations=source.route.stops;
 const query=`[out:json][timeout:60];relation(${RELATION_ID});way(r);out geom;`;
 console.log("Fetching OSM geometry for relation",RELATION_ID);
-const response=await fetch(`${OVERPASS}?data=${encodeURIComponent(query)}`);
-if(!response.ok)throw new Error(`Overpass HTTP ${response.status}`);
-const data=await response.json(),ways=data.elements.filter(e=>e.type==="way");
+let data=null,lastError=null;
+for(const endpoint of OVERPASS_ENDPOINTS){
+  try{
+    const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"Wildwavestylez-traingame-geometry-import/1.0"},body:new URLSearchParams({data:query})});
+    if(!response.ok)throw new Error(`Overpass HTTP ${response.status}`);
+    data=await response.json();
+    break;
+  }catch(error){lastError=error;console.log(`Endpoint failed: ${endpoint} — ${error.message}`);}
+}
+if(!data)throw lastError||new Error("All Overpass endpoints failed");
+const ways=data.elements.filter(e=>e.type==="way");
 console.log("Received",ways.length,"railway ways");
 const graph=buildGraph(ways),path=[];
 for(let i=1;i<stations.length;i++){
