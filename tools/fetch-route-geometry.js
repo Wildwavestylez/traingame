@@ -12,13 +12,36 @@ function distanceKm(a,b){const R=6371,dLat=toRad(b.lat-a.lat),dLon=toRad(b.lon-a
 class MinHeap{constructor(){this.a=[]}push(item,p){this.a.push({item,p});let i=this.a.length-1;while(i){const q=Math.floor((i-1)/2);if(this.a[q].p<=p)break;[this.a[q],this.a[i]]=[this.a[i],this.a[q]];i=q}}pop(){if(!this.a.length)return null;const r=this.a[0],x=this.a.pop();if(this.a.length){this.a[0]=x;let i=0;for(;;){let l=i*2+1,rn=l+1,s=i;if(l<this.a.length&&this.a[l].p<this.a[s].p)s=l;if(rn<this.a.length&&this.a[rn].p<this.a[s].p)s=rn;if(s===i)break;[this.a[i],this.a[s]]=[this.a[s],this.a[i]];i=s}}return r}}
 const key=p=>`${p.lat.toFixed(7)},${p.lon.toFixed(7)}`;
 function buildGraph(elements){const nodes=new Map(),edges=new Map(),add=p=>{const id=key(p);if(!nodes.has(id)){nodes.set(id,{id,lat:p.lat,lon:p.lon});edges.set(id,[])}return id};for(const way of elements){if(!way.geometry||way.geometry.length<2)continue;for(let i=1;i<way.geometry.length;i++){const a=way.geometry[i-1],b=way.geometry[i],ai=add(a),bi=add(b),w=distanceKm(a,b);edges.get(ai).push({to:bi,weight:w});edges.get(bi).push({to:ai,weight:w})}}return {nodes,edges};}
-function nearestNode(graph,station){let best=null,d=Infinity;for(const n of graph.nodes.values()){const x=distanceKm({lat:station.latitude,lon:station.longitude},n);if(x<d){d=x;best=n}}if(!best||d>5)throw new Error(`No railway node within 5 km of ${station.name} (nearest ${d.toFixed(2)} km)`);return best;}
+function nearestNode(graph,station){let best=null,d=Infinity;for(const n of graph.nodes.values()){const x=distanceKm({lat:station.latitude,lon:station.longitude},n);if(x<d){d=x;best=n}}if(!best||d>2)throw new Error(`No railway node within 2 km of ${station.name} (nearest ${d.toFixed(2)} km)`);return best;}
 function shortest(graph,start,end){const h=new MinHeap(),dist=new Map([[start,0]]),prev=new Map();h.push(start,0);while(h.a.length){const cur=h.pop();if(cur.item===end)break;if(cur.p!==dist.get(cur.item))continue;for(const e of graph.edges.get(cur.item)||[]){const nd=cur.p+e.weight;if(nd<(dist.get(e.to)??Infinity)){dist.set(e.to,nd);prev.set(e.to,cur.item);h.push(e.to,nd)}}}if(!dist.has(end))return null;const ids=[];let c=end;while(c!==undefined){ids.push(c);if(c===start)break;c=prev.get(c)}if(ids.at(-1)!==start)return null;return ids.reverse().map(id=>graph.nodes.get(id));}
 async function overpass(query){let lastError=null;for(const endpoint of OVERPASS_ENDPOINTS){try{const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","User-Agent":"Wildwavestylez-traingame-geometry-import/1.1"},body:new URLSearchParams({data:query})});if(!response.ok)throw new Error(`Overpass HTTP ${response.status}`);return await response.json();}catch(error){lastError=error;console.log(`Endpoint failed: ${endpoint} — ${error.message}`);}}throw lastError||new Error("All Overpass endpoints failed");}
 function parseRoutes(html){const routes=[];const nameRe=/name:\s*["']Trať\s+([^"']+)["']/g;let m;while((m=nameRe.exec(html))){const raw=m[1].trim();const idMatch=raw.match(/^(\d+[a-z]?)/i);if(!idMatch)continue;const routeId=idMatch[1];if(ROUTE_IDS.length&&!ROUTE_IDS.includes(routeId))continue;const stopsStart=html.indexOf("stops:",m.index);if(stopsStart<0)continue;const rest=html.slice(stopsStart);const blockMatch=rest.match(/stops:\s*\[\s*([\s\S]*?)\n\s*\]\s*,/);if(!blockMatch)continue;const block=blockMatch[1];const stops=[];const stopRe=/\{\s*name:\s*["']([^"']+)["']\s*,\s*location:\s*\[\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\]/g;let s;while((s=stopRe.exec(block)))stops.push({name:s[1],latitude:Number(s[2]),longitude:Number(s[3])});if(stops.length>=2)routes.push({routeId,raw,stops});}return routes;}
 function segmentWays(ways,a,b,corridorKm){const latPad=corridorKm/111,midLat=(a.latitude+b.latitude)/2,lonPad=corridorKm/(111*Math.max(0.2,Math.cos(toRad(midLat))));const south=Math.min(a.latitude,b.latitude)-latPad,north=Math.max(a.latitude,b.latitude)+latPad,west=Math.min(a.longitude,b.longitude)-lonPad,east=Math.max(a.longitude,b.longitude)+lonPad;return ways.filter(w=>Array.isArray(w.geometry)&&w.geometry.some(p=>p.lat>=south&&p.lat<=north&&p.lon>=west&&p.lon<=east));}
 function bboxQuery(a,b,padKm){const latPad=padKm/111,midLat=(a.latitude+b.latitude)/2,lonPad=padKm/(111*Math.max(0.2,Math.cos(toRad(midLat))));const south=Math.min(a.latitude,b.latitude)-latPad,north=Math.max(a.latitude,b.latitude)+latPad,west=Math.min(a.longitude,b.longitude)-lonPad,east=Math.max(a.longitude,b.longitude)+lonPad;return `[out:json][timeout:45];way["railway"="rail"](${south},${west},${north},${east});out geom;`;}
-async function routeSegment(ways,a,b){for(const radius of [3,6,10]){const local=segmentWays(ways,a,b,radius);const graph=buildGraph(local);try{const start=nearestNode(graph,a),end=nearestNode(graph,b),path=shortest(graph,start.id,end.id);if(path)return path;}catch(error){if(radius===10)console.log(`  relation graph failed for ${a.name} → ${b.name}: ${error.message}`);}}const fallback=await overpass(bboxQuery(a,b,8));const graph=buildGraph((fallback.elements||[]).filter(e=>e.type==="way"));const start=nearestNode(graph,a),end=nearestNode(graph,b),path=shortest(graph,start.id,end.id);if(!path)throw new Error(`No railway path between ${a.name} and ${b.name}`);return path;}
+async function routeSegment(ways,a,b){
+  for(const radius of [3,5,8]){
+    try{
+      const localData=await overpass(bboxQuery(a,b,radius));
+      const local=(localData.elements||[]).filter(e=>e.type==="way");
+      const graph=buildGraph(local);
+      const start=nearestNode(graph,a),end=nearestNode(graph,b),path=shortest(graph,start.id,end.id);
+      if(path)return path;
+    }catch(error){
+      if(radius===8)console.log(`  local railway query failed for ${a.name} → ${b.name}: ${error.message}`);
+    }
+  }
+  for(const radius of [3,6,10]){
+    const local=segmentWays(ways,a,b,radius);
+    const graph=buildGraph(local);
+    try{
+      const start=nearestNode(graph,a),end=nearestNode(graph,b),path=shortest(graph,start.id,end.id);
+      if(path)return path;
+    }catch(error){
+      if(radius===10)console.log(`  relation graph failed for ${a.name} → ${b.name}: ${error.message}`);
+    }
+  }
+  throw new Error(`No railway path between ${a.name} and ${b.name}`);
+}
 const html=await fs.readFile(GAME_PATH,"utf8");let all=parseRoutes(html);if(!ROUTE_IDS.length){const seen=new Set();all=all.filter(r=>{if(seen.has(r.routeId)||r.routeId==="198")return false;seen.add(r.routeId);return true;}).slice(0,10);}if(!all.length)throw new Error("No routes selected for geometry import.");console.log("Selected routes:",all.map(r=>r.routeId).join(", "));
 const refs=all.map(r=>r.routeId),refPattern=refs.join("|");let relData;try{relData=await overpass(`[out:json][timeout:45];relation["ref"~"^(${refPattern})$"]["route"~"^(train|railway|tracks)$"];out tags;`);}catch(error){console.log("Relation discovery failed:",error.message);relData={elements:[]};}
 const relations=new Map();for(const el of relData.elements||[]){const ref=(el.tags?.ref||"").trim();if(refs.includes(ref)&&!relations.has(ref))relations.set(ref,{id:el.id,tags:el.tags||{}});}for(const route of all){if(!relations.has(route.routeId)&&KNOWN_RAILWAY_RELATIONS[route.routeId])relations.set(route.routeId,{id:KNOWN_RAILWAY_RELATIONS[route.routeId],tags:{ref:route.routeId}});}
